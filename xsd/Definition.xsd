@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns="http://www.ofdspec.org/2016"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://www.ofdspec.org/2016"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified"
+>
+
+    <xs:simpleType name="ST_ID">
+        <xs:restriction base="xs:unsignedInt" />
+    </xs:simpleType>
+
+    <xs:simpleType name="ST_RefID">
+        <xs:restriction base="xs:unsignedInt" />
+    </xs:simpleType>
+
+    <xs:simpleType name="ST_Loc">
+        <xs:restriction base="xs:anyURI" />
+    </xs:simpleType>
+
+    <xs:simpleType name="ST_Array">
+        <xs:restriction base="xs:string" />
+    </xs:simpleType>
+
+    <xs:simpleType name="ST_Pos">
+        <xs:restriction base="xs:string" />
+    </xs:simpleType>
+
+    <xs:simpleType name="ST_Box">
+        <xs:restriction base="xs:string" />
+    </xs:simpleType>
+
+</xs:schema>

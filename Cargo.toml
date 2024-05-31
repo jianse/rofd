@@ -1,0 +1,20 @@
+[package]
+name = "rofd"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+chrono = { version = "0.4.38", features = ["serde"] }
+clap = { version = "4.5.4", features = ["derive"] }
+eyre = "0.6.12"
+quick-xml = { version = "0.31.0", features = ["serde", "serialize"] }
+serde = { version = "1.0.203", features = ["derive"] }
+serde_with = "3.8.1"
+skia-safe = "0.73.0"
+zip = "2.1.0"
+help-macro = { path = "./help-macro" }
+# [lib]
+# proc-macro = true
+
+[workspace]
+members = ["help-macro"]
