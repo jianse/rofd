@@ -24,7 +24,7 @@ struct Cli {
 
 fn main() -> Result<()> {
     let ops = Cli::parse();
-    let info = ofd_utils::get_info(ops.ofd_file)?;
+    let info = ofd_utils::get_info(&ops.ofd_file)?;
     dbg!(info);
     Ok(())
 }

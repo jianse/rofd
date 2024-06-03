@@ -35,7 +35,7 @@ pub struct CommonData {
     document_res: Option<Vec<StLoc>>,
 
     #[serde(rename = "TemplatePage")]
-    template_page: Option<Vec<TemplatePage>>,
+    pub template_page: Option<Vec<TemplatePage>>,
 
     #[serde(rename = "DefaultCS")]
     default_cs: Option<StRefId>,
@@ -53,7 +53,7 @@ pub struct TemplatePage {
     z_order: Option<String>,
 
     #[serde(rename = "@BaseLoc")]
-    base_loc: StLoc,
+    pub base_loc: StLoc,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

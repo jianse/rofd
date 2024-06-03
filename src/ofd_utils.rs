@@ -4,7 +4,10 @@ use eyre::{OptionExt, Result};
 
 use crate::{
     container,
-    element::file::{document::DocumentXmlFile, ofd::OfdXmlFile},
+    element::file::{
+        document::DocumentXmlFile,
+        ofd::OfdXmlFile,
+    },
 };
 #[derive(Debug)]
 pub struct OfdInfo {
@@ -13,22 +16,21 @@ pub struct OfdInfo {
 
     pub doc_info: Vec<DocInfo>,
 }
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct DocInfo {
     /// docid
     pub doc_id: Option<String>,
-    
+
     /// how many page this doc have
     pub page_count: usize,
+
+    /// how many template page this doc have
+    pub template_count: usize,
 }
 
-pub fn get_info(path: PathBuf) -> Result<OfdInfo> {
+pub fn get_info(path: &PathBuf) -> Result<OfdInfo> {
     let mut res = container::from_path(path)?;
-    let entry_path = PathBuf::from_str(r"OFD.xml")?;
-    let ofd_entry = res.open(&entry_path)?;
-    let reader = BufReader::new(ofd_entry);
-
-    let xml: OfdXmlFile = quick_xml::de::from_reader(reader)?;
+    let xml: OfdXmlFile = res.entry()?;
     let doc_count = xml.doc_body.len();
     let doc_info = xml
         .doc_body
@@ -46,7 +48,17 @@ pub fn get_info(path: PathBuf) -> Result<OfdInfo> {
 
             let xml: DocumentXmlFile = quick_xml::de::from_reader(reader)?;
             let page_count = xml.pages.page.len();
-            Ok(DocInfo { doc_id, page_count })
+
+            let template_count = match xml.common_data.template_page {
+                Some(v) => v.len(),
+                None => 0,
+            };
+            Ok(DocInfo {
+                doc_id,
+                page_count,
+                template_count,
+                ..Default::default()
+            })
         })
         .filter_map(
             |e: Result<DocInfo>| {
@@ -63,4 +75,15 @@ pub fn get_info(path: PathBuf) -> Result<OfdInfo> {
         doc_count,
         doc_info,
     })
+}
+
+pub fn render_template(
+    ofd_path: PathBuf,
+    output_path: PathBuf,
+    doc_index: usize,
+    template_index: usize,
+) -> Result<()> {
+    let mut res = container::from_path(&ofd_path)?;
+    let xml = res.template_by_index(doc_index, template_index)?;
+    todo!()
 }
