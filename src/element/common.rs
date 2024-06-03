@@ -1,9 +1,7 @@
 use super::base::{StArray, StBox, StRefId};
 use serde::{Deserialize, Serialize};
-use serde_with::{serde_as, DisplayFromStr};
 
 /// common Layer type
-#[serde_as]
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct CtLayer {
     #[serde(rename = "@Type")]
@@ -11,52 +9,9 @@ pub struct CtLayer {
     r#type: Option<String>,
 
     #[serde(rename = "@DrawParam")]
-    #[serde_as(as = "Option<DisplayFromStr>")]
     draw_param: Option<StRefId>,
 }
-macro_rules! add_field {
-    () => {
-        
-    };
-}
 
-#[macro_export]
-macro_rules! ct_layer{
-    // (@field_def $field_vis:vis $field_name:ident : $field_type:ty) => {
-    //     $field_vis $field_name : $field_type,
-    // };
-    // (@meta $(#[$meta:meta])*)=>{
-    //     $(#[$meta])*
-    // };
-    // (@struct_def $vis:vis struct $struct_name:ident)=>{
-    //     $vis:vis struct $struct_name:ident  
-    // };
-    (
-     $(#[$meta:meta])* 
-     $vis:vis struct $struct_name:ident {
-        $(
-        $(#[$field_meta:meta])*
-        $field_vis:vis $field_name:ident : $field_type:ty
-        ),*$(,)+
-    }
-    ) => {
-
-            $(#[$meta])*
-            $vis struct $struct_name{
-                #[serde(rename = "@Type")]
-                // #[serde_as(as = "FromInto<String>")]
-                r#type: Option<String>,
-        
-                #[serde(rename = "@DrawParam")]
-                draw_param: Option<StRefId>,
-
-                $(
-                $(#[$field_meta])*
-                pub $field_name : $field_type,
-                )*
-            }
-    }
-}
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct CtGraphicUnit {
@@ -76,6 +31,7 @@ pub struct CtGraphicUnit {
     #[serde(rename = "Actions")]
     actions: Option<Actions>,
 }
+
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct Actions {
     #[serde(rename = "Action")]
@@ -84,6 +40,14 @@ pub struct Actions {
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct CtAction {}
+
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
+pub struct CtColor {
+    #[serde(rename = "@Value")]
+    pub value:StArray<u8>,
+
+    // TODO: p39
+}
 
 #[cfg(test)]
 mod test_super {

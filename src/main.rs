@@ -2,10 +2,10 @@ mod container;
 mod element;
 mod custom_de;
 mod ofd_utils;
-use std::{path::PathBuf};
+use std::path::PathBuf;
 
 use clap::{command, Parser};
-use eyre::{Result};
+use eyre::Result;
 
 
 #[derive(Parser)]

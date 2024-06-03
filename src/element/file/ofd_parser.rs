@@ -3,6 +3,7 @@ use std::io::BufRead;
 use eyre::Result;
 use quick_xml::{events::Event, NsReader};
 
+#[allow(dead_code)]
 fn parse<R: BufRead>(mut reader: NsReader<R>) -> Result<()> {
     reader.trim_text(true);
     // let mut reader = NsReader::from_file("sample/OFD.xml")?;

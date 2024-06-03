@@ -1,13 +1,51 @@
-use std::path::PathBuf;
+use std::{fmt::Display, path::PathBuf, str::FromStr};
 
 // use eyre::Ok;
 use serde::{
     de::{self, Visitor},
     Deserialize, Serialize,
 };
+use serde_with::serde_as;
 
 pub type StLoc = PathBuf;
-pub type StArray<T> = Vec<T>;
+
+#[serde_as]
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
+pub struct StArray<T: FromStr + Display>(Vec<T>);
+
+impl<T: FromStr + Display> FromStr for StArray<T> {
+    type Err = <T as FromStr>::Err;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        // Vec::from
+        let parts = s.split(" ");
+        let data = parts
+            .into_iter()
+            .map(T::from_str)
+            .collect::<Result<Vec<T>, <T as FromStr>::Err>>();
+        match data {
+            Ok(data) => Ok(Self { 0: data }),
+            Err(e) => Err(e),
+        }
+        // todo!()
+    }
+}
+impl<T: FromStr + Display> Display for StArray<T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let r = self
+            .0
+            .iter()
+            .map(|i| format!("{}", i))
+            .collect::<Vec<String>>();
+        write!(f, "{}", r.join(" "))
+    }
+}
+impl<T: FromStr + Display> From<Vec<T>> for StArray<T> {
+    fn from(value: Vec<T>) -> Self {
+        Self { 0: value }
+    }
+}
+
 pub type StId = u64;
 pub type StRefId = StId;
 pub struct StPos {

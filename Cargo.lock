@@ -549,14 +549,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
 
 [[package]]
-name = "help-macro"
-version = "0.1.0"
-dependencies = [
- "proc-macro2",
- "syn",
-]
-
-[[package]]
 name = "hex"
 version = "0.4.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -833,9 +825,9 @@ dependencies = [
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.84"
+version = "1.0.85"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ec96c6a92621310b51366f1e28d05ef11489516e93be030060e5fc12024a49d6"
+checksum = "22244ce15aa966053a896d1accb3a6e68469b97c7f33f284b99f0d576879fc23"
 dependencies = [
  "unicode-ident",
 ]
@@ -934,7 +926,6 @@ dependencies = [
  "chrono",
  "clap",
  "eyre",
- "help-macro",
  "quick-xml",
  "serde",
  "serde_with",
@@ -1062,9 +1053,9 @@ checksum = "d66dc143e6b11c1eddc06d5c423cfc97062865baf299914ab64caa38182078fe"
 
 [[package]]
 name = "skia-bindings"
-version = "0.73.0"
+version = "0.75.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "43555ec5d87ee8c14273f3045bf09504a58c6afe842c51d1593b62abf095aa96"
+checksum = "c06e19e97660b09a381c6eb566849b63556b1a90b8e2c6ba2d146b3f5066847b"
 dependencies = [
  "bindgen",
  "cc",
@@ -1079,9 +1070,9 @@ dependencies = [
 
 [[package]]
 name = "skia-safe"
-version = "0.73.0"
+version = "0.75.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c431cc5c1ca6008199bf2e849083dd05539c9f2a2ffc1c24b521e6e0ef2c31a7"
+checksum = "ad6e6f369522471b585c99427720b53aad04016fa4314e0a8cf23f17083a4e4c"
 dependencies = [
  "bitflags 2.5.0",
  "lazy_static",
@@ -1427,9 +1418,9 @@ dependencies = [
 
 [[package]]
 name = "zip"
-version = "2.1.0"
+version = "2.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e2568cd0f20e86cd9a7349fe05178f7bd22f22724678448ae5a9bac266df2689"
+checksum = "098d5d7737fb0b70814faa73c17df84f047d38dd31d13bbf2ec3fb354b5abf45"
 dependencies = [
  "aes",
  "arbitrary",
