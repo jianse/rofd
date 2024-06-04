@@ -1,13 +1,10 @@
-use std::{io::BufReader, path::PathBuf, str::FromStr};
+use std::{fs::create_dir_all, path::PathBuf};
 
-use eyre::{OptionExt, Result};
+use eyre::Result;
 
 use crate::{
     container,
-    element::file::{
-        document::DocumentXmlFile,
-        ofd::OfdXmlFile,
-    },
+    element::file::{document::DocumentXmlFile, ofd::OfdXmlFile},
 };
 #[derive(Debug)]
 pub struct OfdInfo {
@@ -29,24 +26,17 @@ pub struct DocInfo {
 }
 
 pub fn get_info(path: &PathBuf) -> Result<OfdInfo> {
-    let mut res = container::from_path(path)?;
-    let xml: OfdXmlFile = res.entry()?;
+    let mut container = container::from_path(path)?;
+    let xml: OfdXmlFile = container.entry()?.content;
     let doc_count = xml.doc_body.len();
     let doc_info = xml
         .doc_body
         .iter()
-        .map(|ele| {
+        .enumerate()
+        .map(|(idx, ele)| {
             let doc_id = ele.doc_info.doc_id.clone();
-            let dr = ele
-                .doc_root
-                .as_ref()
-                .ok_or_eyre("unable to locate document root")?;
-            // dbg!(dr);
-            // dbg!(xml);
-            let document_xml = res.open(dr)?;
-            let reader = BufReader::new(document_xml);
 
-            let xml: DocumentXmlFile = quick_xml::de::from_reader(reader)?;
+            let xml: DocumentXmlFile = container.document_by_index(idx)?.content;
             let page_count = xml.pages.page.len();
 
             let template_count = match xml.common_data.template_page {
@@ -78,12 +68,25 @@ pub fn get_info(path: &PathBuf) -> Result<OfdInfo> {
 }
 
 pub fn render_template(
-    ofd_path: PathBuf,
-    output_path: PathBuf,
+    ofd_path: &PathBuf,
+    output_path: &PathBuf,
     doc_index: usize,
     template_index: usize,
 ) -> Result<()> {
+    if !output_path.exists() {
+        create_dir_all(output_path)?;
+    } else {
+        assert!(
+            output_path.is_dir(),
+            "path {} is not a dir!",
+            output_path.display()
+        );
+    }
+
     let mut res = container::from_path(&ofd_path)?;
-    let xml = res.template_by_index(doc_index, template_index)?;
+    let xml = res.template_by_index(doc_index, template_index)?.content;
+    dbg!(xml);
+
     todo!()
 }
+// fn create_dir()

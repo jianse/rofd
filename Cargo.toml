@@ -5,12 +5,13 @@ edition = "2021"
 
 [dependencies]
 chrono = { version = "0.4.38", features = ["serde"] }
-clap = { version = "4.5.4", features = ["derive"] }
+clap = { version = "4.5.4", features = ["derive", "string"] }
 eyre = "0.6.12"
 quick-xml = { version = "0.31.0", features = ["serde", "serialize"] }
 serde = { version = "1.0.203", features = ["derive"] }
 serde_with = "3.8.1"
 skia-safe = "0.75.0"
+thiserror = "1.0.61"
 zip = "2.1.0"
 # help-macro = { path = "./help-macro" }
 

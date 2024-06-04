@@ -930,6 +930,7 @@ dependencies = [
  "serde",
  "serde_with",
  "skia-safe",
+ "thiserror",
  "zip",
 ]
 
