@@ -3,6 +3,7 @@ mod custom_de;
 mod element;
 mod error;
 mod ofd_utils;
+mod render;
 use std::path::PathBuf;
 
 use clap::{command, Parser, Subcommand};

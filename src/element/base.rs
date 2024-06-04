@@ -11,7 +11,7 @@ pub type StLoc = PathBuf;
 
 #[serde_as]
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
-pub struct StArray<T: FromStr + Display>(Vec<T>);
+pub struct StArray<T: FromStr + Display>(pub Vec<T>);
 
 impl<T: FromStr + Display> FromStr for StArray<T> {
     type Err = <T as FromStr>::Err;

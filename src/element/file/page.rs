@@ -130,56 +130,60 @@ pub enum CtPageBlock {
         // endregion
     },
 
-    PathObject {
-        #[serde(rename = "@Stroke")]
-        stroke: Option<bool>,
-        #[serde(rename = "@Fill")]
-        fill: Option<bool>,
-        #[serde(rename = "@Rule")]
-        rule: Option<String>,
-        #[serde(rename = "FillColor")]
-        fill_color: Option<CtColor>,
-
-        #[serde(rename = "StrokeColor")]
-        stroke_color: Option<CtColor>,
-
-        #[serde_as(as = "serde_with::DisplayFromStr")]
-        #[serde(rename = "AbbreviatedData")]
-        abbreviated_data: StArray<String>,
-
-        // common fileds on graphic unit
-        #[serde(rename = "@Boundary")]
-        boundary: StBox,
-        #[serde(rename = "@Name")]
-        name: Option<String>,
-        #[serde(rename = "@Visible")]
-        visible: Option<bool>,
-        #[serde(rename = "@CTM")]
-        ctm: Option<StArray<f64>>,
-        #[serde(rename = "@DrawParam")]
-        draw_param: Option<StRefId>,
-        #[serde(rename = "@LineWidth")]
-        line_width: Option<f64>,
-        #[serde(rename = "@Cap")]
-        cap: Option<String>,
-        #[serde(rename = "@Join")]
-        join: Option<String>,
-        #[serde(rename = "@MiterLimit")]
-        miter_limit: Option<f64>,
-        #[serde(rename = "@DashOffset")]
-        dash_offset: Option<f64>,
-        #[serde(rename = "@DashPattern")]
-        dash_pattern: Option<StArray<f64>>,
-        #[serde(rename = "@Alapha")]
-        alapha: Option<u8>,
-        #[serde(rename = "Actions")]
-        actions: Option<Actions>,
-        // endregion
-    },
+    PathObject(PathObject),
     ImageObject {},
     CompositeObject {},
     PageBlock {},
 }
+#[serde_as]
+#[derive(Debug, Deserialize, Serialize)]
+pub struct PathObject {
+    #[serde(rename = "@Stroke")]
+    pub stroke: Option<bool>,
+    #[serde(rename = "@Fill")]
+    pub fill: Option<bool>,
+    #[serde(rename = "@Rule")]
+    pub rule: Option<String>,
+    #[serde(rename = "FillColor")]
+    pub fill_color: Option<CtColor>,
+
+    #[serde(rename = "StrokeColor")]
+    pub stroke_color: Option<CtColor>,
+
+    #[serde_as(as = "serde_with::DisplayFromStr")]
+    #[serde(rename = "AbbreviatedData")]
+    pub abbreviated_data: StArray<String>,
+
+    // common fileds on graphic unit
+    #[serde(rename = "@Boundary")]
+    pub boundary: StBox,
+    #[serde(rename = "@Name")]
+    pub name: Option<String>,
+    #[serde(rename = "@Visible")]
+    pub visible: Option<bool>,
+    #[serde(rename = "@CTM")]
+    pub ctm: Option<StArray<f64>>,
+    #[serde(rename = "@DrawParam")]
+    pub draw_param: Option<StRefId>,
+    #[serde(rename = "@LineWidth")]
+    pub line_width: Option<f64>,
+    #[serde(rename = "@Cap")]
+    pub cap: Option<String>,
+    #[serde(rename = "@Join")]
+    pub join: Option<String>,
+    #[serde(rename = "@MiterLimit")]
+    pub miter_limit: Option<f64>,
+    #[serde(rename = "@DashOffset")]
+    pub dash_offset: Option<f64>,
+    #[serde(rename = "@DashPattern")]
+    pub dash_pattern: Option<StArray<f64>>,
+    #[serde(rename = "@Alapha")]
+    pub alapha: Option<u8>,
+    #[serde(rename = "Actions")]
+    pub actions: Option<Actions>,
+    // endregion
+}
+
 #[derive(Debug, Deserialize, Serialize)]
 pub struct TextCode {
     #[serde(rename = "@X")]
