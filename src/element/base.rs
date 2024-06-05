@@ -49,25 +49,25 @@ impl<T: FromStr + Display> From<Vec<T>> for StArray<T> {
 pub type StId = u64;
 pub type StRefId = StId;
 pub struct StPos {
-    x: f64,
-    y: f64,
+    x: f32,
+    y: f32,
 }
 
-// #[serde_as(as = "FromInto<(f64, f64, f64, f64)>")]
+// #[serde_as(as = "FromInto<(f32, f32, f32, f32)>")]
 #[derive(Debug, Serialize, PartialEq, PartialOrd)]
 pub struct StBox {
-    x: f64,
-    y: f64,
-    w: f64,
-    h: f64,
+    x: f32,
+    y: f32,
+    w: f32,
+    h: f32,
 }
 impl StBox {
-    fn new(x: f64, y: f64, w: f64, h: f64) -> Self {
+    fn new(x: f32, y: f32, w: f32, h: f32) -> Self {
         Self { x, y, w, h }
     }
 }
-impl From<(f64, f64, f64, f64)> for StBox {
-    fn from(value: (f64, f64, f64, f64)) -> Self {
+impl From<(f32, f32, f32, f32)> for StBox {
+    fn from(value: (f32, f32, f32, f32)) -> Self {
         StBox {
             x: value.0,
             y: value.1,
@@ -76,7 +76,7 @@ impl From<(f64, f64, f64, f64)> for StBox {
         }
     }
 }
-impl From<StBox> for (f64, f64, f64, f64) {
+impl From<StBox> for (f32, f32, f32, f32) {
     fn from(value: StBox) -> Self {
         (value.x, value.y, value.w, value.h)
     }
@@ -98,13 +98,13 @@ impl<'de> Deserialize<'de> for StBox {
             where
                 E: de::Error,
             {
-                fn get<E>(parts: &Vec<&str>, index: usize) -> Result<f64, E>
+                fn get<E>(parts: &Vec<&str>, index: usize) -> Result<f32, E>
                 where
                     E: de::Error,
                 {
                     let p_str = parts[index];
 
-                    let res: f64 = p_str.parse().map_err(|_| {
+                    let res: f32 = p_str.parse().map_err(|_| {
                         de::Error::invalid_value(de::Unexpected::Str(p_str), &"number like")
                     })?;
                     Ok(res)
@@ -128,14 +128,9 @@ impl<'de> Deserialize<'de> for StBox {
 }
 
 #[cfg(test)]
-mod test_de {
+mod tests {
     use super::*;
 
-    #[test]
-    fn test_vec_de() {
-        let r: Vec<f64> = quick_xml::de::from_str("<StBox>a.0 0 160 35.5</StBox>").unwrap();
-        assert_eq!(r, vec![0.0, 0.0, 160.0, 35.5])
-    }
     #[test]
     fn test_stbox_de() {
         let res = quick_xml::de::from_str::<StBox>("<StBox>0 0 160 35.5</StBox>");

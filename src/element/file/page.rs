@@ -8,16 +8,16 @@ use serde_with::serde_as;
 pub struct PageXmlFile {
     /// size
     #[serde(rename = "Area")]
-    area: Option<CtPageArea>,
+    pub area: Option<CtPageArea>,
 
     #[serde(rename = "Template")]
-    template: Option<Vec<Template>>,
+    pub template: Option<Vec<Template>>,
 
     #[serde(rename = "PageRes")]
-    page_res: Option<Vec<StLoc>>,
+    pub page_res: Option<Vec<StLoc>>,
 
     #[serde(rename = "Content")]
-    content: Option<Content>,
+    pub content: Option<Content>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -48,14 +48,14 @@ pub enum CtPageBlock {
         font: StRefId,
 
         #[serde(rename = "@Size")]
-        size: f64,
+        size: f32,
 
         #[serde(rename = "@Stroke")]
         stroke: Option<bool>,
 
         fill: Option<bool>,
 
-        h_scale: Option<f64>,
+        h_scale: Option<f32>,
 
         read_direction: Option<u32>,
 
@@ -108,21 +108,21 @@ pub enum CtPageBlock {
         #[serde(rename = "@Visible")]
         visible: Option<bool>,
         #[serde(rename = "@CTM")]
-        ctm: Option<StArray<f64>>,
+        ctm: Option<StArray<f32>>,
         #[serde(rename = "@DrawParam")]
         draw_param: Option<StRefId>,
         #[serde(rename = "@LineWidth")]
-        line_width: Option<f64>,
+        line_width: Option<f32>,
         #[serde(rename = "@Cap")]
         cap: Option<String>,
         #[serde(rename = "@Join")]
         join: Option<String>,
         #[serde(rename = "@MiterLimit")]
-        miter_limit: Option<f64>,
+        miter_limit: Option<f32>,
         #[serde(rename = "@DashOffset")]
-        dash_offset: Option<f64>,
+        dash_offset: Option<f32>,
         #[serde(rename = "@DashPattern")]
-        dash_pattern: Option<StArray<f64>>,
+        dash_pattern: Option<StArray<f32>>,
         #[serde(rename = "@Alapha")]
         alapha: Option<u8>,
         #[serde(rename = "Actions")]
@@ -162,21 +162,21 @@ pub struct PathObject {
     #[serde(rename = "@Visible")]
     pub visible: Option<bool>,
     #[serde(rename = "@CTM")]
-    pub ctm: Option<StArray<f64>>,
+    pub ctm: Option<StArray<f32>>,
     #[serde(rename = "@DrawParam")]
     pub draw_param: Option<StRefId>,
     #[serde(rename = "@LineWidth")]
-    pub line_width: Option<f64>,
+    pub line_width: Option<f32>,
     #[serde(rename = "@Cap")]
     pub cap: Option<String>,
     #[serde(rename = "@Join")]
     pub join: Option<String>,
     #[serde(rename = "@MiterLimit")]
-    pub miter_limit: Option<f64>,
+    pub miter_limit: Option<f32>,
     #[serde(rename = "@DashOffset")]
-    pub dash_offset: Option<f64>,
+    pub dash_offset: Option<f32>,
     #[serde(rename = "@DashPattern")]
-    pub dash_pattern: Option<StArray<f64>>,
+    pub dash_pattern: Option<StArray<f32>>,
     #[serde(rename = "@Alapha")]
     pub alapha: Option<u8>,
     #[serde(rename = "Actions")]
@@ -187,9 +187,9 @@ pub struct PathObject {
 #[derive(Debug, Deserialize, Serialize)]
 pub struct TextCode {
     #[serde(rename = "@X")]
-    x: Option<f64>,
+    x: Option<f32>,
     #[serde(rename = "@Y")]
-    y: Option<f64>,
+    y: Option<f32>,
     #[serde(rename = "@DeltaX")]
     delta_x: Option<StArray<String>>,
     #[serde(rename = "@DeltaY")]
@@ -197,11 +197,6 @@ pub struct TextCode {
     #[serde(rename = "$value")]
     val: String,
 }
-
-// ct_graphic_unit!(
-//     #[derive(Debug, Deserialize, Serialize)]
-//     pub struct TextObject {}
-// );
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Template {
@@ -213,7 +208,7 @@ pub struct Template {
 }
 
 #[cfg(test)]
-mod test_page_file {
+mod tests {
     use std::{fs::File, io::BufReader};
 
     use eyre::Result;

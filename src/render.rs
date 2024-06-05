@@ -10,9 +10,12 @@ use skia_safe::Path;
 use skia_safe::PathDirection;
 use skia_safe::{Canvas, ImageInfo, Surface};
 
+use crate::container::Container;
 use crate::element::base::StArray;
 use crate::element::file::page::PathObject;
 use crate::error::MyError;
+
+// fn render_template()
 
 fn create_canvas(size: (i32, i32)) -> Result<Surface> {
     let ii = ImageInfo::new_s32(size, skia_safe::AlphaType::Opaque);
@@ -23,7 +26,11 @@ fn create_canvas(size: (i32, i32)) -> Result<Surface> {
 }
 
 fn draw_path_object(canvas: &mut Canvas, path_object: &PathObject) {
-    // path_object.visible
+    let vis = path_object.visible.unwrap_or(true);
+    if !vis {
+        return;
+    }
+
     // canvas.
     // create_canvas(size)
     todo!()
@@ -85,7 +92,6 @@ fn abbreviated_data_2_path(abbr: &StArray<String>) -> Result<Path> {
             _ => { Err(MyError::UnknownPathCommnad(ele.into())) }?,
         };
         s?;
-
     }
     Ok(path)
 }
@@ -116,9 +122,28 @@ fn next_path_direction(iter: &mut Enumerate<Iter<String>>) -> Result<PathDirecti
     }?;
     Ok(r)
 }
+fn render_template(container: &mut Container, doc_index: usize, page_index: usize) -> Result<()> {
+    let mut doc = container.document_by_index(doc_index)?;
+    let page = doc.get_page(page_index)?;
+    let content = page.content;
+    let size = content.area;
+    let mut has_template = false;
+    if let Some(templates) = content.template {
+        if templates.is_empty() {
+            has_template = false;
+        } else {
+            has_template = true;
+            let tpl = doc.get_template_by_id(5);
+        }
+        
+    }
+
+    let xml = container.template_by_index(doc_index, page_index)?.content;
+    Ok(())
+}
 
 #[cfg(test)]
-mod test_super {
+mod tests {
     use super::*;
 
     #[test]

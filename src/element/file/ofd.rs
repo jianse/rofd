@@ -57,7 +57,7 @@ pub struct CustomData {
     pub value: String,
 }
 #[cfg(test)]
-mod test_parse_ofd_xml {
+mod tests {
     use std::{
         fs::File,
         io::{BufReader, Write},
@@ -80,7 +80,7 @@ mod test_parse_ofd_xml {
 
     #[test]
     fn test_write_ofd_xml() -> Result<()> {
-        let out_path = "out/OFD.xml";
+        let out_path = "output/OFD.xml";
         let mut file = File::create(out_path)?;
         let value = new_ofd();
         let buffer = quick_xml::se::to_string(&value)?;

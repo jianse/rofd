@@ -35,7 +35,7 @@ fn parse<R: BufRead>(mut reader: NsReader<R>) -> Result<()> {
     Ok(())
 }
 #[cfg(test)]
-mod test_parse_ofd_xml {
+mod tests {
 
     use super::*;
 

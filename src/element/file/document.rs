@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::element::base::{StBox, StId, StLoc, StRefId};
 
+/// Document.xml 文件
 #[derive(Debug, Serialize, Deserialize)]
 pub struct DocumentXmlFile {
     #[serde(rename = "CommonData")]
@@ -37,6 +38,7 @@ pub struct CommonData {
     #[serde(rename = "TemplatePage")]
     pub template_page: Option<Vec<TemplatePage>>,
 
+    /// 可选属性 默认值为sRGB
     #[serde(rename = "DefaultCS")]
     default_cs: Option<StRefId>,
 }
@@ -44,7 +46,7 @@ pub struct CommonData {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct TemplatePage {
     #[serde(rename = "@ID")]
-    id: StId,
+    pub id: StId,
 
     #[serde(rename = "@Name")]
     name: Option<String>,
@@ -67,7 +69,7 @@ pub struct Page {
     #[serde(rename = "@ID")]
     id: StId,
     #[serde(rename = "@BaseLoc")]
-    base_loc: StLoc,
+    pub base_loc: StLoc,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -86,7 +88,7 @@ pub struct CtPageArea {
 }
 
 #[cfg(test)]
-mod test_serde {
+mod tests {
     use eyre::Result;
     use std::{fs::File, io::BufReader};
 

@@ -1,10 +1,13 @@
 use std::{fs::File, io::BufReader, path::PathBuf};
 
-use eyre::{Ok, OptionExt, Result};
+use eyre::{OptionExt, Result};
 use zip::{read::ZipFile, ZipArchive};
 
 use crate::{
-    element::file::{document::DocumentXmlFile, ofd::OfdXmlFile, page::PageXmlFile},
+    element::{
+        base::StId,
+        file::{document::DocumentXmlFile, ofd::OfdXmlFile, page::PageXmlFile},
+    },
     error::MyError,
 };
 pub struct Container {
@@ -12,12 +15,90 @@ pub struct Container {
     // path:
     zip_archive: ZipArchive<BufReader<File>>,
 }
-pub struct InnerFile<T> {
+pub struct InnerFile<'a, T> {
+    container: &'a mut Container,
     path: PathBuf,
     pub content: T,
 }
+/// this holds some resource for render
+pub struct Resources {
+    // public_res: Option<todo!()>,
+}
 
-impl<T> InnerFile<T> {
+impl<'a> InnerFile<'a, DocumentXmlFile> {
+    pub fn get_page(&mut self, page_index: usize) -> Result<InnerFile<PageXmlFile>> {
+        let a = &self.content.pages.page;
+        let page = a.get(page_index).ok_or_eyre("no such page!")?;
+        let abs_path = self.resolve(&page.base_loc);
+        let page_xml = self.container.open(&abs_path)?;
+        let reader = BufReader::new(page_xml);
+
+        let xml = quick_xml::de::from_reader::<_, PageXmlFile>(reader)?;
+        Ok(InnerFile {
+            container: self.container,
+            path: abs_path,
+            content: xml,
+        })
+    }
+    pub fn get_template_by_index(
+        &mut self,
+        template_index: usize,
+    ) -> Result<InnerFile<PageXmlFile>> {
+        let templates_option = self.content.common_data.template_page.as_ref();
+        let templates = templates_option.ok_or_eyre("message")?;
+        let t = templates.get(template_index).ok_or_eyre("message")?;
+        let abs_path = self.resolve(&t.base_loc);
+        let page_xml = self.container.open(&abs_path)?;
+        let reader = BufReader::new(page_xml);
+
+        let xml = quick_xml::de::from_reader::<_, PageXmlFile>(reader)?;
+        Ok(InnerFile {
+            container: self.container,
+            path: abs_path,
+            content: xml,
+        })
+    }
+    pub fn get_template_by_id(&mut self, template_id: StId) -> Result<InnerFile<PageXmlFile>> {
+        let templates_option = self.content.common_data.template_page.as_ref();
+        let templates = templates_option.ok_or_eyre("message")?;
+        let t = templates
+            .iter()
+            .find(|e| e.id == template_id)
+            .ok_or_eyre("message")?;
+        let abs_path = self.resolve(&t.base_loc);
+        let page_xml = self.container.open(&abs_path)?;
+        let reader = BufReader::new(page_xml);
+
+        let xml = quick_xml::de::from_reader::<_, PageXmlFile>(reader)?;
+        Ok(InnerFile {
+            container: self.container,
+            path: abs_path,
+            content: xml,
+        })
+    }
+}
+
+impl<'a> InnerFile<'a, OfdXmlFile> {
+    /// 通过索引获取Document.xml对象
+    pub fn get_document(&mut self, doc_index: usize) -> Result<InnerFile<DocumentXmlFile>> {
+        let db = &self.content.doc_body;
+        let doc_body = db.get(doc_index).ok_or_eyre("no such doc")?;
+        let path = doc_body.doc_root.as_ref().ok_or_eyre("no such document!")?;
+        let path = self.resolve(path);
+        let inner = self.container.open(&path)?;
+
+        let reader = BufReader::new(inner);
+        let xml: DocumentXmlFile = quick_xml::de::from_reader(reader)?;
+        Ok(InnerFile {
+            container: self.container,
+            path,
+            content: xml,
+        })
+        // todo!()
+    }
+}
+
+impl<'a, T> InnerFile<'a, T> {
     fn resolve(&self, other: &PathBuf) -> PathBuf {
         if other.is_absolute() {
             other.clone()
@@ -49,6 +130,7 @@ impl Container {
 
         let xml: OfdXmlFile = quick_xml::de::from_reader(reader)?;
         Ok(InnerFile {
+            container: self,
             path: "OFD.xml".into(),
             content: xml,
         })
@@ -66,7 +148,11 @@ impl Container {
 
         let reader = BufReader::new(inner);
         let xml: DocumentXmlFile = quick_xml::de::from_reader(reader)?;
-        Ok(InnerFile { path, content: xml })
+        Ok(InnerFile {
+            container: self,
+            path,
+            content: xml,
+        })
     }
     pub fn template_by_index(
         &mut self,
@@ -87,6 +173,7 @@ impl Container {
         let reader = BufReader::new(inner);
         let xml: PageXmlFile = quick_xml::de::from_reader(reader)?;
         Ok(InnerFile {
+            container: self,
             path: tpl_path,
             content: xml,
         })

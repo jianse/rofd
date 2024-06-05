@@ -1,5 +1,4 @@
 mod container;
-mod custom_de;
 mod element;
 mod error;
 mod ofd_utils;
@@ -43,7 +42,10 @@ enum Commands {
         doc_index: usize,
 
         #[arg(default_value_t = 0)]
-        template_index: usize,
+        page_index: usize,
+
+        #[arg(short,long)]
+        template:bool,
     },
 }
 
@@ -58,16 +60,17 @@ fn main() -> Result<()> {
             ofd_file,
             out_path,
             doc_index,
-            template_index,
+            page_index,
+            template
         } => {
-            let _ = ofd_utils::render_template(&ofd_file, &out_path, doc_index, template_index)?;
+            let _ = ofd_utils::render_page(&ofd_file, &out_path, doc_index, page_index,template)?;
         }
     }
 
     Ok(())
 }
 #[cfg(test)]
-mod test_zip {
+mod tests {
     use std::{fs::File, io::BufReader};
 
     // use super::*;

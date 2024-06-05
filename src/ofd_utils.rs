@@ -67,11 +67,12 @@ pub fn get_info(path: &PathBuf) -> Result<OfdInfo> {
     })
 }
 
-pub fn render_template(
+pub fn render_page(
     ofd_path: &PathBuf,
     output_path: &PathBuf,
     doc_index: usize,
-    template_index: usize,
+    page_index: usize,
+    only_template: bool,
 ) -> Result<()> {
     if !output_path.exists() {
         create_dir_all(output_path)?;
@@ -84,9 +85,9 @@ pub fn render_template(
     }
 
     let mut res = container::from_path(&ofd_path)?;
-    let xml = res.template_by_index(doc_index, template_index)?.content;
+    let xml = res.template_by_index(doc_index, page_index)?.content;
     dbg!(xml);
-
+    // let surface = create_surface();
     todo!()
 }
 // fn create_dir()
