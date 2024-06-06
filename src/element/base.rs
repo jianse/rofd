@@ -54,16 +54,20 @@ pub struct StPos {
 }
 
 // #[serde_as(as = "FromInto<(f32, f32, f32, f32)>")]
-#[derive(Debug, Serialize, PartialEq, PartialOrd)]
+#[derive(Debug, Serialize, PartialEq, PartialOrd, Clone, Copy)]
 pub struct StBox {
     x: f32,
     y: f32,
-    w: f32,
-    h: f32,
+    pub w: f32,
+    pub h: f32,
 }
+
 impl StBox {
     fn new(x: f32, y: f32, w: f32, h: f32) -> Self {
         Self { x, y, w, h }
+    }
+    pub fn get_size(&self) -> (f32, f32) {
+        (self.w, self.h)
     }
 }
 impl From<(f32, f32, f32, f32)> for StBox {

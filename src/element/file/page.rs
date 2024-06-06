@@ -32,109 +32,112 @@ pub struct Layer {
     id: StId,
 
     #[serde(rename = "$value")]
-    objects: Option<Vec<CtPageBlock>>,
+    pub objects: Option<Vec<CtPageBlock>>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Content {
     #[serde(rename = "Layer")]
-    layer: Vec<Layer>,
+    pub layer: Vec<Layer>,
 }
 #[serde_as]
 #[derive(Debug, Serialize, Deserialize)]
 pub enum CtPageBlock {
-    TextObject {
-        #[serde(rename = "@Font")]
-        font: StRefId,
-
-        #[serde(rename = "@Size")]
-        size: f32,
-
-        #[serde(rename = "@Stroke")]
-        stroke: Option<bool>,
-
-        fill: Option<bool>,
-
-        h_scale: Option<f32>,
-
-        read_direction: Option<u32>,
-
-        char_direction: Option<u32>,
-
-        weight: Option<u32>,
-
-        italic: Option<bool>,
-
-        #[serde(rename = "FillColor")]
-        fill_color: Option<CtColor>,
-
-        #[serde(rename = "StrokeColor")]
-        stroke_color: Option<CtColor>,
-
-        #[serde(rename = "TextCode")]
-        text_codes: Vec<TextCode>,
-
-        // #[serde(rename = "@FontName")]
-        // font_name: String,
-
-        // #[serde(rename = "@FamilyName")]
-        // family_name: Option<String>,
-
-        // #[serde(rename = "@Charset")]
-        // charset: Option<String>,
-
-        // #[serde(rename = "@Italic")]
-        // italic: Option<bool>,
-
-        // #[serde(rename = "@Bold")]
-        // bold: Option<bool>,
-
-        // #[serde(rename = "@Serif")]
-        // serif: Option<bool>,
-
-        // #[serde(rename = "@FixedWidth")]
-        // fixed_width: Option<bool>,
-
-        // #[serde(rename = "FontFile")]
-        // font_file: Option<StLoc>,
-
-        // region:common fields
-
-        // common fileds on graphic unit
-        #[serde(rename = "@Boundary")]
-        boundary: StBox,
-        #[serde(rename = "@Name")]
-        name: Option<String>,
-        #[serde(rename = "@Visible")]
-        visible: Option<bool>,
-        #[serde(rename = "@CTM")]
-        ctm: Option<StArray<f32>>,
-        #[serde(rename = "@DrawParam")]
-        draw_param: Option<StRefId>,
-        #[serde(rename = "@LineWidth")]
-        line_width: Option<f32>,
-        #[serde(rename = "@Cap")]
-        cap: Option<String>,
-        #[serde(rename = "@Join")]
-        join: Option<String>,
-        #[serde(rename = "@MiterLimit")]
-        miter_limit: Option<f32>,
-        #[serde(rename = "@DashOffset")]
-        dash_offset: Option<f32>,
-        #[serde(rename = "@DashPattern")]
-        dash_pattern: Option<StArray<f32>>,
-        #[serde(rename = "@Alapha")]
-        alapha: Option<u8>,
-        #[serde(rename = "Actions")]
-        actions: Option<Actions>,
-        // endregion
-    },
-
+    TextObject(TextObject),
     PathObject(PathObject),
     ImageObject {},
     CompositeObject {},
     PageBlock {},
 }
+#[serde_as]
+#[derive(Debug, Serialize, Deserialize)]
+pub struct TextObject {
+    #[serde(rename = "@Font")]
+    font: StRefId,
+
+    #[serde(rename = "@Size")]
+    size: f32,
+
+    #[serde(rename = "@Stroke")]
+    stroke: Option<bool>,
+
+    fill: Option<bool>,
+
+    h_scale: Option<f32>,
+
+    read_direction: Option<u32>,
+
+    char_direction: Option<u32>,
+
+    weight: Option<u32>,
+
+    italic: Option<bool>,
+
+    #[serde(rename = "FillColor")]
+    fill_color: Option<CtColor>,
+
+    #[serde(rename = "StrokeColor")]
+    stroke_color: Option<CtColor>,
+
+    #[serde(rename = "TextCode")]
+    text_codes: Vec<TextCode>,
+
+    // #[serde(rename = "@FontName")]
+    // font_name: String,
+
+    // #[serde(rename = "@FamilyName")]
+    // family_name: Option<String>,
+
+    // #[serde(rename = "@Charset")]
+    // charset: Option<String>,
+
+    // #[serde(rename = "@Italic")]
+    // italic: Option<bool>,
+
+    // #[serde(rename = "@Bold")]
+    // bold: Option<bool>,
+
+    // #[serde(rename = "@Serif")]
+    // serif: Option<bool>,
+
+    // #[serde(rename = "@FixedWidth")]
+    // fixed_width: Option<bool>,
+
+    // #[serde(rename = "FontFile")]
+    // font_file: Option<StLoc>,
+
+    // region:common fields
+
+    // common fileds on graphic unit
+    #[serde(rename = "@Boundary")]
+    boundary: StBox,
+    #[serde(rename = "@Name")]
+    name: Option<String>,
+    #[serde(rename = "@Visible")]
+    visible: Option<bool>,
+    #[serde(rename = "@CTM")]
+    ctm: Option<StArray<f32>>,
+    #[serde(rename = "@DrawParam")]
+    draw_param: Option<StRefId>,
+    #[serde(rename = "@LineWidth")]
+    line_width: Option<f32>,
+    #[serde(rename = "@Cap")]
+    cap: Option<String>,
+    #[serde(rename = "@Join")]
+    join: Option<String>,
+    #[serde(rename = "@MiterLimit")]
+    miter_limit: Option<f32>,
+    #[serde(rename = "@DashOffset")]
+    dash_offset: Option<f32>,
+    #[serde(rename = "@DashPattern")]
+    dash_pattern: Option<StArray<f32>>,
+    #[serde(rename = "@Alapha")]
+    alapha: Option<u8>,
+    #[serde(rename = "Actions")]
+    actions: Option<Actions>,
+    // endregion
+}
+
 #[serde_as]
 #[derive(Debug, Deserialize, Serialize)]
 pub struct PathObject {
@@ -201,10 +204,10 @@ pub struct TextCode {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Template {
     #[serde(rename = "@TemplateID")]
-    template_id: StRefId,
+    pub template_id: StRefId,
 
     #[serde(rename = "@ZOrder")]
-    z_order: Option<String>,
+    pub z_order: Option<String>,
 }
 
 #[cfg(test)]

@@ -27,7 +27,7 @@ pub struct CommonData {
     max_unit_id: StId,
 
     #[serde(rename = "PageArea")]
-    page_area: CtPageArea,
+    pub page_area: CtPageArea,
 
     #[serde(rename = "PublicRes")]
     public_res: Option<Vec<StLoc>>,
@@ -86,6 +86,7 @@ pub struct CtPageArea {
     #[serde(rename = "BleedBox")]
     pub bleed_box: Option<StBox>,
 }
+
 
 #[cfg(test)]
 mod tests {

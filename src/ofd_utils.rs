@@ -5,6 +5,7 @@ use eyre::Result;
 use crate::{
     container,
     element::file::{document::DocumentXmlFile, ofd::OfdXmlFile},
+    render::render_template,
 };
 #[derive(Debug)]
 pub struct OfdInfo {
@@ -85,9 +86,7 @@ pub fn render_page(
     }
 
     let mut res = container::from_path(&ofd_path)?;
-    let xml = res.template_by_index(doc_index, page_index)?.content;
-    dbg!(xml);
-    // let surface = create_surface();
-    todo!()
+    render_template(&mut res, doc_index, page_index)?;
+    Ok(())
 }
 // fn create_dir()

@@ -25,12 +25,18 @@ pub struct Resources {
     // public_res: Option<todo!()>,
 }
 
+impl<'a> InnerFile<'a, PageXmlFile> {
+    pub fn get_templates(&mut self) -> Result<Vec<InnerFile<PageXmlFile>>> {
+        todo!()
+    }
+}
+
 impl<'a> InnerFile<'a, DocumentXmlFile> {
     pub fn get_page(&mut self, page_index: usize) -> Result<InnerFile<PageXmlFile>> {
         let a = &self.content.pages.page;
         let page = a.get(page_index).ok_or_eyre("no such page!")?;
         let abs_path = self.resolve(&page.base_loc);
-        let page_xml = self.container.open(&abs_path)?;
+        let page_xml = Container::open(&mut self.container, &abs_path)?;
         let reader = BufReader::new(page_xml);
 
         let xml = quick_xml::de::from_reader::<_, PageXmlFile>(reader)?;
@@ -172,11 +178,39 @@ impl Container {
         let inner = self.open(&tpl_path)?;
         let reader = BufReader::new(inner);
         let xml: PageXmlFile = quick_xml::de::from_reader(reader)?;
+        // let cont = &*self;
         Ok(InnerFile {
             container: self,
             path: tpl_path,
             content: xml,
         })
+    }
+    pub fn page_by_index(
+        &mut self,
+        doc_index: usize,
+        page_index: usize,
+    ) -> Result<InnerFile<PageXmlFile>> {
+        let doc = self.document_by_index(doc_index)?;
+        let tpls = &doc.content.pages.page;
+        let tpl_el = tpls.get(page_index).ok_or_eyre("no such template")?;
+        let tpl_path = &tpl_el.base_loc;
+        let tpl_path = doc.resolve(tpl_path);
+        let inner = self.open(&tpl_path)?;
+        let reader = BufReader::new(inner);
+        let xml: PageXmlFile = quick_xml::de::from_reader(reader)?;
+        // let cont = &*self;
+        Ok(InnerFile {
+            container: self,
+            path: tpl_path,
+            content: xml,
+        })
+    }
+    pub fn templates_for_page(
+        &mut self,
+        doc_index: usize,
+        page_index: usize,
+    ) -> Result<Vec<InnerFile<PageXmlFile>>> {
+        todo!()
     }
 }
 
