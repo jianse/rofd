@@ -6,6 +6,9 @@ use eyre::eyre;
 use eyre::OptionExt;
 use eyre::Result;
 use skia_safe::path::ArcSize;
+use skia_safe::Color;
+use skia_safe::Color4f;
+use skia_safe::Paint;
 use skia_safe::Path;
 use skia_safe::PathDirection;
 use skia_safe::{Canvas, ImageInfo, Surface};
@@ -34,8 +37,10 @@ fn draw_path_object(canvas: &Canvas, path_object: &PathObject) -> Result<()> {
         return Ok(());
     }
     let path = abbreviated_data_2_path(&path_object.abbreviated_data)?;
-    let paint = todo!();
-    canvas.draw_path(&path, paint);
+    let color: Color4f = Color::from_rgb(255, 0, 0).into();
+
+    let paint = Paint::new(color, None);
+    canvas.draw_path(&path, &paint);
     // canvas.
     // create_canvas(size)
     // todo!()

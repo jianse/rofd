@@ -51,16 +51,7 @@ pub fn get_info(path: &PathBuf) -> Result<OfdInfo> {
                 ..Default::default()
             })
         })
-        .filter_map(
-            |e: Result<DocInfo>| {
-                if e.is_ok() {
-                    Some(e.unwrap())
-                } else {
-                    None
-                }
-            },
-        )
-        .collect();
+        .collect::<Result<Vec<DocInfo>>>()?;
     // let db = xml.doc_body.first().ok_or_eyre("empty?")?;
     Ok(OfdInfo {
         doc_count,
