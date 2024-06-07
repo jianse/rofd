@@ -26,7 +26,7 @@ pub struct Layer {
     r#type: Option<String>,
 
     #[serde(rename = "@DrawParam")]
-    draw_param: Option<StRefId>,
+    pub draw_param: Option<StRefId>,
 
     #[serde(rename = "@ID")]
     id: StId,

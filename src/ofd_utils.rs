@@ -1,6 +1,10 @@
-use std::{fs::create_dir_all, path::PathBuf};
+use std::{
+    fs::{create_dir_all, File},
+    io::Write,
+    path::PathBuf,
+};
 
-use eyre::Result;
+use eyre::{OptionExt, Result};
 
 use crate::{
     container,
@@ -77,7 +81,15 @@ pub fn render_page(
     }
 
     let mut res = container::from_path(&ofd_path)?;
-    render_template(&mut res, doc_index, page_index)?;
+    let image = render_template(&mut res, doc_index, page_index)?;
+
+    let data = image
+        .encode(None, skia_safe::EncodedImageFormat::PNG, 100)
+        .ok_or_eyre("message")?;
+    let mut op = PathBuf::from(output_path);
+    op.push(format!("tpl_{doc_index},{page_index}.png"));
+    let mut out = File::create(op)?;
+    out.write(&data)?;
     Ok(())
 }
 // fn create_dir()

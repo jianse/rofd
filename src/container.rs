@@ -25,16 +25,23 @@ pub struct InnerFile<T> {
 pub struct Resources {
     // public_res: Option<todo!()>,
 }
+impl Resources {
+    pub fn get_color_space_by_id(&mut self, color_space_id: StRefId) -> Result<()> {
+        todo!()
+    }
+    pub fn get_draw_param_by_id(&mut self, draw_param_id: StRefId) -> Result<()> {
+        todo!()
+    }
+}
 
 impl<'a, T> InnerFile<T> {
     fn resolve(&self, other: &PathBuf) -> RelativePathBuf {
-        
         let this = self.path.clone();
-        let this = dbg!(this);
+        // let this = dbg!(this);
         let that = RelativePathBuf::from_path(other).unwrap();
-        let that = dbg!(that);
+        // let that = dbg!(that);
         // let res;
-        let res = if that.starts_with("/") {
+        let res = if that.to_string().starts_with("/") {
             that.normalize()
         } else {
             //  = PathBuf::new();
@@ -43,10 +50,12 @@ impl<'a, T> InnerFile<T> {
                 Some(p) => p.into(),
                 None => RelativePathBuf::new(),
             };
+            // let base = dbg!(base);
             let np = base.join(that).normalize();
+            // res = np
             np
         };
-        let res = dbg!(res);
+        // let res = dbg!(res);
 
         res
     }
@@ -120,7 +129,28 @@ impl Container {
         doc_index: usize,
         template_id: StRefId,
     ) -> Result<InnerFile<PageXmlFile>> {
-        todo!()
+        let doc = self.document_by_index(doc_index)?;
+        let tpls = doc
+            .content
+            .common_data
+            .template_page
+            .as_ref()
+            .ok_or_eyre("no such template")?;
+        let tpl_el = tpls
+            .iter()
+            .find(|i| i.id == template_id)
+            .ok_or_eyre("no such template")?;
+        let tpl_path = &tpl_el.base_loc;
+        let tpl_path = doc.resolve(tpl_path);
+        let inner = self.open(tpl_path.to_string())?;
+        let reader = BufReader::new(inner);
+        let xml: PageXmlFile = quick_xml::de::from_reader(reader)?;
+        // let cont = &*self;
+        Ok(InnerFile {
+            // container: self,
+            path: tpl_path,
+            content: xml,
+        })
     }
     pub fn page_by_index(
         &mut self,
@@ -163,6 +193,9 @@ impl Container {
 
         // todo!()
     }
+    pub fn resources_for_page(&mut self, doc_index: usize, page_index: usize) -> Result<Resources> {
+        todo!()
+    }
 }
 
 pub fn from_path(path: &PathBuf) -> Result<Container> {
@@ -178,13 +211,28 @@ pub fn from_path(path: &PathBuf) -> Result<Container> {
 
 #[cfg(test)]
 mod tests {
+    use std::path::PathBuf;
+
     use relative_path::RelativePathBuf;
+
+    use super::InnerFile;
 
     #[test]
     fn test_reltive_path() {
         let mut rp = RelativePathBuf::from("/a/value");
-        rp.push("../");
+        rp.join("/foo/bar");
         rp = rp.normalize();
         dbg!(rp.to_string());
+        let rp = rp.relative("/");
+        dbg!(rp.to_string());
+    }
+    #[test]
+    fn test_resolve() {
+        let l = InnerFile {
+            path: RelativePathBuf::from("a/b"),
+            content: String::new(),
+        };
+        let r = l.resolve(&PathBuf::from("value".to_string()));
+        assert_eq!(r.to_string(), "a/value")
     }
 }

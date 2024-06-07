@@ -1,3 +1,5 @@
+use std::borrow::Borrow;
+use std::error::Error;
 use std::iter::Enumerate;
 use std::slice::Iter;
 use std::str::FromStr;
@@ -8,13 +10,18 @@ use eyre::Result;
 use skia_safe::path::ArcSize;
 use skia_safe::Color;
 use skia_safe::Color4f;
+use skia_safe::Image;
+use skia_safe::Matrix;
 use skia_safe::Paint;
 use skia_safe::Path;
 use skia_safe::PathDirection;
+use skia_safe::Rect;
 use skia_safe::{Canvas, ImageInfo, Surface};
 
 use crate::container::Container;
+use crate::container::Resources;
 use crate::element::base::StArray;
+use crate::element::base::StBox;
 use crate::element::file::document::CtPageArea;
 use crate::element::file::document::DocumentXmlFile;
 use crate::element::file::page::PageXmlFile;
@@ -24,26 +31,47 @@ use crate::error::MyError;
 // fn render_template()
 
 fn create_surface(size: (i32, i32)) -> Result<Surface> {
-    let ii = ImageInfo::new_s32(size, skia_safe::AlphaType::Opaque);
+    let ii = ImageInfo::new_s32(size, skia_safe::AlphaType::Unpremul);
     let surface = skia_safe::surfaces::raster(&ii, None, None).ok_or_eyre("message")?;
     // let canvas = Canvas::f
     // let canvas = surface.canvas();
     Ok(surface)
 }
-
+fn apply_boundary(can: &Canvas, boundary: StBox) {
+    let br = Rect::from_xywh(boundary.x, boundary.y, boundary.w, boundary.h);
+    let matrix = Matrix::translate(boundary.get_tl());
+    can.clip_rect(br, None, true);
+    can.concat(&matrix);
+    // todo!()
+}
 fn draw_path_object(canvas: &Canvas, path_object: &PathObject) -> Result<()> {
     let vis = path_object.visible.unwrap_or(true);
     if !vis {
         return Ok(());
     }
+    canvas.save();
+    let boundary = path_object.boundary;
+    apply_boundary(canvas, boundary);
     let path = abbreviated_data_2_path(&path_object.abbreviated_data)?;
+    if path_object.stroke.unwrap_or(true) {
+        let color: Color4f;
+        if let Some(ct_color) = &path_object.stroke_color {
+            if let Some(color_values) = &ct_color.value {}
+            todo!();
+        } else {
+            color = Color::BLACK.into();
+        }
+        //  = Color::from_rgb(r, g, b);
+        let mut paint = Paint::new(color, None);
+        paint.set_stroke(true);
+        let lw = path_object.line_width.unwrap_or(0.353);
+        paint.set_stroke_width(lw);
+        canvas.draw_path(&path, &paint);
+    }
     let color: Color4f = Color::from_rgb(255, 0, 0).into();
+    // Color
 
-    let paint = Paint::new(color, None);
-    canvas.draw_path(&path, &paint);
-    // canvas.
-    // create_canvas(size)
-    // todo!()
+    canvas.restore();
     Ok(())
 }
 
@@ -51,7 +79,7 @@ fn abbreviated_data_2_path(abbr: &StArray<String>) -> Result<Path> {
     let mut path = Path::new();
     let mut iter = abbr.0.iter().enumerate();
     while let Some((idx, ele)) = iter.next() {
-        let s: std::prelude::v1::Result<(), MyError> = match ele as &str {
+        let s: Result<()> = match ele as &str {
             "S" => Ok(()),
             "M" => {
                 // iter.nex
@@ -147,51 +175,64 @@ fn decide_size(
     CtPageArea { ..*size }
     // todo!()
 }
-pub fn render_template(container: &mut Container, doc_index: usize, page_index: usize) -> Result<()> {
+pub fn render_template(
+    container: &mut Container,
+    doc_index: usize,
+    page_index: usize,
+) -> Result<Image> {
+    let dpi = 300;
+
     let doc = container.document_by_index(doc_index)?;
     let doc_xml = &doc.content;
 
     let page = container.page_by_index(doc_index, page_index)?;
     let page_xml = &page.content;
 
-    // let
-    // let size = content.area.as_ref();
     let templates = container.templates_for_page(doc_index, page_index)?;
     let tpls = &templates
         .iter()
         .map(|i| &i.content)
         .collect::<Vec<&PageXmlFile>>();
-    // let has_template = !;
+
     if templates.is_empty() {
         return Err(eyre!("no such template!"));
     }
     let pa = decide_size(page_xml, tpls, doc_xml);
-    // create_canvas(size.physical_box);
-    let size = (mm2px(pa.physical_box.w, 300), mm2px(pa.physical_box.h, 300));
-    // let template_size =
+
+    let size = (
+        mm2px_i32(pa.physical_box.w, dpi),
+        mm2px_i32(pa.physical_box.h, dpi),
+    );
+    let resources = container.resources_for_page(doc_index, page_index)?;
+
     let mut sur = create_surface(size)?;
     let can = sur.canvas();
+    let scale = calc_scale(dpi);
+    can.scale((scale, scale));
     for tpl in tpls {
-        draw_page(can, tpl);
+        draw_page(can, tpl, &resources);
     }
-
-    Ok(())
+    can.restore();
+    let snap = sur.image_snapshot();
+    Ok(snap)
 }
 
-fn draw_page(can: &Canvas, tpl: &&PageXmlFile) -> () {
+fn draw_page(can: &Canvas, tpl: &&PageXmlFile, resources: &Resources) -> Result<()> {
     if let Some(content) = tpl.content.as_ref() {
+        
         for layer in &content.layer {
+            // TODO: get draw_param 
             draw_layer(can, layer);
         }
     }
-    todo!()
+    Ok(())
 }
 
 fn draw_layer(can: &Canvas, layer: &crate::element::file::page::Layer) -> () {
     if let Some(objects) = layer.objects.as_ref() {
         for obj in objects {
             let _ = match obj {
-                crate::element::file::page::CtPageBlock::TextObject(text) => todo!(),
+                crate::element::file::page::CtPageBlock::TextObject(_text) => Ok(()),
                 crate::element::file::page::CtPageBlock::PathObject(path) => {
                     draw_path_object(can, path)
                 }
@@ -201,12 +242,21 @@ fn draw_layer(can: &Canvas, layer: &crate::element::file::page::Layer) -> () {
             };
         }
     }
-    todo!()
+    // todo!()
 }
-fn mm2px(mm: f32, dpi: i32) -> i32 {
+
+fn mm2px_i32(mm: f32, dpi: i32) -> i32 {
     let f = mm * dpi as f32 / 25.4;
     let f = dbg!(f);
     f.round() as i32
+}
+fn mm2px_f32(mm: f32, dpi: i32) -> f32 {
+    let f = mm * dpi as f32 / 25.4;
+    let f = dbg!(f);
+    f.round() as f32
+}
+fn calc_scale(dpi: i32) -> f32 {
+    dpi as f32 / 25.4
 }
 #[cfg(test)]
 mod tests {
@@ -222,19 +272,19 @@ mod tests {
 
     #[test]
     fn test_mm2px() {
-        let x = mm2px(210.0, 72);
+        let x = mm2px_i32(210.0, 72);
         assert_eq!(x, 595);
-        let y = mm2px(297.0, 72);
+        let y = mm2px_i32(297.0, 72);
         assert_eq!(y, 842);
 
-        let x = mm2px(210.0, 150);
+        let x = mm2px_i32(210.0, 150);
         assert_eq!(x, 1240);
-        let y = mm2px(297.0, 150);
+        let y = mm2px_i32(297.0, 150);
         assert_eq!(y, 1754);
 
-        let x = mm2px(210.0, 300);
+        let x = mm2px_i32(210.0, 300);
         assert_eq!(x, 2480);
-        let y = mm2px(297.0, 300);
+        let y = mm2px_i32(297.0, 300);
         assert_eq!(y, 3508);
     }
 }
