@@ -2,5 +2,5 @@
 
 pub mod base;
 pub mod file;
-mod common;
+pub mod common;
 

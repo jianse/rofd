@@ -6,8 +6,13 @@ use zip::{read::ZipFile, ZipArchive};
 
 use crate::{
     element::{
-        base::{StId, StRefId},
-        file::{document::DocumentXmlFile, ofd::OfdXmlFile, page::PageXmlFile},
+        base::StRefId,
+        file::{
+            document::DocumentXmlFile,
+            ofd::OfdXmlFile,
+            page::PageXmlFile,
+            res::{ColorSpace, DrawParam, ResourceXmlFile},
+        },
     },
     error::MyError,
 };
@@ -23,14 +28,71 @@ pub struct InnerFile<T> {
 }
 /// this holds some resource for render
 pub struct Resources {
-    // public_res: Option<todo!()>,
+    pub default_cs: Option<StRefId>,
+    public_resource: Option<Vec<InnerFile<ResourceXmlFile>>>,
+    document_resource: Option<Vec<InnerFile<ResourceXmlFile>>>,
+    page_resource: Option<Vec<InnerFile<ResourceXmlFile>>>,
 }
-impl Resources {
-    pub fn get_color_space_by_id(&mut self, color_space_id: StRefId) -> Result<()> {
-        todo!()
+
+struct ResourceIter<'a> {
+    res_flat: Vec<&'a InnerFile<ResourceXmlFile>>,
+    // res: &'a Resources,
+    idx: usize,
+}
+impl<'a> ResourceIter<'a> {
+    fn new(res: &'a Resources) -> Self {
+        let res_flat = [
+            &res.page_resource,
+            &res.document_resource,
+            &res.public_resource,
+        ]
+        .iter()
+        .filter_map(|e| e.as_ref())
+        .flat_map(|e| e.iter())
+        .collect::<Vec<&InnerFile<ResourceXmlFile>>>();
+        Self {
+            res_flat,
+            // res,
+            idx: 0,
+        }
     }
-    pub fn get_draw_param_by_id(&mut self, draw_param_id: StRefId) -> Result<()> {
-        todo!()
+}
+impl<'a> Iterator for ResourceIter<'a> {
+    type Item = &'a InnerFile<ResourceXmlFile>;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let res;
+        if self.idx < self.res_flat.len() {
+            res = Some(self.res_flat[self.idx]);
+        } else {
+            res = None;
+        }
+        self.idx += 1;
+        res
+        // todo!()
+    }
+}
+
+impl Resources {
+    fn iter(&self) -> ResourceIter {
+        ResourceIter::new(self)
+    }
+    pub fn get_color_space_by_id(&self, color_space_id: StRefId) -> Option<&ColorSpace> {
+        let cs = self
+            .iter()
+            .filter_map(|f| f.content.color_spaces.as_ref())
+            .flat_map(|css| css.color_spaces.iter())
+            .find(|cs| cs.id == color_space_id);
+        cs
+    }
+
+    pub fn get_draw_param_by_id(&self, draw_param_id: StRefId) -> Option<&DrawParam> {
+        let dp = self
+            .iter()
+            .filter_map(|f| f.content.draw_params.as_ref())
+            .flat_map(|dps| dps.draw_params.iter())
+            .find(|dp| dp.id == draw_param_id);
+        dp
     }
 }
 
@@ -194,7 +256,52 @@ impl Container {
         // todo!()
     }
     pub fn resources_for_page(&mut self, doc_index: usize, page_index: usize) -> Result<Resources> {
-        todo!()
+        let doc = self.document_by_index(doc_index)?;
+        let pub_res_locs = &doc.content.common_data.public_res;
+        let pub_res = self._load_res(&doc, pub_res_locs)?;
+        let doc_res_locs = &doc.content.common_data.document_res;
+        let doc_res = self._load_res(&doc, doc_res_locs)?;
+        let page = self.page_by_index(doc_index, page_index)?;
+        let page_res_locs = &page.content.page_res;
+        let page_res = self._load_res(&page, page_res_locs)?;
+        Ok(Resources {
+            default_cs: doc.content.common_data.default_cs,
+            public_resource: pub_res,
+            document_resource: doc_res,
+            page_resource: page_res,
+        })
+    }
+
+    fn _load_res<T>(
+        &mut self,
+        parent: &InnerFile<T>,
+        res_list: &Option<Vec<PathBuf>>,
+    ) -> Result<Option<Vec<InnerFile<ResourceXmlFile>>>> {
+        let res = if let Some(paths) = res_list.as_ref() {
+            if paths.is_empty() {
+                None
+            } else {
+                let r = paths
+                    .iter()
+                    .map(|p| -> Result<InnerFile<ResourceXmlFile>> {
+                        let rp = parent.resolve(p);
+                        let file = self.open(rp.to_string())?;
+                        let reader = BufReader::new(file);
+
+                        let xml: ResourceXmlFile = quick_xml::de::from_reader(reader)?;
+
+                        Ok(InnerFile {
+                            path: rp,
+                            content: xml,
+                        })
+                    })
+                    .collect::<Result<Vec<InnerFile<ResourceXmlFile>>>>()?;
+                Some(r)
+            }
+        } else {
+            None
+        };
+        Ok(res)
     }
 }
 

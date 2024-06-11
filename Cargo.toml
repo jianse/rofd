@@ -7,7 +7,7 @@ edition = "2021"
 chrono = { version = "0.4.38", features = ["serde"] }
 clap = { version = "4.5.4", features = ["derive", "string"] }
 eyre = "0.6.12"
-quick-xml = { version = "0.31.0", features = ["serde", "serialize"] }
+quick-xml = { version = "0.32.0", features = ["serde", "serialize"] }
 relative-path = "1.9.3"
 serde = { version = "1.0.203", features = ["derive"] }
 serde_with = "3.8.1"

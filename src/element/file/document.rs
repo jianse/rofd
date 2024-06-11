@@ -30,17 +30,17 @@ pub struct CommonData {
     pub page_area: CtPageArea,
 
     #[serde(rename = "PublicRes")]
-    public_res: Option<Vec<StLoc>>,
+    pub public_res: Option<Vec<StLoc>>,
 
     #[serde(rename = "DocumentRes")]
-    document_res: Option<Vec<StLoc>>,
+    pub document_res: Option<Vec<StLoc>>,
 
     #[serde(rename = "TemplatePage")]
     pub template_page: Option<Vec<TemplatePage>>,
 
     /// 可选属性 默认值为sRGB
     #[serde(rename = "DefaultCS")]
-    default_cs: Option<StRefId>,
+    pub default_cs: Option<StRefId>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

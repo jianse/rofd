@@ -1,5 +1,3 @@
-use std::borrow::Borrow;
-use std::error::Error;
 use std::iter::Enumerate;
 use std::slice::Iter;
 use std::str::FromStr;
@@ -7,6 +5,7 @@ use std::str::FromStr;
 use eyre::eyre;
 use eyre::OptionExt;
 use eyre::Result;
+// use skia_safe::named_transfer_fn::SRGB;
 use skia_safe::path::ArcSize;
 use skia_safe::Color;
 use skia_safe::Color4f;
@@ -22,10 +21,14 @@ use crate::container::Container;
 use crate::container::Resources;
 use crate::element::base::StArray;
 use crate::element::base::StBox;
+use crate::element::common::CtColor;
 use crate::element::file::document::CtPageArea;
 use crate::element::file::document::DocumentXmlFile;
 use crate::element::file::page::PageXmlFile;
 use crate::element::file::page::PathObject;
+use crate::element::file::res::DrawParam;
+use crate::element::file::res::SRGB;
+// use crate::element
 use crate::error::MyError;
 
 // fn render_template()
@@ -44,7 +47,50 @@ fn apply_boundary(can: &Canvas, boundary: StBox) {
     can.concat(&matrix);
     // todo!()
 }
-fn draw_path_object(canvas: &Canvas, path_object: &PathObject) -> Result<()> {
+
+fn resolve_color(ct_color: &CtColor, resources: &Resources) -> Result<()> {
+    // ct_color
+    let cs = if let Some(cs_id) = ct_color.color_space {
+        // have a color space refence
+        let cs = resources
+            .get_color_space_by_id(cs_id)
+            .ok_or_eyre("message")?;
+        cs
+    } else {
+        if let Some(cs_id) = resources.default_cs {
+            // looking for default color space
+            let cs = resources
+                .get_color_space_by_id(cs_id)
+                .ok_or_eyre("message")?;
+            cs
+        } else {
+            // default srgb
+            &SRGB
+        }
+    };
+    if let Some(val) = &ct_color.value {
+        // value color
+        assert_eq!(
+            cs.r#type.channel_count(),
+            val.0.len(),
+            "color and colorspace mismatch"
+        );
+        // let color = Color::from_rgb(val.0, g, b);
+
+        Ok(())
+    } else {
+        // plate color
+        todo!()
+    }
+    // ct_color.
+}
+
+fn draw_path_object(
+    canvas: &Canvas,
+    path_object: &PathObject,
+    resources: &Resources,
+    draw_param: Option<&DrawParam>,
+) -> Result<()> {
     let vis = path_object.visible.unwrap_or(true);
     if !vis {
         return Ok(());
@@ -68,8 +114,6 @@ fn draw_path_object(canvas: &Canvas, path_object: &PathObject) -> Result<()> {
         paint.set_stroke_width(lw);
         canvas.draw_path(&path, &paint);
     }
-    let color: Color4f = Color::from_rgb(255, 0, 0).into();
-    // Color
 
     canvas.restore();
     Ok(())
@@ -82,7 +126,6 @@ fn abbreviated_data_2_path(abbr: &StArray<String>) -> Result<Path> {
         let s: Result<()> = match ele as &str {
             "S" => Ok(()),
             "M" => {
-                // iter.nex
                 let x = next_val::<f32>(&mut iter)?;
                 let y = next_val::<f32>(&mut iter)?;
                 path.move_to((x, y));
@@ -210,7 +253,7 @@ pub fn render_template(
     let scale = calc_scale(dpi);
     can.scale((scale, scale));
     for tpl in tpls {
-        draw_page(can, tpl, &resources);
+        draw_page(can, tpl, &resources)?;
     }
     can.restore();
     let snap = sur.image_snapshot();
@@ -219,22 +262,34 @@ pub fn render_template(
 
 fn draw_page(can: &Canvas, tpl: &&PageXmlFile, resources: &Resources) -> Result<()> {
     if let Some(content) = tpl.content.as_ref() {
-        
         for layer in &content.layer {
-            // TODO: get draw_param 
-            draw_layer(can, layer);
+            // TODO: get draw_param
+            let dp = if let Some(dp_id) = layer.draw_param {
+                let dp = resources
+                    .get_draw_param_by_id(dp_id)
+                    .ok_or_eyre(format!("required DrawParam id = {dp_id} is not defined!"))?;
+                Some(dp)
+            } else {
+                None
+            };
+            draw_layer(can, layer, resources, dp);
         }
     }
     Ok(())
 }
 
-fn draw_layer(can: &Canvas, layer: &crate::element::file::page::Layer) -> () {
+fn draw_layer(
+    canvas: &Canvas,
+    layer: &crate::element::file::page::Layer,
+    resources: &Resources,
+    draw_param: Option<&DrawParam>,
+) -> () {
     if let Some(objects) = layer.objects.as_ref() {
         for obj in objects {
             let _ = match obj {
                 crate::element::file::page::CtPageBlock::TextObject(_text) => Ok(()),
                 crate::element::file::page::CtPageBlock::PathObject(path) => {
-                    draw_path_object(can, path)
+                    draw_path_object(canvas, path, resources, draw_param)
                 }
                 crate::element::file::page::CtPageBlock::ImageObject {} => todo!(),
                 crate::element::file::page::CtPageBlock::CompositeObject {} => todo!(),
@@ -250,14 +305,11 @@ fn mm2px_i32(mm: f32, dpi: i32) -> i32 {
     let f = dbg!(f);
     f.round() as i32
 }
-fn mm2px_f32(mm: f32, dpi: i32) -> f32 {
-    let f = mm * dpi as f32 / 25.4;
-    let f = dbg!(f);
-    f.round() as f32
-}
+
 fn calc_scale(dpi: i32) -> f32 {
     dpi as f32 / 25.4
 }
+
 #[cfg(test)]
 mod tests {
     use super::*;

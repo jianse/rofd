@@ -1,4 +1,4 @@
-use super::base::{StArray, StBox, StRefId};
+use super::base::{StArray, StBox, StLoc, StRefId};
 use serde::{Deserialize, Serialize};
 
 /// common Layer type
@@ -60,6 +60,93 @@ pub struct CtColor {
     #[serde(rename = "@Alpha")]
     pub alpha: Option<u8>,
     // TODO: p39
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct CtColorSpace {
+    #[serde(rename = "@Type")]
+    pub r#type: String,
+
+    /// default 8
+    #[serde(rename = "@BitsPerComponent")]
+    pub bits_per_component: Option<u8>,
+
+    #[serde(rename = "@Profile")]
+    pub profile: Option<StLoc>,
+
+    #[serde(rename = "Palette")]
+    pub palette: Palette,
+}
+
+/// TODO: CV field?
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Palette {}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct CtDrawParam {
+    #[serde(rename = "@Relative")]
+    pub relative: Option<StRefId>,
+
+    /// default 0.353
+    #[serde(rename = "@LineWidth")]
+    pub line_width: Option<f32>,
+
+    /// default Miter
+    #[serde(rename = "@Join")]
+    pub join: Option<String>,
+
+    /// default Butt
+    #[serde(rename = "@Cap")]
+    pub cap: Option<String>,
+
+    /// default 0
+    #[serde(rename = "@DashOffset")]
+    pub dash_offset: Option<f32>,
+
+    #[serde(rename = "@DashPattern")]
+    pub dash_pattern: Option<StArray<f32>>,
+
+    /// default 4.234
+    #[serde(rename = "@MiterLimit")]
+    pub miter_limit: Option<f32>,
+
+    #[serde(rename = "FillColor")]
+    pub fill_color: Option<CtColor>,
+
+    #[serde(rename = "StrokeColor")]
+    pub stroke_color: Option<CtColor>,
+}
+
+/// CT_Font
+#[derive(Debug, Serialize, Deserialize)]
+pub struct CtFont {
+    #[serde(rename = "@FontName")]
+    pub font_name:String,
+    
+    #[serde(rename = "@FamilyName")]
+    pub family_name:Option<String>,
+    /// default unicode
+    #[serde(rename = "@Charset")]
+    pub charset: Option<String>,
+
+    /// default false
+    #[serde(rename = "@Italic")]
+    pub italic:Option<bool>,
+
+    /// default false
+    #[serde(rename = "@Bold")]
+    pub bold:Option<bool>,
+
+    /// default false
+    #[serde(rename = "@Serif")]
+    pub serif:Option<bool>,
+
+    /// default false
+    #[serde(rename = "@FixedWidth")]
+    pub fixed_width: Option<bool>,
+
+    #[serde(rename = "FontFile")]
+    pub font_file: Option<StLoc>,
 }
 
 #[cfg(test)]

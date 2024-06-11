@@ -5,7 +5,9 @@ use quick_xml::{events::Event, NsReader};
 
 #[allow(dead_code)]
 fn parse<R: BufRead>(mut reader: NsReader<R>) -> Result<()> {
-    reader.trim_text(true);
+    // reader.trim_text(true);
+    let conf = reader.config_mut();
+    conf.trim_text(true);
     // let mut reader = NsReader::from_file("sample/OFD.xml")?;
     // let mut reader = NsReader::from_str(xml.as_str());
     let mut buf = vec![];
