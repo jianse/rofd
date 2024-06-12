@@ -138,7 +138,6 @@ pub struct TextObject {
     // endregion
 }
 
-
 #[derive(Debug, Serialize, Deserialize)]
 pub enum FillRule {
     NoneZero,

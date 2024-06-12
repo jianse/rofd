@@ -44,8 +44,8 @@ enum Commands {
         #[arg(default_value_t = 0)]
         page_index: usize,
 
-        #[arg(short,long)]
-        template:bool,
+        #[arg(short, long)]
+        template: bool,
     },
 }
 
@@ -61,9 +61,9 @@ fn main() -> Result<()> {
             out_path,
             doc_index,
             page_index,
-            template
+            template,
         } => {
-            let _ = ofd_utils::render_page(&ofd_file, &out_path, doc_index, page_index,template)?;
+            let _ = ofd_utils::render_page(&ofd_file, &out_path, doc_index, page_index, template)?;
         }
     }
 

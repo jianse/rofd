@@ -2,7 +2,9 @@
 mod test_skia {
     use std::{fs::File, io::Write};
 
-    use skia_safe::{ Color, Color4f, Font, FontMgr, Image, ImageInfo, Paint, Path, Point, TextBlob, Typeface};
+    use skia_safe::{
+        Color, Color4f, Font, FontMgr, Image, ImageInfo, Paint, Path, Point, TextBlob, Typeface,
+    };
 
     use super::*;
     use eyre::{OptionExt, Result};
@@ -74,10 +76,10 @@ mod test_skia {
         // let typeface = Typeface::from_data();
         let fm = FontMgr::new();
         let fc = fm.count_families();
-        for index in  0..fc{
+        for index in 0..fc {
             let fss = fm.new_style_set(index);
             // dbg!(fss.);
-            let family_name   =fm.family_name(index);
+            let family_name = fm.family_name(index);
             dbg!(family_name);
         }
         let mut ff = fm.match_family("Noto Mono");
@@ -97,21 +99,35 @@ mod test_skia {
 
     #[test]
     #[cfg(target_os = "windows")]
-    fn test_font_mgr(){
+    fn test_font_mgr() {
         let fm = FontMgr::new();
         let fc = fm.count_families();
-        for index in  0..fc{
+        for index in 0..fc {
             let fss = fm.new_style_set(index);
             // dbg!(fss.);
-            let family_name   =fm.family_name(index);
+            let family_name = fm.family_name(index);
             dbg!(family_name);
         }
         let mut fss = fm.match_family("楷体");
-        for index in 0..fss.count(){
+        for index in 0..fss.count() {
             let ff = fss.new_typeface(index).unwrap();
-            let family_name = ff.family_name();
-            dbg!(family_name,ff);
-
+            let family_name = ff.new_family_name_iterator().for_each(|f| {
+                dbg!(f);
+            });
+            dbg!(family_name, ff);
+        }
+    }
+    #[test]
+    #[cfg(target_os = "windows")]
+    fn test_kaiti() {
+        let fm = FontMgr::new();
+        let mut fss = fm.match_family("KaiTi");
+        for index in 0..fss.count() {
+            let ff = fss.new_typeface(index).unwrap();
+            ff.new_family_name_iterator().for_each(|f| {
+                dbg!(f);
+            });
+            dbg!(ff);
         }
     }
 

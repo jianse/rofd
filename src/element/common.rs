@@ -135,25 +135,25 @@ pub struct CtDrawParam {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CtFont {
     #[serde(rename = "@FontName")]
-    pub font_name:String,
-    
+    pub font_name: String,
+
     #[serde(rename = "@FamilyName")]
-    pub family_name:Option<String>,
+    pub family_name: Option<String>,
     /// default unicode
     #[serde(rename = "@Charset")]
     pub charset: Option<String>,
 
     /// default false
     #[serde(rename = "@Italic")]
-    pub italic:Option<bool>,
+    pub italic: Option<bool>,
 
     /// default false
     #[serde(rename = "@Bold")]
-    pub bold:Option<bool>,
+    pub bold: Option<bool>,
 
     /// default false
     #[serde(rename = "@Serif")]
-    pub serif:Option<bool>,
+    pub serif: Option<bool>,
 
     /// default false
     #[serde(rename = "@FixedWidth")]

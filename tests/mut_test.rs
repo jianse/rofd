@@ -6,7 +6,7 @@ mod test_mut {
     }
 
     // #[derive()]
-    // struct 
+    // struct
 
     #[test]
     fn test_() {

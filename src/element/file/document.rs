@@ -87,7 +87,6 @@ pub struct CtPageArea {
     pub bleed_box: Option<StBox>,
 }
 
-
 #[cfg(test)]
 mod tests {
     use eyre::Result;
