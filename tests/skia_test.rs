@@ -75,7 +75,8 @@ mod test_skia {
         let fm = FontMgr::new();
         let fc = fm.count_families();
         for index in  0..fc{
-
+            let fss = fm.new_style_set(index);
+            // dbg!(fss.);
             let family_name   =fm.family_name(index);
             dbg!(family_name);
         }
@@ -92,6 +93,26 @@ mod test_skia {
 
         let image = surface.image_snapshot();
         save_image(image, "output/test_text.png")
+    }
+
+    #[test]
+    #[cfg(target_os = "windows")]
+    fn test_font_mgr(){
+        let fm = FontMgr::new();
+        let fc = fm.count_families();
+        for index in  0..fc{
+            let fss = fm.new_style_set(index);
+            // dbg!(fss.);
+            let family_name   =fm.family_name(index);
+            dbg!(family_name);
+        }
+        let mut fss = fm.match_family("楷体");
+        for index in 0..fss.count(){
+            let ff = fss.new_typeface(index).unwrap();
+            let family_name = ff.family_name();
+            dbg!(family_name,ff);
+
+        }
     }
 
     fn save_image(image: Image, path: &str) -> Result<()> {
