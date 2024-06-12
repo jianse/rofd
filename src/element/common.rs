@@ -1,6 +1,20 @@
 use super::base::{StArray, StBox, StLoc, StRefId};
 use serde::{Deserialize, Serialize};
 
+#[derive(Debug, Deserialize, Serialize)]
+pub enum Join {
+    Miter,
+    Round,
+    Bevel,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub enum Cap {
+    Butt,
+    Round,
+    Square,
+}
+
 /// common Layer type
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct CtLayer {
@@ -93,11 +107,11 @@ pub struct CtDrawParam {
 
     /// default Miter
     #[serde(rename = "@Join")]
-    pub join: Option<String>,
+    pub join: Option<Join>,
 
     /// default Butt
     #[serde(rename = "@Cap")]
-    pub cap: Option<String>,
+    pub cap: Option<Cap>,
 
     /// default 0
     #[serde(rename = "@DashOffset")]

@@ -99,26 +99,18 @@ impl Resources {
 impl<'a, T> InnerFile<T> {
     fn resolve(&self, other: &PathBuf) -> RelativePathBuf {
         let this = self.path.clone();
-        // let this = dbg!(this);
         let that = RelativePathBuf::from_path(other).unwrap();
-        // let that = dbg!(that);
-        // let res;
         let res = if that.to_string().starts_with("/") {
             that.normalize()
         } else {
-            //  = PathBuf::new();
             let folder = this.parent();
             let base = match folder {
                 Some(p) => p.into(),
                 None => RelativePathBuf::new(),
             };
-            // let base = dbg!(base);
             let np = base.join(that).normalize();
-            // res = np
             np
         };
-        // let res = dbg!(res);
-
         res
     }
 }
@@ -161,7 +153,7 @@ impl Container {
             content: xml,
         })
     }
-    pub fn template_by_index(
+    fn _template_by_index(
         &mut self,
         doc_index: usize,
         template_index: usize,

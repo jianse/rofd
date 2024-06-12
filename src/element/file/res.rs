@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::element::{
     base::{StArray, StId, StLoc, StRefId},
-    common::{CtColor, Palette},
+    common::{Cap, CtColor, Join, Palette},
 };
 
 use super::page::CtPageBlock;
@@ -96,11 +96,11 @@ pub struct DrawParam {
 
     /// default Miter
     #[serde(rename = "@Join")]
-    pub join: Option<String>,
+    pub join: Option<Join>,
 
     /// default Butt
     #[serde(rename = "@Cap")]
-    pub cap: Option<String>,
+    pub cap: Option<Cap>,
 
     /// default 0
     #[serde(rename = "@DashOffset")]

@@ -48,6 +48,8 @@ impl<T: FromStr + Display> From<Vec<T>> for StArray<T> {
 
 pub type StId = u64;
 pub type StRefId = StId;
+
+#[allow(dead_code)]
 pub struct StPos {
     x: f32,
     y: f32,
@@ -117,7 +119,6 @@ impl<'de> Deserialize<'de> for StBox {
                     Ok(res)
                 }
 
-                // let v = dbg!(v);
                 let parts: Vec<&str> = v.split(" ").collect();
                 if parts.len() != 4 {
                     Err(de::Error::invalid_length(parts.len(), &"4"))

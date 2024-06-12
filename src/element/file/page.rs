@@ -1,6 +1,6 @@
 use super::document::CtPageArea;
 use crate::element::base::{StArray, StBox, StId, StLoc, StRefId};
-use crate::element::common::{Actions, CtColor};
+use crate::element::common::{Actions, Cap, CtColor, Join};
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
@@ -138,18 +138,34 @@ pub struct TextObject {
     // endregion
 }
 
+
+#[derive(Debug, Serialize, Deserialize)]
+pub enum FillRule {
+    NoneZero,
+    // #[serde]
+    EvenOdd,
+}
+
 #[serde_as]
 #[derive(Debug, Deserialize, Serialize)]
 pub struct PathObject {
+    /// default true
     #[serde(rename = "@Stroke")]
     pub stroke: Option<bool>,
+
+    /// default false
     #[serde(rename = "@Fill")]
     pub fill: Option<bool>,
+
+    /// default NoneZero
     #[serde(rename = "@Rule")]
-    pub rule: Option<String>,
+    pub rule: Option<FillRule>,
+
+    /// default transparent
     #[serde(rename = "FillColor")]
     pub fill_color: Option<CtColor>,
 
+    /// default black
     #[serde(rename = "StrokeColor")]
     pub stroke_color: Option<CtColor>,
 
@@ -170,10 +186,16 @@ pub struct PathObject {
     pub draw_param: Option<StRefId>,
     #[serde(rename = "@LineWidth")]
     pub line_width: Option<f32>,
+
+    /// default Butt
     #[serde(rename = "@Cap")]
-    pub cap: Option<String>,
+    pub cap: Option<Cap>,
+
+    /// default Miter
     #[serde(rename = "@Join")]
-    pub join: Option<String>,
+    pub join: Option<Join>,
+
+    /// default 3.528
     #[serde(rename = "@MiterLimit")]
     pub miter_limit: Option<f32>,
     #[serde(rename = "@DashOffset")]

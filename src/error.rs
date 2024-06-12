@@ -1,5 +1,3 @@
-use std::path::PathBuf;
-
 use thiserror::Error;
 use zip::result::ZipError;
 

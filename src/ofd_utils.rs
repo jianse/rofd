@@ -68,7 +68,7 @@ pub fn render_page(
     output_path: &PathBuf,
     doc_index: usize,
     page_index: usize,
-    only_template: bool,
+    _only_template: bool,
 ) -> Result<()> {
     if !output_path.exists() {
         create_dir_all(output_path)?;
