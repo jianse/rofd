@@ -29,6 +29,7 @@ use crate::element::file::document::CtPageArea;
 use crate::element::file::document::DocumentXmlFile;
 use crate::element::file::page::PageXmlFile;
 use crate::element::file::page::PathObject;
+use crate::element::file::page::TextObject;
 use crate::element::file::res::DrawParam;
 use crate::element::file::res::SRGB;
 // use crate::element
@@ -500,7 +501,9 @@ fn draw_layer(
     if let Some(objects) = layer.objects.as_ref() {
         for obj in objects {
             let _ = match obj {
-                crate::element::file::page::CtPageBlock::TextObject(_text) => Ok(()),
+                crate::element::file::page::CtPageBlock::TextObject(text) => {
+                    draw_text_object(canvas, text, resources, draw_param)
+                }
                 crate::element::file::page::CtPageBlock::PathObject(path) => {
                     draw_path_object(canvas, path, resources, draw_param)
                 }
@@ -511,6 +514,15 @@ fn draw_layer(
         }
     }
     // todo!()
+}
+fn draw_text_object(
+    canvas: &Canvas,
+    text_object: &TextObject,
+    resources: &Resources,
+    draw_param: Option<&DrawParam>,
+) -> Result<()> {
+    // canvas.draw_text_align(text, p, font, paint, align);
+    todo!()
 }
 
 fn mm2px_i32(mm: f32, dpi: i32) -> i32 {
