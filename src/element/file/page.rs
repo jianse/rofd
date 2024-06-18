@@ -56,7 +56,7 @@ pub struct TextObject {
     font: StRefId,
 
     #[serde(rename = "@Size")]
-    size: f32,
+    pub size: f32,
 
     #[serde(rename = "@Stroke")]
     stroke: Option<bool>,
@@ -80,7 +80,7 @@ pub struct TextObject {
     stroke_color: Option<CtColor>,
 
     #[serde(rename = "TextCode")]
-    text_codes: Vec<TextCode>,
+    pub text_codes: Vec<TextCode>,
 
     // #[serde(rename = "@FontName")]
     // font_name: String,
@@ -110,11 +110,11 @@ pub struct TextObject {
 
     // common fileds on graphic unit
     #[serde(rename = "@Boundary")]
-    boundary: StBox,
+    pub boundary: StBox,
     #[serde(rename = "@Name")]
     name: Option<String>,
     #[serde(rename = "@Visible")]
-    visible: Option<bool>,
+    pub visible: Option<bool>,
     #[serde(rename = "@CTM")]
     ctm: Option<StArray<f32>>,
     #[serde(rename = "@DrawParam")]
@@ -211,15 +211,15 @@ pub struct PathObject {
 #[derive(Debug, Deserialize, Serialize)]
 pub struct TextCode {
     #[serde(rename = "@X")]
-    x: Option<f32>,
+    pub x: Option<f32>,
     #[serde(rename = "@Y")]
-    y: Option<f32>,
+    pub y: Option<f32>,
     #[serde(rename = "@DeltaX")]
-    delta_x: Option<StArray<String>>,
+    pub delta_x: Option<StArray<String>>,
     #[serde(rename = "@DeltaY")]
-    delta_y: Option<StArray<String>>,
+    pub delta_y: Option<StArray<String>>,
     #[serde(rename = "$value")]
-    val: String,
+    pub val: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

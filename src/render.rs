@@ -8,6 +8,9 @@ use eyre::Result;
 use skia_safe::path::ArcSize;
 use skia_safe::Color;
 use skia_safe::Color4f;
+use skia_safe::Font;
+use skia_safe::FontMgr;
+use skia_safe::FontStyle;
 use skia_safe::Image;
 use skia_safe::Matrix;
 use skia_safe::Paint;
@@ -15,7 +18,9 @@ use skia_safe::PaintCap;
 use skia_safe::PaintJoin;
 use skia_safe::Path;
 use skia_safe::PathDirection;
+use skia_safe::Point;
 use skia_safe::Rect;
+use skia_safe::TextBlob;
 use skia_safe::{Canvas, ImageInfo, Surface};
 
 use crate::container::Container;
@@ -515,14 +520,112 @@ fn draw_layer(
     }
     // todo!()
 }
+
 fn draw_text_object(
     canvas: &Canvas,
     text_object: &TextObject,
     resources: &Resources,
     draw_param: Option<&DrawParam>,
 ) -> Result<()> {
+    let vis = text_object.visible.unwrap_or(true);
+    if !vis {
+        return Ok(());
+    }
+    canvas.save();
+    let boundary = text_object.boundary;
+    apply_boundary(canvas, boundary);
+    let color: Color4f = Color::RED.into();
+    let paint = Paint::new(&color, None);
+    // paint
+    let text_codes = &text_object.text_codes;
+    assert!(text_codes.len() > 0, "textCode length must grater than 0!");
+    let mut last_pos = (text_codes[0].x.unwrap(), text_codes[0].y.unwrap());
+    let fm = FontMgr::new();
+    let typeface = fm
+        .match_family_style("楷体", FontStyle::normal())
+        .ok_or_eyre("no font found!")?;
+    let font = Font::from_typeface(typeface, Some(text_object.size));
+    for text_code in &text_object.text_codes {
+        let origin = (
+            text_code.x.unwrap_or(last_pos.0),
+            text_code.y.unwrap_or(last_pos.1),
+        );
+        let blob = from_text_code(origin, text_code, &font)?;
+        // blob.
+        // paint.align
+        canvas.draw_text_blob(blob, origin, &paint);
+        last_pos = origin;
+    }
     // canvas.draw_text_align(text, p, font, paint, align);
-    todo!()
+
+    canvas.restore();
+    Ok(())
+    // todo!()
+}
+
+fn from_text_code(
+    origin: (f32, f32),
+    text_code: &crate::element::file::page::TextCode,
+    font: &Font,
+) -> Result<TextBlob> {
+    let text = &text_code.val;
+    let pos = decode_dx_dy(
+        origin.into(),
+        text_code.delta_x.as_ref(),
+        text_code.delta_y.as_ref(),
+        text.chars().count(),
+    )?;
+    let tb = TextBlob::from_pos_text(text, &pos, font).ok_or_eyre("message");
+    return tb;
+}
+
+fn decode_dx_dy(
+    origin: (f32, f32),
+    delta_x: Option<&StArray<String>>,
+    delta_y: Option<&StArray<String>>,
+    len: usize,
+) -> Result<Vec<Point>> {
+    let mut res = vec![];
+    let dxs = delta_x
+        .map(flat_g)
+        .transpose()?
+        .unwrap_or(vec![0_f32; len - 1]);
+    let dys = delta_y
+        .map(flat_g)
+        .transpose()?
+        .unwrap_or(vec![0_f32; len - 1]);
+    assert_eq!(dxs.len(), len - 1, "dxs: {:?},dys:{:?}", delta_x, delta_y);
+    // if let Some(dx)
+    assert_eq!(dys.len(), len - 1, "dxs: {:?},dys:{:?}", delta_x, delta_y);
+    let mut last_pos = origin;
+    res.push(Point::new(last_pos.0, last_pos.1));
+    for (dx, dy) in std::iter::zip(dxs, dys) {
+        last_pos = (last_pos.0 + dx, last_pos.1 + dy);
+        res.push(Point::new(last_pos.0, last_pos.1));
+    }
+    // todo!();
+    assert_eq!(res.len(), len);
+    return Ok(res);
+}
+
+fn flat_g(d: &StArray<String>) -> Result<Vec<f32>> {
+    let mut res = vec![];
+    let mut iter = d.0.iter().enumerate();
+
+    while let Some((_idx, ele)) = iter.next() {
+        match ele as &str {
+            "g" => {
+                let rep = next_val::<usize>(&mut iter)?;
+                let val = next_val::<f32>(&mut iter)?;
+                res.append(&mut vec![val; rep]);
+            }
+            _ => {
+                let val = f32::from_str(ele)?;
+                res.push(val);
+            }
+        }
+    }
+    Ok(res)
 }
 
 fn mm2px_i32(mm: f32, dpi: i32) -> i32 {

@@ -87,7 +87,7 @@ pub fn render_page(
         .encode(None, skia_safe::EncodedImageFormat::PNG, 100)
         .ok_or_eyre("message")?;
     let mut op = PathBuf::from(output_path);
-    op.push(format!("tpl_{doc_index},{page_index}.png"));
+    op.push(format!("tpl_{doc_index}_{page_index}.png"));
     let mut out = File::create(op)?;
     out.write(&data)?;
     Ok(())
