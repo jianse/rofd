@@ -544,15 +544,20 @@ fn draw_text_object(
     let typeface = fm
         .match_family_style("楷体", FontStyle::normal())
         .ok_or_eyre("no font found!")?;
-    let font = Font::from_typeface(typeface, Some(text_object.size));
+    
+    let mut font = Font::from_typeface(typeface, Some(text_object.size));
+    // font.set_w
+
+    // get
+    // font.set_scale_x(0.5);
+    // font.set
     for text_code in &text_object.text_codes {
         let origin = (
             text_code.x.unwrap_or(last_pos.0),
             text_code.y.unwrap_or(last_pos.1),
         );
-        let blob = from_text_code(origin, text_code, &font)?;
-        // blob.
-        // paint.align
+        let blob = from_text_code(text_code, &font)?;
+
         canvas.draw_text_blob(blob, origin, &paint);
         last_pos = origin;
     }
@@ -560,14 +565,15 @@ fn draw_text_object(
 
     canvas.restore();
     Ok(())
-    // todo!()
 }
 
+/// make TextBlob from TextCode
 fn from_text_code(
-    origin: (f32, f32),
+    // origin: (f32, f32),
     text_code: &crate::element::file::page::TextCode,
     font: &Font,
 ) -> Result<TextBlob> {
+    let origin = (0.0, 0.0);
     let text = &text_code.val;
     let pos = decode_dx_dy(
         origin.into(),
@@ -579,6 +585,7 @@ fn from_text_code(
     return tb;
 }
 
+/// decode dx dy into points
 fn decode_dx_dy(
     origin: (f32, f32),
     delta_x: Option<&StArray<String>>,
@@ -608,6 +615,7 @@ fn decode_dx_dy(
     return Ok(res);
 }
 
+/// flat sparse format (include g command) dx or dy into dense format (only numbers)
 fn flat_g(d: &StArray<String>) -> Result<Vec<f32>> {
     let mut res = vec![];
     let mut iter = d.0.iter().enumerate();

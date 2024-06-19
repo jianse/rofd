@@ -1,6 +1,9 @@
 #[cfg(test)]
 mod test_skia {
-    use std::{fs::File, io::Write};
+    use std::{
+        fs::File,
+        io::{BufReader, Read, Write},
+    };
 
     use skia_safe::{
         Color, Color4f, Font, FontMgr, FontStyle, Image, ImageInfo, Paint, Path, Point, TextBlob,
@@ -61,8 +64,6 @@ mod test_skia {
     #[test]
     #[cfg(target_os = "linux")]
     fn test_text() -> Result<()> {
-        use skia_safe::typeface::LocalizedString;
-
         let ii = ImageInfo::new_s32((300, 300), skia_safe::AlphaType::Unpremul);
         let mut surface = skia_safe::surfaces::raster(&ii, None, None).ok_or_eyre("message")?;
         let canvas = surface.canvas();
@@ -78,34 +79,20 @@ mod test_skia {
         ];
         // let typeface = Typeface::from_data();
         let fm = FontMgr::new();
-        let fc = fm.count_families();
-        for index in 0..fc {
-            let mut fss = fm.new_style_set(index);
-            let fcc = fss.count();
-            for fci in 0..fcc {
-                let ff = fss.new_typeface(fci).unwrap();
-                let f_n = ff.family_name();
-                let fns = ff
-                    .new_family_name_iterator()
-                    .into_iter()
-                    .collect::<Vec<LocalizedString>>();
-                // ff.
-                dbg!(f_n, fns);
-            }
-            // dbg!(fss.);
-            let family_name = fm.family_name(index);
-            // dbg!(family_name);
-        }
-        let mut ff = fm.match_family("Noto Mono");
-        let ff = ff.new_typeface(0).unwrap();
-        // return Ok(());
-        // let ff = fm.new_from_data("Noto Mono".as_bytes(),None).unwrap();
 
-        let font = Font::new(ff, Some(20.0));
+        let tf = fm
+            .match_family_style("Noto Mono", FontStyle::normal())
+            .unwrap();
+
+        let font = Font::new(tf, Some(20.0));
         // let font = dbg!(font);
         let blob = TextBlob::from_pos_text("hello", &pos, &font).unwrap();
         // dbg!(blob.bounds());
         canvas.draw_text_blob(blob, (10, 50), &paint);
+
+        // draw origin point as green
+        let paint = Paint::new(Color4f::new(0.0, 1.0, 0.0, 1.0), None);
+        canvas.draw_point((10.0, 50.0), &paint);
 
         let image = surface.image_snapshot();
         save_image(image, "output/test_text.png")
@@ -119,9 +106,43 @@ mod test_skia {
         let mut fss = fm.match_family("楷体");
         dbg!(fss.count());
         assert!(fss.count() > 0);
-        // fss.
+
         let kaiti = fm.match_family_style("楷体", FontStyle::normal());
         assert!(kaiti.is_some());
+        let kaiti = kaiti.unwrap();
+        dbg!(kaiti.font_style());
+    }
+    #[test]
+    fn fm_test() -> Result<()> {
+        let fm = FontMgr::empty();
+        let file = File::open("simkai.ttf")?;
+        let mut reader = BufReader::new(file);
+        let mut buf = vec![];
+        reader.read_to_end(&mut buf)?;
+        let tf = fm.new_from_data(&buf, 2);
+        // fm.fr
+        dbg!(tf);
+        // assert_eq!()
+        dbg!(fm);
+        Ok(())
+    }
+
+    #[test]
+    fn test_typeface_load() -> Result<()> {
+        let fm = FontMgr::empty();
+        let file = File::open("simkai.ttf")?;
+        // let mut reader = BufReader::new(file);
+        // Typeface::fr
+        // let tf = Typeface::f(file, Some(fm));
+        // dbg!(tf);
+        Ok(())
+    }
+    #[test]
+    fn test_binding(){
+        let fm = FontMgr::empty();
+        unsafe{
+            // fm.
+        }
     }
 
     #[test]
