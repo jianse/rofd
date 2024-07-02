@@ -650,7 +650,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_() -> Result<()> {
+    fn test_abbr_2_path() -> Result<()> {
         let src = StArray::<String>::from_str("M 10.07 5.54 B 10.07 3.04 8.04 1 5.53 1 B 3.03 1 1 3.04 1 5.54 B 1 8.04 3.03 10.08 5.53 10.08 B 8.04 10.08 10.07 8.04 10.07 5.54 M 2.3 2.3 L 8.7 8.7 M 2.3 8.7 L 8.7 2.3 ")?;
         let p = abbreviated_data_2_path(&src)?;
         dbg!(p);

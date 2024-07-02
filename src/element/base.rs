@@ -17,7 +17,7 @@ impl<T: FromStr + Display> FromStr for StArray<T> {
     type Err = <T as FromStr>::Err;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        // Vec::from
+        let s = s.trim();
         let parts = s.split(" ");
         let data = parts
             .into_iter()

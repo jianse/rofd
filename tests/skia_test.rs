@@ -133,7 +133,7 @@ mod test_skia {
         let file = File::open("simkai.ttf")?;
         // let mut reader = BufReader::new(file);
         // Typeface::fr
-        // let tf = Typeface::f(file, Some(fm));
+        let tf = Typeface::make_deserialize (file, Some(fm));
         // dbg!(tf);
         Ok(())
     }
