@@ -86,13 +86,13 @@ impl Resources {
         cs
     }
 
-    pub fn get_draw_param_by_id(&self, draw_param_id: StRefId) -> Option<&DrawParam> {
+    pub fn get_draw_param_by_id(&self, draw_param_id: StRefId) -> Option<DrawParam> {
         let dp = self
             .iter()
             .filter_map(|f| f.content.draw_params.as_ref())
             .flat_map(|dps| dps.draw_params.iter())
             .find(|dp| dp.id == draw_param_id);
-        dp
+        dp.cloned()
     }
 }
 

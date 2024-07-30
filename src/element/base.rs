@@ -10,7 +10,7 @@ use serde_with::serde_as;
 pub type StLoc = PathBuf;
 
 #[serde_as]
-#[derive(Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 pub struct StArray<T: FromStr + Display>(pub Vec<T>);
 
 impl<T: FromStr + Display> FromStr for StArray<T> {
@@ -101,7 +101,7 @@ impl<'de> Deserialize<'de> for StBox {
             type Value = StBox;
 
             fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
-                formatter.write_str("4 space seprated numbers")
+                formatter.write_str("4 space separated numbers")
             }
             fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
             where

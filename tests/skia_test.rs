@@ -6,8 +6,7 @@ mod test_skia {
     };
 
     use skia_safe::{
-        Color, Color4f, Font, FontMgr, FontStyle, Image, ImageInfo, Paint, Path, Point, TextBlob,
-        Typeface,
+        Color, Color4f, FontMgr, FontStyle, Image, ImageInfo, Paint, Path, Typeface
     };
 
     use eyre::{OptionExt, Result};
@@ -114,16 +113,25 @@ mod test_skia {
     }
     #[test]
     fn fm_test() -> Result<()> {
-        let fm = FontMgr::empty();
+        let fm = FontMgr::new();
         let file = File::open("simkai.ttf")?;
         let mut reader = BufReader::new(file);
         let mut buf = vec![];
         reader.read_to_end(&mut buf)?;
-        let tf = fm.new_from_data(&buf, 2);
+        let tf = fm.new_from_data(&buf, 0);
         // fm.fr
-        dbg!(tf);
+        // dbg!(tf.unwrap());
+        let tf = tf.expect("can not open font file");
+        let family_name = tf.family_name();
+        let font_style = tf.font_style();
+        // assert_eq!(font_style.weight(), 400);
+        dbg!(font_style);
+        for name in tf.new_family_name_iterator() {
+            dbg!(name);
+        }
+        println!("family_name = {}", family_name);
         // assert_eq!()
-        dbg!(fm);
+        // dbg!(fm);
         Ok(())
     }
 
@@ -133,16 +141,9 @@ mod test_skia {
         let file = File::open("simkai.ttf")?;
         // let mut reader = BufReader::new(file);
         // Typeface::fr
-        let tf = Typeface::make_deserialize (file, Some(fm));
-        // dbg!(tf);
+        let tf = Typeface::make_deserialize(file, Some(fm));
+        dbg!(tf);
         Ok(())
-    }
-    #[test]
-    fn test_binding(){
-        let fm = FontMgr::empty();
-        unsafe{
-            // fm.
-        }
     }
 
     #[test]
@@ -152,7 +153,7 @@ mod test_skia {
         let fc = fm.count_families();
         for index in 0..fc {
             let fss = fm.new_style_set(index);
-            // dbg!(fss.);
+            dbg!(fss);
             let family_name = fm.family_name(index);
             dbg!(family_name);
         }

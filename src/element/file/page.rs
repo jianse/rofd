@@ -108,33 +108,33 @@ pub struct TextObject {
 
     // region:common fields
 
-    // common fileds on graphic unit
+    // common fields on graphic unit
     #[serde(rename = "@Boundary")]
     pub boundary: StBox,
     #[serde(rename = "@Name")]
-    name: Option<String>,
+    pub name: Option<String>,
     #[serde(rename = "@Visible")]
     pub visible: Option<bool>,
     #[serde(rename = "@CTM")]
-    ctm: Option<StArray<f32>>,
+    pub ctm: Option<StArray<f32>>,
     #[serde(rename = "@DrawParam")]
-    draw_param: Option<StRefId>,
+    pub draw_param: Option<StRefId>,
     #[serde(rename = "@LineWidth")]
-    line_width: Option<f32>,
+    pub line_width: Option<f32>,
     #[serde(rename = "@Cap")]
-    cap: Option<String>,
+    pub cap: Option<String>,
     #[serde(rename = "@Join")]
-    join: Option<String>,
+    pub join: Option<String>,
     #[serde(rename = "@MiterLimit")]
-    miter_limit: Option<f32>,
+    pub miter_limit: Option<f32>,
     #[serde(rename = "@DashOffset")]
-    dash_offset: Option<f32>,
+    pub dash_offset: Option<f32>,
     #[serde(rename = "@DashPattern")]
-    dash_pattern: Option<StArray<f32>>,
-    #[serde(rename = "@Alapha")]
-    alapha: Option<u8>,
+    pub dash_pattern: Option<StArray<f32>>,
+    #[serde(rename = "@Alpha")]
+    pub alpha: Option<u8>,
     #[serde(rename = "Actions")]
-    actions: Option<Actions>,
+    pub actions: Option<Actions>,
     // endregion
 }
 
@@ -172,7 +172,7 @@ pub struct PathObject {
     #[serde(rename = "AbbreviatedData")]
     pub abbreviated_data: StArray<String>,
 
-    // common fileds on graphic unit
+    // common fields on graphic unit
     #[serde(rename = "@Boundary")]
     pub boundary: StBox,
     #[serde(rename = "@Name")]
@@ -201,8 +201,8 @@ pub struct PathObject {
     pub dash_offset: Option<f32>,
     #[serde(rename = "@DashPattern")]
     pub dash_pattern: Option<StArray<f32>>,
-    #[serde(rename = "@Alapha")]
-    pub alapha: Option<u8>,
+    #[serde(rename = "@Alpha")]
+    pub alpha: Option<u8>,
     #[serde(rename = "Actions")]
     pub actions: Option<Actions>,
     // endregion

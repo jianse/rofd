@@ -82,7 +82,7 @@ pub struct DrawParams {
     pub draw_params: Vec<DrawParam>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct DrawParam {
     #[serde(rename = "@ID")]
     pub id: StId,
@@ -204,7 +204,7 @@ mod tests {
     use crate::element::file::res::ResourceXmlFile;
 
     #[test]
-    fn test_pubres_de() -> Result<()> {
+    fn test_pub_res_de() -> Result<()> {
         let path = "sample/Doc_0/PublicRes.xml";
         let file = File::open(path)?;
         let reader = BufReader::new(file);
@@ -213,7 +213,7 @@ mod tests {
         Ok(())
     }
     #[test]
-    fn test_docres_de() -> Result<()> {
+    fn test_doc_res_de() -> Result<()> {
         let path = "sample/Doc_0/DocumentRes.xml";
         let file = File::open(path)?;
         let reader = BufReader::new(file);

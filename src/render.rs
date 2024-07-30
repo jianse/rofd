@@ -6,6 +6,8 @@ use eyre::eyre;
 use eyre::OptionExt;
 use eyre::Result;
 use skia_safe::path::ArcSize;
+use skia_safe::BlendMode;
+use skia_safe::ClipOp;
 use skia_safe::Color;
 use skia_safe::Color4f;
 use skia_safe::Font;
@@ -27,6 +29,7 @@ use crate::container::Container;
 use crate::container::Resources;
 use crate::element::base::StArray;
 use crate::element::base::StBox;
+use crate::element::base::StRefId;
 use crate::element::common::Cap;
 use crate::element::common::CtColor;
 use crate::element::common::Join;
@@ -41,6 +44,145 @@ use crate::element::file::res::SRGB;
 use crate::error::MyError;
 
 // fn render_template()
+
+struct DrawParamStack {
+    draw_params: Vec<DrawParam>,
+}
+
+impl DrawParamStack {
+    /// create a new stack
+    fn new() -> Self {
+        Self {
+            draw_params: vec![],
+        }
+    }
+
+    fn push(&mut self, draw_param: Option<DrawParam>) {
+        if let Some(draw_param) = draw_param {
+            self.draw_params.push(draw_param);
+        }
+    }
+    fn pop(&mut self, draw_param: Option<DrawParam>) -> Option<DrawParam> {
+        if draw_param.is_some() {
+            self.draw_params.pop()
+        } else {
+            None
+        }
+    }
+
+    /// is empty
+    fn is_empty(&self) -> bool {
+        self.draw_params.is_empty()
+    }
+
+    /// get stock color
+    fn get_stroke_color(
+        &self,
+        element_stroke_color: Option<&CtColor>,
+        resources: &Resources,
+        fallback: Color4f,
+    ) -> Color4f {
+        // test element color
+        if element_stroke_color.is_some() {
+            return resolve_color(element_stroke_color.unwrap(), resources).unwrap();
+        }
+
+        // find in draw param
+        let dp_stroke_color = self
+            .draw_params
+            .iter()
+            .rev()
+            .find_map(|dp| dp.stroke_color.clone());
+        if let Some(ct_color) = dp_stroke_color {
+            return resolve_color(&ct_color, resources).unwrap();
+        }
+
+        // use fallback
+        return fallback;
+    }
+
+    /// get join
+    fn get_join(&self, element_join: Option<&Join>, fallback: &Join) -> PaintJoin {
+        // test element join
+        let rj = if let Some(j) = element_join {
+            j
+        } else if let Some(x) = self
+            .draw_params
+            .iter()
+            .rev()
+            .find_map(|dp| dp.join.as_ref())
+        {
+            x
+        } else {
+            fallback
+        };
+        let join = match rj {
+            Join::Miter => PaintJoin::Miter,
+            Join::Round => PaintJoin::Round,
+            Join::Bevel => PaintJoin::Bevel,
+        };
+        return join;
+    }
+
+    fn get_miter_limit(&self, element_miter_limit: Option<f32>, fallback: f32) -> f32 {
+        // test element miter limit
+        let rml = if let Some(ml) = element_miter_limit {
+            ml
+        } else if let Some(x) = self
+            .draw_params
+            .iter()
+            .rev()
+            .find_map(|dp| dp.miter_limit.as_ref())
+        {
+            *x
+        } else {
+            fallback
+        };
+        return rml;
+    }
+
+    fn get_cap(&self, element_cap: Option<&Cap>, fallback: &Cap) -> PaintCap {
+        // test element cap
+        let rc = if let Some(c) = element_cap {
+            c
+        } else if let Some(x) = self.draw_params.iter().rev().find_map(|dp| dp.cap.as_ref()) {
+            x
+        } else {
+            fallback
+        };
+        let cap = match rc {
+            Cap::Butt => PaintCap::Butt,
+            Cap::Round => PaintCap::Round,
+            Cap::Square => PaintCap::Square,
+        };
+        cap
+    }
+
+    fn get_fill_color(
+        &self,
+        element_fill_color: Option<&CtColor>,
+        resources: &Resources,
+        fallback: Color4f,
+    ) -> Color4f {
+        // test element color
+        if element_fill_color.is_some() {
+            return resolve_color(element_fill_color.unwrap(), resources).unwrap();
+        }
+
+        // find in draw param
+        let dp_fill_color = self
+            .draw_params
+            .iter()
+            .rev()
+            .find_map(|dp| dp.fill_color.clone());
+        if let Some(ct_color) = dp_fill_color {
+            return resolve_color(&ct_color, resources).unwrap();
+        }
+
+        // use fallback
+        return fallback;
+    }
+}
 
 fn create_surface(size: (i32, i32)) -> Result<Surface> {
     let ii = ImageInfo::new_s32(size, skia_safe::AlphaType::Unpremul);
@@ -60,7 +202,7 @@ fn apply_boundary(can: &Canvas, boundary: StBox) {
 fn resolve_color(ct_color: &CtColor, resources: &Resources) -> Result<Color4f> {
     // ct_color
     let cs = if let Some(cs_id) = ct_color.color_space {
-        // have a color space refence
+        // have a color space reference
         let cs = resources
             .get_color_space_by_id(cs_id)
             .ok_or_eyre(format!("color space not found id: {cs_id}"))?;
@@ -82,7 +224,7 @@ fn resolve_color(ct_color: &CtColor, resources: &Resources) -> Result<Color4f> {
         assert_eq!(
             cs.r#type.channel_count(),
             val.0.len(),
-            "color and colorspace mismatch"
+            "color and color space mismatch"
         );
         let bpc = cs.bits_per_component.unwrap_or(8);
         let max_val = (1 << bpc) - 1;
@@ -121,136 +263,11 @@ fn resolve_color(ct_color: &CtColor, resources: &Resources) -> Result<Color4f> {
     // ct_color.
 }
 
-fn get_stroke_color(
-    element_stroke_color: Option<&CtColor>,
-    resources: &Resources,
-    edp: Option<&DrawParam>,
-    ldp: Option<&DrawParam>,
-    fallback: Color4f,
-) -> Color4f {
-    // let res = None;
-    if let Some(color) = element_stroke_color {
-        // use element's stroke_color
-        // resolve_color shoud never fall
-        return resolve_color(color, resources).unwrap();
-    }
-    if let Some(dp) = edp {
-        if let Some(color) = &dp.stroke_color {
-            // use stroke color defined in element's drawparam
-            //
-            return resolve_color(color, resources).unwrap();
-        }
-    }
-    if let Some(dp) = ldp {
-        if let Some(ct_color) = &dp.stroke_color {
-            // use layer's
-            return resolve_color(ct_color, resources).unwrap();
-        }
-    }
-
-    fallback
-}
-
-fn get_fill_color(
-    ele_fill_color: Option<&CtColor>,
-    resources: &Resources,
-    edp: Option<&DrawParam>,
-    ldp: Option<&DrawParam>,
-    fallback: Color4f,
-) -> Color4f {
-    if let Some(ct_color) = ele_fill_color {
-        return resolve_color(ct_color, resources).unwrap();
-    }
-    if let Some(dp) = edp {
-        if let Some(color) = &dp.fill_color {
-            return resolve_color(color, resources).unwrap();
-        }
-    }
-    if let Some(dp) = ldp {
-        if let Some(ct_color) = &dp.fill_color {
-            return resolve_color(ct_color, resources).unwrap();
-        }
-    }
-    fallback
-}
-
-fn get_join(
-    ele_val: Option<&Join>,
-    edp: Option<&DrawParam>,
-    ldp: Option<&DrawParam>,
-    default: &Join,
-) -> PaintJoin {
-    let rj = if let Some(j) = ele_val {
-        j
-    } else if let Some(DrawParam { join: Some(x), .. }) = edp {
-        x
-    } else if let Some(DrawParam { join: Some(x), .. }) = ldp {
-        x
-    } else {
-        default
-    };
-    let join = match rj {
-        Join::Miter => PaintJoin::Miter,
-        Join::Round => PaintJoin::Round,
-        Join::Bevel => PaintJoin::Bevel,
-    };
-    join
-}
-
-/// get miter_limit from self > self.draw_param > layer.draw_param
-fn get_miter_limit(
-    ele_val: Option<f32>,
-    edp: Option<&DrawParam>,
-    ldp: Option<&DrawParam>,
-    default: f32,
-) -> f32 {
-    let rj = if let Some(j) = ele_val {
-        j
-    } else if let Some(DrawParam {
-        miter_limit: Some(x),
-        ..
-    }) = edp
-    {
-        *x
-    } else if let Some(DrawParam {
-        miter_limit: Some(x),
-        ..
-    }) = ldp
-    {
-        *x
-    } else {
-        default
-    };
-    rj
-}
-
-fn get_cap(
-    ele_val: Option<&Cap>,
-    edp: Option<&DrawParam>,
-    ldp: Option<&DrawParam>,
-    default: &Cap,
-) -> PaintCap {
-    let rj = if let Some(j) = ele_val {
-        j
-    } else if let Some(DrawParam { cap: Some(x), .. }) = edp {
-        x
-    } else if let Some(DrawParam { cap: Some(x), .. }) = ldp {
-        x
-    } else {
-        default
-    };
-    match rj {
-        Cap::Butt => PaintCap::Butt,
-        Cap::Round => PaintCap::Round,
-        Cap::Square => PaintCap::Square,
-    }
-}
-
 fn draw_path_object(
     canvas: &Canvas,
     path_object: &PathObject,
     resources: &Resources,
-    draw_param: Option<&DrawParam>,
+    draw_param_stack: &DrawParamStack,
 ) -> Result<()> {
     let vis = path_object.visible.unwrap_or(true);
     if !vis {
@@ -260,48 +277,27 @@ fn draw_path_object(
     let boundary = path_object.boundary;
     apply_boundary(canvas, boundary);
     let mut path = abbreviated_data_2_path(&path_object.abbreviated_data)?;
-    let element_draw_param = path_object
-        .draw_param
-        .map(|dp_id| resources.get_draw_param_by_id(dp_id).unwrap());
-    // path.
 
     // draw stroke
     if path_object.stroke.unwrap_or(true) {
-        let color: Color4f = get_stroke_color(
+        let color: Color4f = draw_param_stack.get_stroke_color(
             path_object.stroke_color.as_ref(),
             resources,
-            element_draw_param,
-            draw_param,
             Color::BLACK.into(),
         );
         let mut paint = Paint::new(color, None);
 
         paint.set_stroke(true);
 
-        let join = get_join(
-            path_object.join.as_ref(),
-            element_draw_param,
-            draw_param,
-            &Join::Miter,
-        );
+        let join = draw_param_stack.get_join(path_object.join.as_ref(), &Join::Miter);
         paint.set_stroke_join(join);
 
         if join == PaintJoin::Miter {
-            let miter = get_miter_limit(
-                path_object.miter_limit,
-                element_draw_param,
-                draw_param,
-                3.528,
-            );
+            let miter = draw_param_stack.get_miter_limit(path_object.miter_limit, 3.528);
             paint.set_stroke_miter(miter);
         }
 
-        let cap = get_cap(
-            path_object.cap.as_ref(),
-            element_draw_param,
-            draw_param,
-            &Cap::Butt,
-        );
+        let cap = draw_param_stack.get_cap(path_object.cap.as_ref(), &Cap::Butt);
         paint.set_stroke_cap(cap);
         let lw = path_object.line_width.unwrap_or(0.353);
         paint.set_stroke_width(lw);
@@ -310,11 +306,9 @@ fn draw_path_object(
 
     // fill
     if path_object.fill.unwrap_or(false) {
-        let color: Color4f = get_fill_color(
+        let color: Color4f = draw_param_stack.get_fill_color(
             path_object.fill_color.as_ref(),
             resources,
-            element_draw_param,
-            draw_param,
             Color::TRANSPARENT.into(),
         );
         let mut paint = Paint::new(color, None);
@@ -390,7 +384,7 @@ fn abbreviated_data_2_path(abbr: &StArray<String>) -> Result<Path> {
                 path.close();
                 Ok(())
             }
-            _ => { Err(MyError::UnknownPathCommnad(ele.into())) }?,
+            _ => { Err(MyError::UnknownPathCommand(ele.into())) }?,
         };
         s?;
     }
@@ -469,6 +463,10 @@ pub fn render_template(
 
     let mut sur = create_surface(size)?;
     let can = sur.canvas();
+    can.save();
+    can.clip_rect(Rect::from_size(size), ClipOp::Intersect, true);
+    can.draw_color(Color::WHITE, BlendMode::Color);
+    can.restore();
     let scale = calc_scale(dpi);
     can.scale((scale, scale));
     for tpl in tpls {
@@ -480,37 +478,56 @@ pub fn render_template(
 }
 
 fn draw_page(can: &Canvas, tpl: &&PageXmlFile, resources: &Resources) -> Result<()> {
+    let mut draw_param_stack = DrawParamStack::new();
     if let Some(content) = tpl.content.as_ref() {
         for layer in &content.layer {
-            // TODO: get draw_param
-            let dp = if let Some(dp_id) = layer.draw_param {
-                let dp = resources
-                    .get_draw_param_by_id(dp_id)
-                    .ok_or_eyre(format!("required DrawParam id = {dp_id} is not defined!"))?;
-                Some(dp)
-            } else {
-                None
-            };
-            draw_layer(can, layer, resources, dp);
+            let dp_id = layer.draw_param;
+            let dp = get_draw_param_by_id(resources, dp_id);
+            draw_param_stack.push(dp.clone());
+            draw_layer(can, layer, resources, &mut draw_param_stack);
+            draw_param_stack.pop(dp);
+            if !draw_param_stack.is_empty() {
+                println!("warn! draw_param stack is imbalance!");
+            }
         }
     }
     Ok(())
+}
+
+fn get_draw_param_by_id(resources: &Resources, id: Option<StRefId>) -> Option<DrawParam> {
+    if let Some(dp_id) = id {
+        let dp = resources.get_draw_param_by_id(dp_id);
+        if dp.is_none() {
+            println!("warn! required DrawParam id = {dp_id} is not defined!");
+        }
+        dp
+    } else {
+        None
+    }
 }
 
 fn draw_layer(
     canvas: &Canvas,
     layer: &crate::element::file::page::Layer,
     resources: &Resources,
-    draw_param: Option<&DrawParam>,
+    draw_param_stack: &mut DrawParamStack,
 ) -> () {
     if let Some(objects) = layer.objects.as_ref() {
         for obj in objects {
             let _ = match obj {
                 crate::element::file::page::CtPageBlock::TextObject(text) => {
-                    draw_text_object(canvas, text, resources, draw_param)
+                    let dp_id = text.draw_param;
+                    let dp = get_draw_param_by_id(resources, dp_id);
+                    draw_param_stack.push(dp.clone());
+                    let _ = draw_text_object(canvas, text, resources, draw_param_stack);
+                    draw_param_stack.pop(dp);
                 }
                 crate::element::file::page::CtPageBlock::PathObject(path) => {
-                    draw_path_object(canvas, path, resources, draw_param)
+                    let dp_id = path.draw_param;
+                    let dp = get_draw_param_by_id(resources, dp_id);
+                    draw_param_stack.push(dp.clone());
+                    let _ = draw_path_object(canvas, path, resources, draw_param_stack);
+                    draw_param_stack.pop(dp);
                 }
                 crate::element::file::page::CtPageBlock::ImageObject {} => todo!(),
                 crate::element::file::page::CtPageBlock::CompositeObject {} => todo!(),
@@ -525,7 +542,7 @@ fn draw_text_object(
     canvas: &Canvas,
     text_object: &TextObject,
     resources: &Resources,
-    draw_param: Option<&DrawParam>,
+    draw_param: &DrawParamStack,
 ) -> Result<()> {
     let vis = text_object.visible.unwrap_or(true);
     if !vis {
@@ -544,7 +561,7 @@ fn draw_text_object(
     let typeface = fm
         .match_family_style("楷体", FontStyle::normal())
         .ok_or_eyre("no font found!")?;
-    
+
     let mut font = Font::from_typeface(typeface, Some(text_object.size));
     // font.set_w
 
