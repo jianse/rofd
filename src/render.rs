@@ -1,3 +1,4 @@
+mod font;
 use std::iter::Enumerate;
 use std::slice::Iter;
 use std::str::FromStr;
@@ -7,7 +8,6 @@ use eyre::OptionExt;
 use eyre::Result;
 use skia_safe::path::ArcSize;
 use skia_safe::BlendMode;
-use skia_safe::ClipOp;
 use skia_safe::Color;
 use skia_safe::Color4f;
 use skia_safe::Font;
@@ -463,10 +463,7 @@ pub fn render_template(
 
     let mut sur = create_surface(size)?;
     let can = sur.canvas();
-    can.save();
-    can.clip_rect(Rect::from_size(size), ClipOp::Intersect, true);
     can.draw_color(Color::WHITE, BlendMode::Color);
-    can.restore();
     let scale = calc_scale(dpi);
     can.scale((scale, scale));
     for tpl in tpls {
@@ -542,7 +539,7 @@ fn draw_text_object(
     canvas: &Canvas,
     text_object: &TextObject,
     resources: &Resources,
-    draw_param: &DrawParamStack,
+    draw_param_stack: &DrawParamStack,
 ) -> Result<()> {
     let vis = text_object.visible.unwrap_or(true);
     if !vis {
@@ -551,23 +548,26 @@ fn draw_text_object(
     canvas.save();
     let boundary = text_object.boundary;
     apply_boundary(canvas, boundary);
-    let color: Color4f = Color::RED.into();
-    let paint = Paint::new(&color, None);
-    // paint
+
     let text_codes = &text_object.text_codes;
     assert!(text_codes.len() > 0, "textCode length must grater than 0!");
     let mut last_pos = (text_codes[0].x.unwrap(), text_codes[0].y.unwrap());
-    let fm = FontMgr::new();
-    let typeface = fm
-        .match_family_style("楷体", FontStyle::normal())
-        .ok_or_eyre("no font found!")?;
+    let font_id = text_object.font;
+    let font = resources.get_font_by_id(font_id);
+    let typeface = if font.is_none() {
+        println!("warn! required font id = {font_id} is not defined!");
+        // fallback font
+        todo!()
+    } else {
+        let font = font.unwrap();
+        let fm = FontMgr::new();
+        let ff = fm
+            .match_family_style(font.font_name, FontStyle::normal())
+            .ok_or_eyre("no font found!")?;
+        ff
+    };
 
-    let mut font = Font::from_typeface(typeface, Some(text_object.size));
-    // font.set_w
-
-    // get
-    // font.set_scale_x(0.5);
-    // font.set
+    let font = Font::from_typeface(typeface, Some(text_object.size));
     for text_code in &text_object.text_codes {
         let origin = (
             text_code.x.unwrap_or(last_pos.0),
@@ -575,7 +575,27 @@ fn draw_text_object(
         );
         let blob = from_text_code(text_code, &font)?;
 
-        canvas.draw_text_blob(blob, origin, &paint);
+        if text_object.stroke.unwrap_or(false) {
+            let stroke_color = draw_param_stack.get_stroke_color(
+                text_object.stroke_color.as_ref(),
+                resources,
+                Color::TRANSPARENT.into(),
+            );
+            let mut paint = Paint::new(&stroke_color, None);
+            paint.set_stroke(true);
+            canvas.draw_text_blob(blob.clone(), origin, &paint);
+        }
+
+        if text_object.fill.unwrap_or(true) {
+            let fill_color = draw_param_stack.get_fill_color(
+                text_object.fill_color.as_ref(),
+                resources,
+                Color::BLACK.into(),
+            );
+            let mut paint = Paint::new(&fill_color, None);
+            paint.set_stroke(false);
+            canvas.draw_text_blob(blob, origin, &paint);
+        }
         last_pos = origin;
     }
     // canvas.draw_text_align(text, p, font, paint, align);

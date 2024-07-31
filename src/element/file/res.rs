@@ -125,7 +125,7 @@ pub struct Fonts {
     #[serde(rename = "Font")]
     pub fonts: Vec<Font>,
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Font {
     #[serde(rename = "@ID")]
     pub id: StId,
@@ -135,6 +135,7 @@ pub struct Font {
 
     #[serde(rename = "@FamilyName")]
     pub family_name: Option<String>,
+
     /// default unicode
     #[serde(rename = "@Charset")]
     pub charset: Option<String>,

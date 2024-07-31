@@ -5,9 +5,7 @@ mod test_skia {
         io::{BufReader, Read, Write},
     };
 
-    use skia_safe::{
-        Color, Color4f, FontMgr, FontStyle, Image, ImageInfo, Paint, Path, Typeface
-    };
+    use skia_safe::{Color, Color4f, FontMgr, FontStyle, Image, ImageInfo, Paint, Path, Typeface};
 
     use eyre::{OptionExt, Result};
 

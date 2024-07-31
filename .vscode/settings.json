@@ -10,5 +10,6 @@
         "tpls",
         "Unpremul",
         "xywh"
-    ]
+    ],
+    "crates.indexServerURL": "sparse+https://mirrors.ustc.edu.cn/crates.io-index/"
 }

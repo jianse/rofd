@@ -12,7 +12,7 @@ quick-xml = { version = "0.36.1", features = ["serde", "serialize"] }
 relative-path = "1.9.3"
 serde = { version = "1.0.204", features = ["derive"] }
 serde_with = "3.9.0"
-skia-safe = { version = "0.75.0", features = ["textlayout"] }
+skia-safe = "0.75.0"
 thiserror = "1.0.63"
 zip = "2.1.5"
 # help-macro = { path = "./help-macro" }

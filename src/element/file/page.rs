@@ -53,58 +53,34 @@ pub enum CtPageBlock {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct TextObject {
     #[serde(rename = "@Font")]
-    font: StRefId,
+    pub font: StRefId,
 
     #[serde(rename = "@Size")]
     pub size: f32,
 
     #[serde(rename = "@Stroke")]
-    stroke: Option<bool>,
+    pub stroke: Option<bool>,
 
-    fill: Option<bool>,
+    pub fill: Option<bool>,
 
-    h_scale: Option<f32>,
+    pub h_scale: Option<f32>,
 
-    read_direction: Option<u32>,
+    pub read_direction: Option<u32>,
 
-    char_direction: Option<u32>,
+    pub char_direction: Option<u32>,
 
-    weight: Option<u32>,
+    pub weight: Option<u32>,
 
-    italic: Option<bool>,
+    pub italic: Option<bool>,
 
     #[serde(rename = "FillColor")]
-    fill_color: Option<CtColor>,
+    pub fill_color: Option<CtColor>,
 
     #[serde(rename = "StrokeColor")]
-    stroke_color: Option<CtColor>,
+    pub stroke_color: Option<CtColor>,
 
     #[serde(rename = "TextCode")]
     pub text_codes: Vec<TextCode>,
-
-    // #[serde(rename = "@FontName")]
-    // font_name: String,
-
-    // #[serde(rename = "@FamilyName")]
-    // family_name: Option<String>,
-
-    // #[serde(rename = "@Charset")]
-    // charset: Option<String>,
-
-    // #[serde(rename = "@Italic")]
-    // italic: Option<bool>,
-
-    // #[serde(rename = "@Bold")]
-    // bold: Option<bool>,
-
-    // #[serde(rename = "@Serif")]
-    // serif: Option<bool>,
-
-    // #[serde(rename = "@FixedWidth")]
-    // fixed_width: Option<bool>,
-
-    // #[serde(rename = "FontFile")]
-    // font_file: Option<StLoc>,
 
     // region:common fields
 

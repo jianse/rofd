@@ -11,7 +11,7 @@ use crate::{
             document::DocumentXmlFile,
             ofd::OfdXmlFile,
             page::PageXmlFile,
-            res::{ColorSpace, DrawParam, ResourceXmlFile},
+            res::{ColorSpace, DrawParam, Font, ResourceXmlFile},
         },
     },
     error::MyError,
@@ -93,6 +93,14 @@ impl Resources {
             .flat_map(|dps| dps.draw_params.iter())
             .find(|dp| dp.id == draw_param_id);
         dp.cloned()
+    }
+    pub fn get_font_by_id(&self, font_id: StRefId) -> Option<Font> {
+        let font = self
+            .iter()
+            .filter_map(|f| f.content.fonts.as_ref())
+            .flat_map(|f| f.fonts.iter())
+            .find(|f| f.id == font_id);
+        font.cloned()
     }
 }
 

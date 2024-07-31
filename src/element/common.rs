@@ -1,14 +1,14 @@
 use super::base::{StArray, StBox, StLoc, StRefId};
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize, Serialize,Clone, Copy)]
+#[derive(Debug, Deserialize, Serialize, Clone, Copy)]
 pub enum Join {
     Miter,
     Round,
     Bevel,
 }
 
-#[derive(Debug, Deserialize, Serialize,Clone, Copy)]
+#[derive(Debug, Deserialize, Serialize, Clone, Copy)]
 pub enum Cap {
     Butt,
     Round,
@@ -55,7 +55,7 @@ pub struct Actions {
 pub struct CtAction {}
 
 /// 包括基本颜色、底纹和渐变
-#[derive(Debug, Serialize, Deserialize, PartialEq,Clone)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 pub struct CtColor {
     /// 各通道颜色的分量
     #[serde(rename = "@Value")]
