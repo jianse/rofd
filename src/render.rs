@@ -199,6 +199,18 @@ fn apply_boundary(can: &Canvas, boundary: StBox) {
     can.concat(&matrix);
 }
 
+fn apply_ctm(can: &Canvas, ctm: Option<&StArray<f32>>) {
+    if ctm.is_none() {
+        return;
+    }
+    let ctm = ctm.unwrap();
+    assert_eq!(ctm.0.len(), 6, "ctm len must be 6");
+    let mat = Matrix::new_all(
+        ctm.0[0], ctm.0[2], ctm.0[4], ctm.0[1], ctm.0[3], ctm.0[5], 0.0, 0.0, 1.0,
+    );
+    can.concat(&mat);
+}
+
 fn resolve_color(ct_color: &CtColor, resources: &Resources) -> Result<Color4f> {
     // ct_color
     let cs = if let Some(cs_id) = ct_color.color_space {
@@ -276,6 +288,10 @@ fn draw_path_object(
     canvas.save();
     let boundary = path_object.boundary;
     apply_boundary(canvas, boundary);
+
+    let ctm = path_object.ctm.as_ref();
+    apply_ctm(canvas, ctm);
+
     let mut path = abbreviated_data_2_path(&path_object.abbreviated_data)?;
 
     // draw stroke
@@ -548,6 +564,9 @@ fn draw_text_object(
     canvas.save();
     let boundary = text_object.boundary;
     apply_boundary(canvas, boundary);
+
+    let ctm = text_object.ctm.as_ref();
+    apply_ctm(canvas, ctm);
 
     let text_codes = &text_object.text_codes;
     assert!(text_codes.len() > 0, "textCode length must grater than 0!");
