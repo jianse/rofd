@@ -35,6 +35,7 @@ pub struct ColorSpaces {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+#[allow(clippy::upper_case_acronyms)]
 pub enum Type {
     RGB,
     GRAY,

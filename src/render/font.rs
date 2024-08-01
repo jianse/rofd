@@ -1,6 +1,5 @@
 use std::{collections::HashMap, path::PathBuf};
 
-use quick_xml::se;
 use skia_safe::{FontStyle, Typeface};
 
 struct FontMgr {

@@ -61,15 +61,13 @@ impl<'a> Iterator for ResourceIter<'a> {
     type Item = &'a InnerFile<ResourceXmlFile>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let res;
-        if self.idx < self.res_flat.len() {
-            res = Some(self.res_flat[self.idx]);
+        let res = if self.idx < self.res_flat.len() {
+            Some(self.res_flat[self.idx])
         } else {
-            res = None;
-        }
+            None
+        };
         self.idx += 1;
         res
-        // todo!()
     }
 }
 
@@ -104,11 +102,11 @@ impl Resources {
     }
 }
 
-impl<'a, T> InnerFile<T> {
+impl<T> InnerFile<T> {
     fn resolve(&self, other: &PathBuf) -> RelativePathBuf {
         let this = self.path.clone();
         let that = RelativePathBuf::from_path(other).unwrap();
-        let res = if that.to_string().starts_with("/") {
+        let res = if that.to_string().starts_with('/') {
             that.normalize()
         } else {
             let folder = this.parent();
@@ -116,8 +114,7 @@ impl<'a, T> InnerFile<T> {
                 Some(p) => p.into(),
                 None => RelativePathBuf::new(),
             };
-            let np = base.join(that).normalize();
-            np
+            base.join(that).normalize()
         };
         res
     }
@@ -252,8 +249,6 @@ impl Container {
         } else {
             Ok(vec![])
         }
-
-        // todo!()
     }
     pub fn resources_for_page(&mut self, doc_index: usize, page_index: usize) -> Result<Resources> {
         let doc = self.document_by_index(doc_index)?;
@@ -306,7 +301,6 @@ impl Container {
 }
 
 pub fn from_path(path: &PathBuf) -> Result<Container> {
-    // todo!()
     let f = File::open(path)?;
     let reader = BufReader::new(f);
     let zip = zip::ZipArchive::new(reader)?;

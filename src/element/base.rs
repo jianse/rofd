@@ -18,16 +18,15 @@ impl<T: FromStr + Display> FromStr for StArray<T> {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let s = s.trim();
-        let parts = s.split(" ");
+        let parts = s.split(' ');
         let data = parts
             .into_iter()
             .map(T::from_str)
             .collect::<Result<Vec<T>, <T as FromStr>::Err>>();
         match data {
-            Ok(data) => Ok(Self { 0: data }),
+            Ok(data) => Ok(Self(data)),
             Err(e) => Err(e),
         }
-        // todo!()
     }
 }
 impl<T: FromStr + Display> Display for StArray<T> {
@@ -42,7 +41,7 @@ impl<T: FromStr + Display> Display for StArray<T> {
 }
 impl<T: FromStr + Display> From<Vec<T>> for StArray<T> {
     fn from(value: Vec<T>) -> Self {
-        Self { 0: value }
+        Self(value)
     }
 }
 
@@ -107,7 +106,7 @@ impl<'de> Deserialize<'de> for StBox {
             where
                 E: de::Error,
             {
-                fn get<E>(parts: &Vec<&str>, index: usize) -> Result<f32, E>
+                fn get<E>(parts: &[&str], index: usize) -> Result<f32, E>
                 where
                     E: de::Error,
                 {
@@ -119,7 +118,7 @@ impl<'de> Deserialize<'de> for StBox {
                     Ok(res)
                 }
 
-                let parts: Vec<&str> = v.split(" ").collect();
+                let parts: Vec<&str> = v.split(' ').collect();
                 if parts.len() != 4 {
                     Err(de::Error::invalid_length(parts.len(), &"4"))
                 } else {

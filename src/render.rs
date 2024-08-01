@@ -1,3 +1,5 @@
+#[allow(dead_code)]
+#[allow(unused_variables)]
 mod font;
 use std::iter::Enumerate;
 use std::slice::Iter;
@@ -83,8 +85,8 @@ impl DrawParamStack {
         fallback: Color4f,
     ) -> Color4f {
         // test element color
-        if element_stroke_color.is_some() {
-            return resolve_color(element_stroke_color.unwrap(), resources).unwrap();
+        if let Some(stroke_color) = element_stroke_color {
+            return resolve_color(stroke_color, resources).unwrap();
         }
 
         // find in draw param
@@ -98,7 +100,7 @@ impl DrawParamStack {
         }
 
         // use fallback
-        return fallback;
+        fallback
     }
 
     /// get join
@@ -116,17 +118,16 @@ impl DrawParamStack {
         } else {
             fallback
         };
-        let join = match rj {
+        match rj {
             Join::Miter => PaintJoin::Miter,
             Join::Round => PaintJoin::Round,
             Join::Bevel => PaintJoin::Bevel,
-        };
-        return join;
+        }
     }
 
     fn get_miter_limit(&self, element_miter_limit: Option<f32>, fallback: f32) -> f32 {
         // test element miter limit
-        let rml = if let Some(ml) = element_miter_limit {
+        if let Some(ml) = element_miter_limit {
             ml
         } else if let Some(x) = self
             .draw_params
@@ -137,8 +138,7 @@ impl DrawParamStack {
             *x
         } else {
             fallback
-        };
-        return rml;
+        }
     }
 
     fn get_cap(&self, element_cap: Option<&Cap>, fallback: &Cap) -> PaintCap {
@@ -150,12 +150,11 @@ impl DrawParamStack {
         } else {
             fallback
         };
-        let cap = match rc {
+        match rc {
             Cap::Butt => PaintCap::Butt,
             Cap::Round => PaintCap::Round,
             Cap::Square => PaintCap::Square,
-        };
-        cap
+        }
     }
 
     fn get_fill_color(
@@ -165,8 +164,8 @@ impl DrawParamStack {
         fallback: Color4f,
     ) -> Color4f {
         // test element color
-        if element_fill_color.is_some() {
-            return resolve_color(element_fill_color.unwrap(), resources).unwrap();
+        if let Some(fill_color) = element_fill_color {
+            return resolve_color(fill_color, resources).unwrap();
         }
 
         // find in draw param
@@ -180,7 +179,7 @@ impl DrawParamStack {
         }
 
         // use fallback
-        return fallback;
+        fallback
     }
 }
 
@@ -215,22 +214,19 @@ fn resolve_color(ct_color: &CtColor, resources: &Resources) -> Result<Color4f> {
     // ct_color
     let cs = if let Some(cs_id) = ct_color.color_space {
         // have a color space reference
-        let cs = resources
+        resources
             .get_color_space_by_id(cs_id)
-            .ok_or_eyre(format!("color space not found id: {cs_id}"))?;
-        cs
+            .ok_or_eyre(format!("color space not found id: {cs_id}"))?
+    } else if let Some(cs_id) = resources.default_cs {
+        // looking for default color space
+        resources
+            .get_color_space_by_id(cs_id)
+            .ok_or_eyre(format!("default cs not found id {cs_id}"))?
     } else {
-        if let Some(cs_id) = resources.default_cs {
-            // looking for default color space
-            let cs = resources
-                .get_color_space_by_id(cs_id)
-                .ok_or_eyre(format!("default cs not found id {cs_id}"))?;
-            cs
-        } else {
-            // default srgb
-            &SRGB
-        }
+        // default srgb
+        &SRGB
     };
+
     if let Some(val) = &ct_color.value {
         // value color
         assert_eq!(
@@ -445,7 +441,6 @@ fn decide_size(
     pa = pa.or(Some(&doc.common_data.page_area));
     let size = pa.unwrap();
     CtPageArea { ..*size }
-    // todo!()
 }
 pub fn render_template(
     container: &mut Container,
@@ -490,7 +485,51 @@ pub fn render_template(
     Ok(snap)
 }
 
-fn draw_page(can: &Canvas, tpl: &&PageXmlFile, resources: &Resources) -> Result<()> {
+pub fn render_page(
+    container: &mut Container,
+    doc_index: usize,
+    page_index: usize,
+) -> Result<Image> {
+    let dpi = 300;
+
+    let doc = container.document_by_index(doc_index)?;
+    let doc_xml = &doc.content;
+
+    let page = container.page_by_index(doc_index, page_index)?;
+    let page_xml = &page.content;
+
+    let templates = container.templates_for_page(doc_index, page_index)?;
+    let tpls = &templates
+        .iter()
+        .map(|i| &i.content)
+        .collect::<Vec<&PageXmlFile>>();
+
+    if templates.is_empty() {
+        return Err(eyre!("no such template!"));
+    }
+    let pa = decide_size(page_xml, tpls, doc_xml);
+
+    let size = (
+        mm2px_i32(pa.physical_box.w, dpi),
+        mm2px_i32(pa.physical_box.h, dpi),
+    );
+    let resources = container.resources_for_page(doc_index, page_index)?;
+
+    let mut sur = create_surface(size)?;
+    let can = sur.canvas();
+    can.draw_color(Color::WHITE, BlendMode::Color);
+    let scale = calc_scale(dpi);
+    can.scale((scale, scale));
+    for tpl in tpls {
+        draw_page(can, tpl, &resources)?;
+    }
+    draw_page(can, &page.content, &resources)?;
+    can.restore();
+    let snap = sur.image_snapshot();
+    Ok(snap)
+}
+
+fn draw_page(can: &Canvas, tpl: &PageXmlFile, resources: &Resources) -> Result<()> {
     let mut draw_param_stack = DrawParamStack::new();
     if let Some(content) = tpl.content.as_ref() {
         for layer in &content.layer {
@@ -524,10 +563,10 @@ fn draw_layer(
     layer: &crate::element::file::page::Layer,
     resources: &Resources,
     draw_param_stack: &mut DrawParamStack,
-) -> () {
+) {
     if let Some(objects) = layer.objects.as_ref() {
         for obj in objects {
-            let _ = match obj {
+            match obj {
                 crate::element::file::page::CtPageBlock::TextObject(text) => {
                     let dp_id = text.draw_param;
                     let dp = get_draw_param_by_id(resources, dp_id);
@@ -542,13 +581,14 @@ fn draw_layer(
                     let _ = draw_path_object(canvas, path, resources, draw_param_stack);
                     draw_param_stack.pop(dp);
                 }
-                crate::element::file::page::CtPageBlock::ImageObject {} => todo!(),
+                crate::element::file::page::CtPageBlock::ImageObject {} => {
+                    // TODO: draw image
+                }
                 crate::element::file::page::CtPageBlock::CompositeObject {} => todo!(),
                 crate::element::file::page::CtPageBlock::PageBlock {} => todo!(),
             };
         }
     }
-    // todo!()
 }
 
 fn draw_text_object(
@@ -569,7 +609,7 @@ fn draw_text_object(
     apply_ctm(canvas, ctm);
 
     let text_codes = &text_object.text_codes;
-    assert!(text_codes.len() > 0, "textCode length must grater than 0!");
+    assert!(!text_codes.is_empty(), "textCode must not be empty!");
     let mut last_pos = (text_codes[0].x.unwrap(), text_codes[0].y.unwrap());
     let font_id = text_object.font;
     let font = resources.get_font_by_id(font_id);
@@ -580,10 +620,8 @@ fn draw_text_object(
     } else {
         let font = font.unwrap();
         let fm = FontMgr::new();
-        let ff = fm
-            .match_family_style(font.font_name, FontStyle::normal())
-            .ok_or_eyre("no font found!")?;
-        ff
+        fm.match_family_style(font.font_name, FontStyle::normal())
+            .ok_or_eyre("no font found!")?
     };
 
     let font = Font::from_typeface(typeface, Some(text_object.size));
@@ -600,7 +638,7 @@ fn draw_text_object(
                 resources,
                 Color::TRANSPARENT.into(),
             );
-            let mut paint = Paint::new(&stroke_color, None);
+            let mut paint = Paint::new(stroke_color, None);
             paint.set_stroke(true);
             canvas.draw_text_blob(blob.clone(), origin, &paint);
         }
@@ -611,7 +649,7 @@ fn draw_text_object(
                 resources,
                 Color::BLACK.into(),
             );
-            let mut paint = Paint::new(&fill_color, None);
+            let mut paint = Paint::new(fill_color, None);
             paint.set_stroke(false);
             canvas.draw_text_blob(blob, origin, &paint);
         }
@@ -632,13 +670,12 @@ fn from_text_code(
     let origin = (0.0, 0.0);
     let text = &text_code.val;
     let pos = decode_dx_dy(
-        origin.into(),
+        origin,
         text_code.delta_x.as_ref(),
         text_code.delta_y.as_ref(),
         text.chars().count(),
     )?;
-    let tb = TextBlob::from_pos_text(text, &pos, font).ok_or_eyre("message");
-    return tb;
+    TextBlob::from_pos_text(text, &pos, font).ok_or_eyre("message")
 }
 
 /// decode dx dy into points
@@ -649,17 +686,36 @@ fn decode_dx_dy(
     len: usize,
 ) -> Result<Vec<Point>> {
     let mut res = vec![];
-    let dxs = delta_x
+    let mut dxs = delta_x
         .map(flat_g)
         .transpose()?
         .unwrap_or(vec![0_f32; len - 1]);
-    let dys = delta_y
+    let mut dys = delta_y
         .map(flat_g)
         .transpose()?
         .unwrap_or(vec![0_f32; len - 1]);
-    assert_eq!(dxs.len(), len - 1, "dxs: {:?},dys:{:?}", delta_x, delta_y);
-    // if let Some(dx)
-    assert_eq!(dys.len(), len - 1, "dxs: {:?},dys:{:?}", delta_x, delta_y);
+    assert!(
+        dxs.len() >= (len - 1),
+        "dx for textCode is not enough! required: {}, got: {}, dxs: {:?}",
+        len - 1,
+        dxs.len(),
+        dxs
+    );
+    if dxs.len() > len - 1 {
+        println!("warn! dx for textCode is longer than text! truncating!");
+        dxs.truncate(len - 1);
+    }
+    assert!(
+        dys.len() >= (len - 1),
+        "dy for textCode is not enough! required: {}, got: {}, dys: {:?}",
+        len - 1,
+        dys.len(),
+        dys
+    );
+    if dys.len() > len - 1 {
+        println!("warn! dy for textCode is longer than text! truncating!");
+        dys.truncate(len - 1);
+    }
     let mut last_pos = origin;
     res.push(Point::new(last_pos.0, last_pos.1));
     for (dx, dy) in std::iter::zip(dxs, dys) {
@@ -668,7 +724,7 @@ fn decode_dx_dy(
     }
     // todo!();
     assert_eq!(res.len(), len);
-    return Ok(res);
+    Ok(res)
 }
 
 /// flat sparse format (include g command) dx or dy into dense format (only numbers)

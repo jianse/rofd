@@ -6,13 +6,12 @@ mod render;
 use std::path::PathBuf;
 
 use clap::{command, Parser, Subcommand};
+use cli_table::{print_stdout, WithTitle};
 use eyre::Result;
 
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
 struct Cli {
-    /// Optional name to operate on
-    // ofd_file: PathBuf,
 
     /// Turn debugging information on
     #[arg(short, long, action = clap::ArgAction::Count)]
@@ -24,7 +23,7 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
-    /// get infomation from ofd file
+    /// get information from ofd file
     Info {
         /// file path
         ofd_file: PathBuf,
@@ -35,15 +34,18 @@ enum Commands {
         // #[arg()]
         ofd_file: PathBuf,
         /// out put path
-        #[arg(short,long ,default_value_os_t = PathBuf::from("output") )]
+        #[arg(short, long, default_value_os_t = PathBuf::from("output"))]
         out_path: PathBuf,
 
+        /// doc index
         #[arg(default_value_t = 0)]
         doc_index: usize,
 
+        /// page index
         #[arg(default_value_t = 0)]
         page_index: usize,
 
+        /// only render template page
         #[arg(short, long)]
         template: bool,
     },
@@ -54,7 +56,9 @@ fn main() -> Result<()> {
     match ops.command {
         Commands::Info { ofd_file } => {
             let info = ofd_utils::get_info(&ofd_file)?;
-            dbg!(info);
+            // dbg!(info);
+            println!("This ofd has {} document(s).", info.doc_count);
+            print_stdout(info.doc_info.with_title())?;
         }
         Commands::Render {
             ofd_file,
@@ -63,7 +67,7 @@ fn main() -> Result<()> {
             page_index,
             template,
         } => {
-            let _ = ofd_utils::render_page(&ofd_file, &out_path, doc_index, page_index, template)?;
+            ofd_utils::render_page(&ofd_file, &out_path, doc_index, page_index, template)?;
         }
     }
 
