@@ -9,6 +9,7 @@
         "stbox",
         "tpls",
         "Unpremul",
+        "walkdir",
         "xywh"
     ],
     "crates.indexServerURL": "sparse+https://mirrors.ustc.edu.cn/crates.io-index/"
