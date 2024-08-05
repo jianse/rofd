@@ -37,6 +37,7 @@ use crate::element::common::CtColor;
 use crate::element::common::Join;
 use crate::element::file::document::CtPageArea;
 use crate::element::file::document::DocumentXmlFile;
+use crate::element::file::page::ImageObject;
 use crate::element::file::page::PageXmlFile;
 use crate::element::file::page::PathObject;
 use crate::element::file::page::TextObject;
@@ -581,14 +582,30 @@ fn draw_layer(
                     let _ = draw_path_object(canvas, path, resources, draw_param_stack);
                     draw_param_stack.pop(dp);
                 }
-                crate::element::file::page::CtPageBlock::ImageObject {} => {
+                crate::element::file::page::CtPageBlock::ImageObject(image) => {
+                    let dp_id = image.draw_param;
+                    let dp = get_draw_param_by_id(resources, dp_id);
+                    draw_param_stack.push(dp.clone());
                     // TODO: draw image
+                    let _ = draw_image_object(canvas, image, resources, draw_param_stack);
+                    draw_param_stack.pop(dp);
                 }
                 crate::element::file::page::CtPageBlock::CompositeObject {} => todo!(),
                 crate::element::file::page::CtPageBlock::PageBlock {} => todo!(),
             };
         }
     }
+}
+
+fn draw_image_object(
+    canvas: &Canvas,
+    image_object: &ImageObject,
+    resources: &Resources,
+    draw_param_stack: &DrawParamStack,
+) -> Result<()> {
+    resources.get_image_by_id(image_object.resource_id);
+    
+    todo!()
 }
 
 fn draw_text_object(

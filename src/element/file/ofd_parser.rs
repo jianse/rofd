@@ -43,7 +43,7 @@ mod tests {
 
     #[test]
     fn test_parse_file() -> Result<()> {
-        let reader = NsReader::from_file("sample/OFD.xml")?;
+        let reader = NsReader::from_file("samples/sample/OFD.xml")?;
         parse(reader)?;
         Ok(())
     }

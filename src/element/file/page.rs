@@ -45,10 +45,80 @@ pub struct Content {
 pub enum CtPageBlock {
     TextObject(TextObject),
     PathObject(PathObject),
-    ImageObject {},
+    ImageObject(ImageObject),
     CompositeObject {},
     PageBlock {},
 }
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct ImageObject {
+    #[serde(rename = "@ResourceID")]
+    pub resource_id: StRefId,
+
+    #[serde(rename = "@Substitution")]
+    pub substitution: Option<StRefId>,
+
+    #[serde(rename = "@ImageMask")]
+    pub image_mask: Option<StRefId>,
+
+    #[serde(rename = "Border")]
+    pub border: Option<Border>,
+
+    // region:common fields
+
+    // common fields on graphic unit
+    #[serde(rename = "@Boundary")]
+    pub boundary: StBox,
+    #[serde(rename = "@Name")]
+    pub name: Option<String>,
+    #[serde(rename = "@Visible")]
+    pub visible: Option<bool>,
+    #[serde(rename = "@CTM")]
+    pub ctm: Option<StArray<f32>>,
+    #[serde(rename = "@DrawParam")]
+    pub draw_param: Option<StRefId>,
+    #[serde(rename = "@LineWidth")]
+    pub line_width: Option<f32>,
+    #[serde(rename = "@Cap")]
+    pub cap: Option<String>,
+    #[serde(rename = "@Join")]
+    pub join: Option<String>,
+    #[serde(rename = "@MiterLimit")]
+    pub miter_limit: Option<f32>,
+    #[serde(rename = "@DashOffset")]
+    pub dash_offset: Option<f32>,
+    #[serde(rename = "@DashPattern")]
+    pub dash_pattern: Option<StArray<f32>>,
+    #[serde(rename = "@Alpha")]
+    pub alpha: Option<u8>,
+    #[serde(rename = "Actions")]
+    pub actions: Option<Actions>,
+    // endregion
+}
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Border {
+    /// default 0.353 mm
+    #[serde(rename = "@LineWidth")]
+    pub line_width: f32,
+
+    /// default 0
+    #[serde(rename = "@HorizontalCornerRadius")]
+    pub horizontal_corner_radius: Option<f32>,
+
+    /// default 0
+    #[serde(rename = "@VerticalCornerRadius")]
+    pub vertical_corner_radius: Option<f32>,
+
+    #[serde(rename = "@DashOffset")]
+    pub dash_offset: Option<f32>,
+
+    #[serde(rename = "@DashPattern")]
+    pub dash_pattern: Option<StArray<f32>>,
+
+    #[serde(rename = "BorderColor")]
+    pub border_color: Option<CtColor>,
+}
+
 #[serde_as]
 #[derive(Debug, Serialize, Deserialize)]
 pub struct TextObject {
@@ -194,7 +264,7 @@ pub struct TextCode {
     pub delta_x: Option<StArray<String>>,
     #[serde(rename = "@DeltaY")]
     pub delta_y: Option<StArray<String>>,
-    #[serde(rename = "$value")]
+    #[serde(rename = "$text")]
     pub val: String,
 }
 
@@ -218,7 +288,7 @@ mod tests {
 
     #[test]
     fn test_page_file() -> Result<()> {
-        let path = "sample/Doc_0/Pages/Page_0/Content.xml";
+        let path = "samples/sample/Doc_0/Pages/Page_0/Content.xml";
         let file = File::open(path)?;
         let reader = BufReader::new(file);
         let xml: PageXmlFile = quick_xml::de::from_reader(reader)?;
@@ -227,7 +297,7 @@ mod tests {
     }
     #[test]
     fn test_tpl_file() -> Result<()> {
-        let path = "sample/Doc_0/Tpls/Tpl_0/Content.xml";
+        let path = "samples/sample/Doc_0/Tpls/Tpl_0/Content.xml";
         let file = File::open(path)?;
         let reader = BufReader::new(file);
         let xml: PageXmlFile = quick_xml::de::from_reader(reader)?;

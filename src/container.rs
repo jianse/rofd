@@ -1,7 +1,9 @@
 use std::{fs::File, io::BufReader, path::PathBuf};
 
 use eyre::{Ok, OptionExt, Result};
+use pdf::content::Op;
 use relative_path::RelativePathBuf;
+use skia_safe::image;
 use zip::{read::ZipFile, ZipArchive};
 
 use crate::{
@@ -99,6 +101,9 @@ impl Resources {
             .flat_map(|f| f.fonts.iter())
             .find(|f| f.id == font_id);
         font.cloned()
+    }
+    pub fn get_image_by_id(&self, image_id: StRefId)-> Option<String> {
+        todo!()
     }
 }
 

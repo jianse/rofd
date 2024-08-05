@@ -70,7 +70,7 @@ mod tests {
 
     #[test]
     fn test_parse_ofd_xml() -> Result<()> {
-        let path = "sample/OFD.xml";
+        let path = "samples/sample/OFD.xml";
         let file = File::open(path)?;
         let reader = BufReader::new(file);
         let xml: OfdXmlFile = quick_xml::de::from_reader(reader)?;
