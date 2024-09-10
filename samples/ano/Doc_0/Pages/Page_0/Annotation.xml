@@ -1,2 +1,493 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ofd:PageAnnot xmlns:ofd="http://www.ofdspec.org/2016"><ofd:Annot Type="Stamp" Creator="OFD R&amp;W" LastModDate="2020-10-21" ID="13133"><ofd:Appearance Boundary="0 0 210 297"><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13135" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 0 0" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13136" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 0 50" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13137" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 0 100" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13138" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 0 150" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13139" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 0 200" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13140" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 0 250" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13141" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 0 300" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13142" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 0 350" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13143" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 0 400" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13144" CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 22.4 0" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13145" CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 22.4 50" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13146" CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 22.4 100" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13147" CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 22.4 150" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13148" CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 22.4 200" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13149" CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 22.4 250" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13150" CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 22.4 300" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13151" CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 22.4 350" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13152" CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 22.4 400" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13153" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 44.8 0" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13154" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 44.8 50" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13155" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 44.8 100" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13156" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 44.8 150" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13157" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 44.8 200" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13158" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 44.8 250" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13159" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 44.8 300" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13160" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 44.8 350" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13161" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 44.8 400" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13162" CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 67.19999999999999 0" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13163" CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 67.19999999999999 50" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13164" CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 67.19999999999999 100" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13165" CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 67.19999999999999 150" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13166" CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 67.19999999999999 200" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13167" CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 67.19999999999999 250" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13168" CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 67.19999999999999 300" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13169" CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 67.19999999999999 350" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13170" CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 67.19999999999999 400" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13171" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 89.6 0" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13172" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 89.6 50" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13173" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 89.6 100" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13174" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 89.6 150" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13175" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 89.6 200" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13176" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 89.6 250" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13177" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 89.6 300" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13178" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 89.6 350" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13179" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 89.6 400" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13180" CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 112 0" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13181" CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 112 50" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13182" CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 112 100" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13183" CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 112 150" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13184" CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 112 200" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13185" CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 112 250" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13186" CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 112 300" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13187" CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 112 350" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13188" CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 112 400" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13189" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 134.39999999999998 0" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13190" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 134.39999999999998 50" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13191" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 134.39999999999998 100" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13192" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 134.39999999999998 150" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13193" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 134.39999999999998 200" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13194" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 134.39999999999998 250" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13195" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 134.39999999999998 300" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13196" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 134.39999999999998 350" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13197" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 134.39999999999998 400" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13198" CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 156.79999999999998 0" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13199" CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 156.79999999999998 50" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13200" CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 156.79999999999998 100" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13201" CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 156.79999999999998 150" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13202" CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 156.79999999999998 200" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13203" CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 156.79999999999998 250" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13204" CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 156.79999999999998 300" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13205" CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 156.79999999999998 350" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13206" CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 156.79999999999998 400" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13207" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 179.2 0" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13208" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 179.2 50" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13209" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 179.2 100" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13210" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 179.2 150" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13211" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 179.2 200" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13212" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 179.2 250" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13213" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 179.2 300" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13214" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 179.2 350" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject><ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13215" CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 179.2 400" Alpha="51"><ofd:FillColor Value="170 160 165"/><ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode></ofd:TextObject></ofd:Appearance></ofd:Annot></ofd:PageAnnot>
+<ofd:PageAnnot xmlns:ofd="http://www.ofdspec.org/2016">
+    <ofd:Annot Type="Stamp" Creator="OFD R&amp;W" LastModDate="2020-10-21" ID="13133">
+        <ofd:Appearance Boundary="0 0 210 297">
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13135"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 0 0"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13136"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 0 50"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13137"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 0 100"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13138"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 0 150"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13139"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 0 200"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13140"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 0 250"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13141"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 0 300"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13142"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 0 350"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13143"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 0 400"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13144"
+                            CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 22.4 0"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13145"
+                            CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 22.4 50"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13146"
+                            CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 22.4 100"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13147"
+                            CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 22.4 150"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13148"
+                            CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 22.4 200"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13149"
+                            CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 22.4 250"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13150"
+                            CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 22.4 300"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13151"
+                            CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 22.4 350"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13152"
+                            CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 22.4 400"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13153"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 44.8 0"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13154"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 44.8 50"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13155"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 44.8 100"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13156"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 44.8 150"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13157"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 44.8 200"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13158"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 44.8 250"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13159"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 44.8 300"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13160"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 44.8 350"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13161"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 44.8 400"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13162"
+                            CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 67.19999999999999 0"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13163"
+                            CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 67.19999999999999 50"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13164"
+                            CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 67.19999999999999 100"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13165"
+                            CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 67.19999999999999 150"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13166"
+                            CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 67.19999999999999 200"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13167"
+                            CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 67.19999999999999 250"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13168"
+                            CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 67.19999999999999 300"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13169"
+                            CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 67.19999999999999 350"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13170"
+                            CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 67.19999999999999 400"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13171"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 89.6 0"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13172"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 89.6 50"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13173"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 89.6 100"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13174"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 89.6 150"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13175"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 89.6 200"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13176"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 89.6 250"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13177"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 89.6 300"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13178"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 89.6 350"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13179"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 89.6 400"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13180"
+                            CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 112 0"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13181"
+                            CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 112 50"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13182"
+                            CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 112 100"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13183"
+                            CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 112 150"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13184"
+                            CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 112 200"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13185"
+                            CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 112 250"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13186"
+                            CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 112 300"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13187"
+                            CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 112 350"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13188"
+                            CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 112 400"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13189"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 134.39999999999998 0"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13190"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 134.39999999999998 50"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13191"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 134.39999999999998 100"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13192"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 134.39999999999998 150"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13193"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 134.39999999999998 200"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13194"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 134.39999999999998 250"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13195"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 134.39999999999998 300"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13196"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 134.39999999999998 350"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13197"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 134.39999999999998 400"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13198"
+                            CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 156.79999999999998 0"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13199"
+                            CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 156.79999999999998 50"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13200"
+                            CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 156.79999999999998 100"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13201"
+                            CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 156.79999999999998 150"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13202"
+                            CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 156.79999999999998 200"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13203"
+                            CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 156.79999999999998 250"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13204"
+                            CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 156.79999999999998 300"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13205"
+                            CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 156.79999999999998 350"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13206"
+                            CTM="0.7071067811865476 -0.7071067811865475 0.7071067811865475 0.7071067811865476 156.79999999999998 400"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13207"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 179.2 0"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13208"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 179.2 50"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13209"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 179.2 100"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13210"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 179.2 150"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13211"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 179.2 200"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13212"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 179.2 250"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13213"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 179.2 300"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13214"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 179.2 350"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+            <ofd:TextObject Boundary="0 0 210 297" Font="13134" Size="8.0" ID="13215"
+                            CTM="0.7071067811865476 0.7071067811865475 -0.7071067811865475 0.7071067811865476 179.2 400"
+                            Alpha="51">
+                <ofd:FillColor Value="170 160 165"/>
+                <ofd:TextCode X="10" Y="10" DeltaX="8 8 8">保密资料</ofd:TextCode>
+            </ofd:TextObject>
+        </ofd:Appearance>
+    </ofd:Annot>
+</ofd:PageAnnot>
