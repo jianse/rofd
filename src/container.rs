@@ -1,9 +1,7 @@
 use std::{fs::File, io::BufReader, path::PathBuf};
 
 use eyre::{Ok, OptionExt, Result};
-use pdf::content::Op;
 use relative_path::RelativePathBuf;
-use skia_safe::image;
 use zip::{read::ZipFile, ZipArchive};
 
 use crate::{
@@ -102,7 +100,7 @@ impl Resources {
             .find(|f| f.id == font_id);
         font.cloned()
     }
-    pub fn get_image_by_id(&self, image_id: StRefId)-> Option<String> {
+    pub fn get_image_by_id(&self, _image_id: StRefId)-> Option<String> {
         todo!()
     }
 }
@@ -324,7 +322,7 @@ mod tests {
     use super::InnerFile;
 
     #[test]
-    fn test_reltive_path() {
+    fn test_relative_path() {
         let mut rp = RelativePathBuf::from("/a/value");
         rp.join("/foo/bar");
         rp = rp.normalize();

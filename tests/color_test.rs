@@ -15,20 +15,6 @@ mod tests {
         dbg!(c4f);
     }
 
-    #[derive(Debug, Deserialize)]
-    struct Text {
-        #[serde(rename = "$text")]
-        text: String,
-    }
-
-    #[test]
-    fn test_de() -> Result<()> {
-        let xml = r#"<Text> </Text>"#;
-        let txt: Text = quick_xml::de::from_str(xml)?;
-        dbg!(txt);
-        Ok(())
-    }
-
     #[test]
     fn test_de_from_reader() {
         let xml = r#"<Text> &lt;</Text>"#;

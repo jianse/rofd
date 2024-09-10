@@ -1,5 +1,866 @@
+// use relative_path::Display;
+
+use std::{
+    fmt::{Debug, Display},
+    fs::File,
+    io::{BufReader, Read},
+};
+use std::borrow::Cow;
+use std::ops::Range;
+use eyre::{eyre, Result};
+use ofd::OfdXmlFile;
+use quick_xml::{
+    events::{BytesStart, Event},
+    reader, Reader,
+};
+use quick_xml::events::attributes::{Attr, Attribute, Attributes};
+use serde::{
+    de::{Error, MapAccess},
+    Deserialize,
+};
+use serde::de::Visitor;
+
 pub mod document;
 pub mod ofd;
 mod ofd_parser;
 pub mod page;
 pub mod res;
+
+struct Deserializer<'de> {
+    reader: Reader<&'de [u8]>,
+    peek: Option<Event<'de>>,
+}
+
+impl<'de> Deserializer<'de> {
+    pub fn from_str(data: &'de str) -> Self {
+        let reader = Reader::from_str(data);
+        Self { reader, peek: None }
+    }
+
+    fn peek(&mut self) -> Result<&Event> {
+        let reader = &mut self.reader;
+        // let ev = reader.read_event();
+        if self.peek.is_none() {
+            self.peek = Some(reader.read_event()?);
+        }
+        match self.peek.as_ref() {
+            Some(e) => Ok(e),
+            None => unreachable!("peek() should not be None"),
+        }
+    }
+    /// peek the count of events
+    fn peeks(&mut self, count: usize) -> Result<Vec<&Event>> {
+        todo!();
+    }
+    /// consume specified count of events
+    fn consume(&mut self, count: usize) -> Result<()> {
+        todo!()
+    }
+
+    fn expect_element(&mut self, element_name: &'static str) -> Result<BytesStart<'de>> {
+        let reader = &mut self.reader;
+        // TODO: check if it is the right element
+        loop {
+            match reader.read_event().unwrap() {
+                Event::Start(e) => {
+                    let qname = e.name();
+                    let lname = qname.local_name();
+                    if element_name.as_bytes() == lname.as_ref() {
+                        // break;
+                        return Ok(e);
+                    } else {
+                        return Err(DeError::custom("unexpected element"))?;
+                    }
+                }
+                Event::Text(_e) => {
+                    // skip
+                }
+                Event::Eof => return Err(DeError::custom("unexpected eof"))?,
+                _ => (),
+            }
+        }
+        // let ev  = reader.read_event().map_err(|e|{DeError::custom(e.to_string())}).unwrap();
+    }
+}
+
+#[derive(Debug)]
+enum DeError {
+    Custom(String),
+}
+
+impl std::fmt::Display for DeError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        todo!()
+    }
+}
+
+impl std::error::Error for DeError {}
+
+impl serde::de::Error for DeError {
+    fn custom<T>(msg: T) -> Self
+    where
+        T: Display,
+    {
+        Self::Custom(msg.to_string())
+    }
+}
+
+impl<'de, 'a> serde::de::Deserializer<'de> for &'a mut Deserializer<'de> {
+    type Error = DeError;
+
+    fn deserialize_any<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_bool<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_i8<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_i16<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_i32<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_i64<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_u8<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_u16<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_u32<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_u64<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_f32<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_f64<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_char<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_str<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_string<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_bytes<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_byte_buf<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_option<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_unit<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_unit_struct<V>(
+        self,
+        name: &'static str,
+        visitor: V,
+    ) -> Result<V::Value, Self::Error>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_newtype_struct<V>(
+        self,
+        name: &'static str,
+        visitor: V,
+    ) -> Result<V::Value, Self::Error>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_seq<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_tuple<V>(self, len: usize, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_tuple_struct<V>(
+        self,
+        name: &'static str,
+        len: usize,
+        visitor: V,
+    ) -> Result<V::Value, Self::Error>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_map<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_struct<V>(
+        self,
+        name: &'static str,
+        fields: &'static [&'static str],
+        visitor: V,
+    ) -> Result<V::Value, Self::Error>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        let (name, fields) = dbg!(name, fields);
+        let ele = self.expect_element(name).unwrap();
+        visitor.visit_map(EMA::new(self, ele, fields))
+    }
+
+    fn deserialize_enum<V>(
+        self,
+        name: &'static str,
+        variants: &'static [&'static str],
+        visitor: V,
+    ) -> Result<V::Value, Self::Error>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_identifier<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_ignored_any<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: serde::de::Visitor<'de>,
+    {
+        todo!()
+    }
+}
+
+struct EMA<'de, 'd> {
+    de: &'d mut Deserializer<'de>,
+    ele: BytesStart<'de>,
+    // attributes: ,
+    fields: &'static [&'static str],
+    idx: usize,
+    value: Option<String>,
+}
+impl<'de, 'd> EMA<'de, 'd> {
+    fn new(
+        de: &'d mut Deserializer<'de>,
+        ele: BytesStart<'de>,
+        // attributes: Attributes,
+        fields: &'static [&'static str],
+    ) -> Self {
+        Self { de, ele, fields, idx: 0, value: None }
+    }
+}
+
+
+impl<'de, 'd> MapAccess<'de> for EMA<'de, 'd> {
+    type Error = DeError;
+
+    fn next_key_seed<K>(&mut self, seed: K) -> std::result::Result<Option<K::Value>, Self::Error>
+    where
+        K: serde::de::DeserializeSeed<'de>,
+    {
+        let mut attrs = self.ele.attributes();
+        // attrs.skip(self.idx);
+        let res = if let Some(Ok(attr)) = attrs.skip(self.idx).next() {
+            let key = String::from_utf8_lossy(attr.key.local_name().as_ref()).into_owned();
+            let value = String::from_utf8_lossy(attr.value.as_ref()).into_owned();
+            self.value = Some(value);
+            seed.deserialize(KeyDer::new(key)).map(Some)
+        } else {
+            // peeks 2 elements to identify spaces between two start element event
+            // for ev in self.de.peeks(2).unwrap(){
+            //     
+            // }
+            match self.de.peek().unwrap() {
+                Event::Start(e) => {
+                    dbg!(e);
+                    todo!()
+                }
+                Event::Text(txt) => {
+                    //skip
+                    dbg!(txt);
+                    Ok(None)
+                }
+                Event::End(e) => {
+                    debug_assert_eq!(self.ele.name(), e.name());
+                    Ok(None)
+                }
+                _ => todo!()
+            }
+        };
+        self.idx += 1;
+        res
+    }
+
+    fn next_value_seed<V>(&mut self, seed: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: serde::de::DeserializeSeed<'de>,
+    {
+        if let Some(value) = self.value.take() {
+            // let val = String::from_utf8_lossy(&value).to_string();
+            let de = ValueDer::new(value);
+            seed.deserialize(de)
+        } else {
+            Err(DeError::custom("no value"))
+        }
+    }
+}
+
+
+struct KeyDer {
+    key: String,
+}
+
+impl KeyDer {
+    fn new(key_der: String) -> Self {
+        KeyDer {
+            key: format!("@{}", key_der),
+        }
+    }
+}
+
+impl<'de> serde::Deserializer<'de> for KeyDer {
+    type Error = DeError;
+
+    fn deserialize_any<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_bool<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_i8<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_i16<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_i32<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_i64<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_u8<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_u16<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_u32<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_u64<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_f32<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_f64<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_char<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_str<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        visitor.visit_str(&self.key)
+    }
+
+    fn deserialize_string<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_bytes<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_byte_buf<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_option<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_unit<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_unit_struct<V>(self, name: &'static str, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_newtype_struct<V>(self, name: &'static str, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_seq<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_tuple<V>(self, len: usize, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_tuple_struct<V>(self, name: &'static str, len: usize, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_map<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_struct<V>(self, name: &'static str, fields: &'static [&'static str], visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_enum<V>(self, name: &'static str, variants: &'static [&'static str], visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_identifier<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        self.deserialize_str(visitor)
+    }
+
+    fn deserialize_ignored_any<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+}
+
+
+struct ValueDer {
+    val: String,
+}
+impl ValueDer {
+    fn new(val: String) -> Self {
+        Self { val }
+    }
+}
+
+impl<'de> serde::de::Deserializer<'de> for ValueDer {
+    type Error = DeError;
+
+    fn deserialize_any<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_bool<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_i8<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_i16<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_i32<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_i64<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_u8<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_u16<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_u32<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_u64<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_f32<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_f64<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_char<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_str<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        // todo!()
+        visitor.visit_str(&self.val)
+    }
+
+    fn deserialize_string<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        // todo!()
+        visitor.visit_string(self.val.clone())
+    }
+
+    fn deserialize_bytes<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_byte_buf<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_option<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_unit<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_unit_struct<V>(self, name: &'static str, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_newtype_struct<V>(self, name: &'static str, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_seq<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_tuple<V>(self, len: usize, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_tuple_struct<V>(self, name: &'static str, len: usize, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_map<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_struct<V>(self, name: &'static str, fields: &'static [&'static str], visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_enum<V>(self, name: &'static str, variants: &'static [&'static str], visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_identifier<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn deserialize_ignored_any<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        visitor.visit_unit()
+    }
+}
+
+#[test]
+fn test() -> Result<()> {
+    let file = File::open("samples/ano/OFD.xml")?;
+    let mut s = BufReader::new(file);
+    let mut buf = String::new();
+    let len = s.read_to_string(&mut buf)?;
+    dbg!(len);
+    // let bytes = file.read_to_string(buf);
+    let mut de = Deserializer::from_str(buf.as_str());
+
+    let res = OfdXmlFile::deserialize(&mut de);
+    let _ = dbg!(res);
+    Ok(())
+}
