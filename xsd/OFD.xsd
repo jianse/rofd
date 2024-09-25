@@ -3,7 +3,7 @@
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
            targetNamespace="http://www.ofdspec.org/2016" elementFormDefault="qualified"
            attributeFormDefault="unqualified">
-  <xs:include schemaLocation="Definition.xsd"/>
+  <xs:include schemaLocation="Definitions.xsd"/>
   <!--主入口定义 -->
   <xs:element name="OFD">
     <xs:complexType>

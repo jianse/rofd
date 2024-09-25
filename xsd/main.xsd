@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns="http://www.ofdspec.org/2016"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://www.ofdspec.org/2016"
+           elementFormDefault="qualified"
+           attributeFormDefault="unqualified"
+>
+  <xs:include schemaLocation="Definitions.xsd"/>
+  <xs:include schemaLocation="Annotation.xsd"/>
+  <xs:include schemaLocation="Annotations.xsd"/>
+  <xs:include schemaLocation="Attachments.xsd"/>
+  <xs:include schemaLocation="CustomTags.xsd"/>
+  <xs:include schemaLocation="Document.xsd"/>
+  <xs:include schemaLocation="Extensions.xsd"/>
+  <xs:include schemaLocation="OFD.xsd"/>
+  <xs:include schemaLocation="Page.xsd"/>
+  <xs:include schemaLocation="Res.xsd"/>
+  <xs:include schemaLocation="Signature.xsd"/>
+  <xs:include schemaLocation="Signatures.xsd"/>
+  <xs:include schemaLocation="Version.xsd"/>
+</xs:schema>
