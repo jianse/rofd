@@ -23,9 +23,11 @@ pub struct DocBody {
     #[serde(rename = "DocRoot")]
     pub doc_root: Option<StLoc>,
 
-    // this prop type is unsure
+    /// this prop type is unsure
+    /// **see xsd** 
     #[serde(rename = "Versions")]
     pub versions: Option<String>,
+    
     #[serde(rename = "Signatures")]
     pub signatures: Option<StLoc>,
 }

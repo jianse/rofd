@@ -33,7 +33,7 @@
           </xs:complexType>
         </xs:element>
       </xs:sequence>
-      <xs:attribute name="Version" type="xs:string" use="required"/>
+      <xs:attribute name="Version" type="xs:string" use="required" fixed="1.0"/>
       <xs:attribute name="DocType" use="required" fixed="OFD">
         <xs:simpleType>
           <xs:restriction base="xs:string">

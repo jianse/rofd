@@ -25,4 +25,8 @@ zip = "2.2.0"
 
 
 [workspace]
+
+[dev-dependencies]
+minidom = "0.16.0"
+thiserror = "1.0.64"
 # members = ["help-macro"]
