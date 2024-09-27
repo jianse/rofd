@@ -3,6 +3,7 @@ use thiserror::Error;
 
 mod doc;
 mod ofd;
+mod page;
 mod res;
 
 pub trait TryFromDom<T>: Sized {
