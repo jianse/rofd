@@ -27,18 +27,18 @@ fn fmt_doc_id(doc_id: &Option<String>) -> String {
         None => "".to_string(),
     }
 }
-#[derive(Debug, Default,Table)]
+#[derive(Debug, Default, Table)]
 pub struct DocInfo {
     /// doc id
-    #[table(title="doc_id",display_fn="fmt_doc_id")]
+    #[table(title = "doc_id", display_fn = "fmt_doc_id")]
     pub doc_id: Option<String>,
 
     /// how many page this doc have
-    #[table(title="page_count")]
+    #[table(title = "page_count")]
     pub page_count: usize,
 
     /// how many template page this doc have
-    #[table(title="template_count")]
+    #[table(title = "template_count")]
     pub template_count: usize,
 }
 

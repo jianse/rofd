@@ -1,8 +1,4 @@
-use std::{
-    fs::File,
-    io::BufReader,
-    path::Path,
-};
+use std::{fs::File, io::BufReader, path::Path};
 
 use eyre::Result;
 use quick_xml::{events::Event, Reader};
@@ -19,7 +15,7 @@ fn test_read_from_file() {
     let mut last_ev = None;
     loop {
         let ev = reader.read_event_into(&mut buf);
-        
+
         match ev.as_ref() {
             Ok(Event::Start(e)) => {
                 start_ele = true;

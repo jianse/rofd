@@ -19,14 +19,14 @@ serde_with = "3.9.0"
 skia-safe = "0.78.0"
 thiserror = "1.0.64"
 walkdir = "2.5.0"
-xml_dom = "0.2.8"
 zip = "2.2.0"
-# help-macro = { path = "./help-macro" }
-
+minidom = "0.16.0"
+strum = { version = "0.26.3", features = ["derive"] }
+#strum_macros = "0.26.4"
 
 [workspace]
+# members = ["help-macro"]
+
 
 [dev-dependencies]
-minidom = "0.16.0"
-thiserror = "1.0.64"
-# members = ["help-macro"]
+xml_dom = "0.2.8"

@@ -24,7 +24,7 @@ pub struct DocumentXmlFile {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CommonData {
     #[serde(rename = "MaxUnitID")]
-    max_unit_id: StId,
+    pub max_unit_id: StId,
 
     #[serde(rename = "PageArea")]
     pub page_area: CtPageArea,
@@ -49,10 +49,10 @@ pub struct TemplatePage {
     pub id: StId,
 
     #[serde(rename = "@Name")]
-    name: Option<String>,
+    pub name: Option<String>,
 
     #[serde(rename = "@ZOrder")]
-    z_order: Option<String>,
+    pub z_order: Option<String>,
 
     #[serde(rename = "@BaseLoc")]
     pub base_loc: StLoc,
@@ -67,7 +67,7 @@ pub struct Pages {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Page {
     #[serde(rename = "@ID")]
-    id: StId,
+    pub id: StId,
     #[serde(rename = "@BaseLoc")]
     pub base_loc: StLoc,
 }

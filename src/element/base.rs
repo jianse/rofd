@@ -6,6 +6,7 @@ use serde::{
     Deserialize, Serialize,
 };
 use serde_with::serde_as;
+use thiserror::Error;
 
 pub type StLoc = PathBuf;
 
@@ -61,6 +62,35 @@ pub struct StBox {
     pub y: f32,
     pub w: f32,
     pub h: f32,
+}
+
+#[derive(Error, Debug)]
+pub enum ParseStBoxError {
+    #[error("Element parts must be 4")]
+    ElementFormat,
+}
+impl FromStr for StBox {
+    type Err = ParseStBoxError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let s = s.trim();
+        let parts = s.split(' ').collect::<Vec<&str>>();
+        if parts.len() != 4 {
+            return Err(ParseStBoxError::ElementFormat);
+        }
+        let res = parts
+            .iter()
+            .map(|s| f32::from_str(s))
+            .collect::<Result<Vec<_>, _>>()
+            .map_err(|_| ParseStBoxError::ElementFormat)?;
+        Ok(StBox::new(res[0], res[1], res[2], res[3]))
+    }
+}
+
+impl Display for StBox {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{} {} {} {}", self.x, self.y, self.w, self.h)
+    }
 }
 
 impl StBox {

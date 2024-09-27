@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use strum::EnumString;
 
 use crate::element::{
     base::{StArray, StId, StLoc, StRefId},
@@ -34,7 +35,7 @@ pub struct ColorSpaces {
     pub color_spaces: Vec<ColorSpace>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, EnumString)]
 #[allow(clippy::upper_case_acronyms)]
 pub enum Type {
     RGB,

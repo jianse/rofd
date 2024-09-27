@@ -1,7 +1,7 @@
 use xml_dom::{level2::convert::as_document, parser::read_xml};
 
 #[test]
-fn test(){
+fn test() {
     // THIS IS NOT WE EXPECTED
     // trailing space has been trimmed
     let xml = r#"<root>1 </root>"#;

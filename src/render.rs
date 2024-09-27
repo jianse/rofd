@@ -598,13 +598,13 @@ fn draw_layer(
 }
 
 fn draw_image_object(
-    canvas: &Canvas,
+    _canvas: &Canvas,
     image_object: &ImageObject,
     resources: &Resources,
-    draw_param_stack: &DrawParamStack,
+    _draw_param_stack: &DrawParamStack,
 ) -> Result<()> {
     resources.get_image_by_id(image_object.resource_id);
-    
+
     todo!()
 }
 

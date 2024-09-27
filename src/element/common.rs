@@ -1,14 +1,15 @@
 use super::base::{StArray, StBox, StLoc, StRefId};
 use serde::{Deserialize, Serialize};
+use strum::EnumString;
 
-#[derive(Debug, Deserialize, Serialize, Clone, Copy)]
+#[derive(Debug, Deserialize, Serialize, Clone, Copy, EnumString)]
 pub enum Join {
     Miter,
     Round,
     Bevel,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, Copy)]
+#[derive(Debug, Deserialize, Serialize, Clone, Copy, EnumString)]
 pub enum Cap {
     Butt,
     Round,

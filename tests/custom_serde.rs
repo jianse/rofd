@@ -1,11 +1,11 @@
+use eyre::Result;
+use quick_xml::events::{BytesStart, Event};
+use quick_xml::Reader;
+use serde::de::{Error, MapAccess, Visitor};
+use serde::Deserialize;
 use std::fmt::Display;
 use std::fs::File;
 use std::io::{BufReader, Read};
-use quick_xml::events::{BytesStart, Event};
-use quick_xml::Reader;
-use eyre::Result;
-use serde::de::{Error, MapAccess, Visitor};
-use serde::Deserialize;
 
 struct Deserializer<'de> {
     reader: Reader<&'de [u8]>,
@@ -342,7 +342,13 @@ impl<'de, 'd> EMA<'de, 'd> {
         // attributes: Attributes,
         fields: &'static [&'static str],
     ) -> Self {
-        Self { de, ele, fields, idx: 0, value: ValueSource::Unknown }
+        Self {
+            de,
+            ele,
+            fields,
+            idx: 0,
+            value: ValueSource::Unknown,
+        }
     }
 }
 
@@ -380,7 +386,7 @@ impl<'de, 'd> MapAccess<'de> for EMA<'de, 'd> {
                     self.value = ValueSource::Nested;
                     seed.deserialize(KeyDer::new_ele(key)).map(Some)
                 }
-                _ => todo!()
+                _ => todo!(),
             }
         };
         self.idx += 1;
@@ -391,11 +397,8 @@ impl<'de, 'd> MapAccess<'de> for EMA<'de, 'd> {
     where
         V: serde::de::DeserializeSeed<'de>,
     {
-        match std::mem::replace(&mut self.value,ValueSource::Unknown) {
-            ValueSource::Nested => {
-                
-                seed.deserialize(MapValueDeserializer{map:self})
-            }
+        match std::mem::replace(&mut self.value, ValueSource::Unknown) {
+            ValueSource::Nested => seed.deserialize(MapValueDeserializer { map: self }),
             ValueSource::Attribute(attr) => {
                 let de = ValueDer::new(attr);
                 seed.deserialize(de)
@@ -407,19 +410,18 @@ impl<'de, 'd> MapAccess<'de> for EMA<'de, 'd> {
     }
 }
 
-
 struct KeyDer {
     key: String,
 }
 
 impl KeyDer {
     fn new_ele(key_der: String) -> Self {
-        KeyDer {
-            key: key_der
-        }
+        KeyDer { key: key_der }
     }
     fn new_attr(key: String) -> Self {
-        KeyDer { key: format!("@{}", key) }
+        KeyDer {
+            key: format!("@{}", key),
+        }
     }
 }
 
@@ -559,14 +561,22 @@ impl<'de> serde::Deserializer<'de> for KeyDer {
         todo!()
     }
 
-    fn deserialize_unit_struct<V>(self, name: &'static str, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    fn deserialize_unit_struct<V>(
+        self,
+        name: &'static str,
+        visitor: V,
+    ) -> std::result::Result<V::Value, Self::Error>
     where
         V: Visitor<'de>,
     {
         todo!()
     }
 
-    fn deserialize_newtype_struct<V>(self, name: &'static str, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    fn deserialize_newtype_struct<V>(
+        self,
+        name: &'static str,
+        visitor: V,
+    ) -> std::result::Result<V::Value, Self::Error>
     where
         V: Visitor<'de>,
     {
@@ -580,14 +590,23 @@ impl<'de> serde::Deserializer<'de> for KeyDer {
         todo!()
     }
 
-    fn deserialize_tuple<V>(self, len: usize, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    fn deserialize_tuple<V>(
+        self,
+        len: usize,
+        visitor: V,
+    ) -> std::result::Result<V::Value, Self::Error>
     where
         V: Visitor<'de>,
     {
         todo!()
     }
 
-    fn deserialize_tuple_struct<V>(self, name: &'static str, len: usize, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    fn deserialize_tuple_struct<V>(
+        self,
+        name: &'static str,
+        len: usize,
+        visitor: V,
+    ) -> std::result::Result<V::Value, Self::Error>
     where
         V: Visitor<'de>,
     {
@@ -601,14 +620,24 @@ impl<'de> serde::Deserializer<'de> for KeyDer {
         todo!()
     }
 
-    fn deserialize_struct<V>(self, name: &'static str, fields: &'static [&'static str], visitor: V) -> std::result::Result<V::Value, Self::Error>
+    fn deserialize_struct<V>(
+        self,
+        name: &'static str,
+        fields: &'static [&'static str],
+        visitor: V,
+    ) -> std::result::Result<V::Value, Self::Error>
     where
         V: Visitor<'de>,
     {
         todo!()
     }
 
-    fn deserialize_enum<V>(self, name: &'static str, variants: &'static [&'static str], visitor: V) -> std::result::Result<V::Value, Self::Error>
+    fn deserialize_enum<V>(
+        self,
+        name: &'static str,
+        variants: &'static [&'static str],
+        visitor: V,
+    ) -> std::result::Result<V::Value, Self::Error>
     where
         V: Visitor<'de>,
     {
@@ -629,7 +658,6 @@ impl<'de> serde::Deserializer<'de> for KeyDer {
         todo!()
     }
 }
-
 
 struct ValueDer {
     val: String,
@@ -778,14 +806,22 @@ impl<'de> serde::de::Deserializer<'de> for ValueDer {
         todo!()
     }
 
-    fn deserialize_unit_struct<V>(self, name: &'static str, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    fn deserialize_unit_struct<V>(
+        self,
+        name: &'static str,
+        visitor: V,
+    ) -> std::result::Result<V::Value, Self::Error>
     where
         V: Visitor<'de>,
     {
         todo!()
     }
 
-    fn deserialize_newtype_struct<V>(self, name: &'static str, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    fn deserialize_newtype_struct<V>(
+        self,
+        name: &'static str,
+        visitor: V,
+    ) -> std::result::Result<V::Value, Self::Error>
     where
         V: Visitor<'de>,
     {
@@ -799,14 +835,23 @@ impl<'de> serde::de::Deserializer<'de> for ValueDer {
         todo!()
     }
 
-    fn deserialize_tuple<V>(self, len: usize, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    fn deserialize_tuple<V>(
+        self,
+        len: usize,
+        visitor: V,
+    ) -> std::result::Result<V::Value, Self::Error>
     where
         V: Visitor<'de>,
     {
         todo!()
     }
 
-    fn deserialize_tuple_struct<V>(self, name: &'static str, len: usize, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    fn deserialize_tuple_struct<V>(
+        self,
+        name: &'static str,
+        len: usize,
+        visitor: V,
+    ) -> std::result::Result<V::Value, Self::Error>
     where
         V: Visitor<'de>,
     {
@@ -820,14 +865,24 @@ impl<'de> serde::de::Deserializer<'de> for ValueDer {
         todo!()
     }
 
-    fn deserialize_struct<V>(self, name: &'static str, fields: &'static [&'static str], visitor: V) -> std::result::Result<V::Value, Self::Error>
+    fn deserialize_struct<V>(
+        self,
+        name: &'static str,
+        fields: &'static [&'static str],
+        visitor: V,
+    ) -> std::result::Result<V::Value, Self::Error>
     where
         V: Visitor<'de>,
     {
         todo!()
     }
 
-    fn deserialize_enum<V>(self, name: &'static str, variants: &'static [&'static str], visitor: V) -> std::result::Result<V::Value, Self::Error>
+    fn deserialize_enum<V>(
+        self,
+        name: &'static str,
+        variants: &'static [&'static str],
+        visitor: V,
+    ) -> std::result::Result<V::Value, Self::Error>
     where
         V: Visitor<'de>,
     {
@@ -849,212 +904,239 @@ impl<'de> serde::de::Deserializer<'de> for ValueDer {
     }
 }
 
-struct MapValueDeserializer<'m,'de,'d> {
-    map: &'m mut EMA<'de,'d>
+struct MapValueDeserializer<'m, 'de, 'd> {
+    map: &'m mut EMA<'de, 'd>,
 }
 
-impl<'m,'de,'d>   serde::de::Deserializer<'de> for MapValueDeserializer<'m,'de,'d> {
+impl<'m, 'de, 'd> serde::de::Deserializer<'de> for MapValueDeserializer<'m, 'de, 'd> {
     type Error = DeError;
 
     fn deserialize_any<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
     where
-        V: Visitor<'de>
+        V: Visitor<'de>,
     {
         todo!()
     }
 
     fn deserialize_bool<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
     where
-        V: Visitor<'de>
+        V: Visitor<'de>,
     {
         todo!()
     }
 
     fn deserialize_i8<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
     where
-        V: Visitor<'de>
+        V: Visitor<'de>,
     {
         todo!()
     }
 
     fn deserialize_i16<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
     where
-        V: Visitor<'de>
+        V: Visitor<'de>,
     {
         todo!()
     }
 
     fn deserialize_i32<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
     where
-        V: Visitor<'de>
+        V: Visitor<'de>,
     {
         todo!()
     }
 
     fn deserialize_i64<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
     where
-        V: Visitor<'de>
+        V: Visitor<'de>,
     {
         todo!()
     }
 
     fn deserialize_u8<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
     where
-        V: Visitor<'de>
+        V: Visitor<'de>,
     {
         todo!()
     }
 
     fn deserialize_u16<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
     where
-        V: Visitor<'de>
+        V: Visitor<'de>,
     {
         todo!()
     }
 
     fn deserialize_u32<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
     where
-        V: Visitor<'de>
+        V: Visitor<'de>,
     {
         todo!()
     }
 
     fn deserialize_u64<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
     where
-        V: Visitor<'de>
+        V: Visitor<'de>,
     {
         todo!()
     }
 
     fn deserialize_f32<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
     where
-        V: Visitor<'de>
+        V: Visitor<'de>,
     {
         todo!()
     }
 
     fn deserialize_f64<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
     where
-        V: Visitor<'de>
+        V: Visitor<'de>,
     {
         todo!()
     }
 
     fn deserialize_char<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
     where
-        V: Visitor<'de>
+        V: Visitor<'de>,
     {
         todo!()
     }
 
     fn deserialize_str<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
     where
-        V: Visitor<'de>
+        V: Visitor<'de>,
     {
         todo!()
     }
 
     fn deserialize_string<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
     where
-        V: Visitor<'de>
+        V: Visitor<'de>,
     {
         todo!()
     }
 
     fn deserialize_bytes<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
     where
-        V: Visitor<'de>
+        V: Visitor<'de>,
     {
         todo!()
     }
 
     fn deserialize_byte_buf<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
     where
-        V: Visitor<'de>
+        V: Visitor<'de>,
     {
         todo!()
     }
 
     fn deserialize_option<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
     where
-        V: Visitor<'de>
+        V: Visitor<'de>,
     {
         todo!()
     }
 
     fn deserialize_unit<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
     where
-        V: Visitor<'de>
+        V: Visitor<'de>,
     {
         todo!()
     }
 
-    fn deserialize_unit_struct<V>(self, name: &'static str, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    fn deserialize_unit_struct<V>(
+        self,
+        name: &'static str,
+        visitor: V,
+    ) -> std::result::Result<V::Value, Self::Error>
     where
-        V: Visitor<'de>
+        V: Visitor<'de>,
     {
         todo!()
     }
 
-    fn deserialize_newtype_struct<V>(self, name: &'static str, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    fn deserialize_newtype_struct<V>(
+        self,
+        name: &'static str,
+        visitor: V,
+    ) -> std::result::Result<V::Value, Self::Error>
     where
-        V: Visitor<'de>
+        V: Visitor<'de>,
     {
         todo!()
     }
 
     fn deserialize_seq<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
     where
-        V: Visitor<'de>
+        V: Visitor<'de>,
     {
         todo!()
     }
 
-    fn deserialize_tuple<V>(self, len: usize, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    fn deserialize_tuple<V>(
+        self,
+        len: usize,
+        visitor: V,
+    ) -> std::result::Result<V::Value, Self::Error>
     where
-        V: Visitor<'de>
+        V: Visitor<'de>,
     {
         todo!()
     }
 
-    fn deserialize_tuple_struct<V>(self, name: &'static str, len: usize, visitor: V) -> std::result::Result<V::Value, Self::Error>
+    fn deserialize_tuple_struct<V>(
+        self,
+        name: &'static str,
+        len: usize,
+        visitor: V,
+    ) -> std::result::Result<V::Value, Self::Error>
     where
-        V: Visitor<'de>
+        V: Visitor<'de>,
     {
         todo!()
     }
 
     fn deserialize_map<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
     where
-        V: Visitor<'de>
+        V: Visitor<'de>,
     {
         todo!()
     }
 
-    fn deserialize_struct<V>(self, name: &'static str, fields: &'static [&'static str], visitor: V) -> std::result::Result<V::Value, Self::Error>
+    fn deserialize_struct<V>(
+        self,
+        name: &'static str,
+        fields: &'static [&'static str],
+        visitor: V,
+    ) -> std::result::Result<V::Value, Self::Error>
     where
-        V: Visitor<'de>
+        V: Visitor<'de>,
     {
         todo!()
     }
 
-    fn deserialize_enum<V>(self, name: &'static str, variants: &'static [&'static str], visitor: V) -> std::result::Result<V::Value, Self::Error>
+    fn deserialize_enum<V>(
+        self,
+        name: &'static str,
+        variants: &'static [&'static str],
+        visitor: V,
+    ) -> std::result::Result<V::Value, Self::Error>
     where
-        V: Visitor<'de>
+        V: Visitor<'de>,
     {
         todo!()
     }
 
     fn deserialize_identifier<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
     where
-        V: Visitor<'de>
+        V: Visitor<'de>,
     {
         todo!()
     }
 
     fn deserialize_ignored_any<V>(self, visitor: V) -> std::result::Result<V::Value, Self::Error>
     where
-        V: Visitor<'de>
+        V: Visitor<'de>,
     {
         todo!()
     }
@@ -1064,8 +1146,6 @@ use rofd::element::file::ofd::OfdXmlFile;
 
 #[test]
 fn test() -> Result<()> {
-    
-    
     let file = File::open("samples/ano/OFD.xml")?;
     let mut s = BufReader::new(file);
     let mut buf = String::new();

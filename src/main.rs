@@ -6,7 +6,6 @@ mod render;
 // mod qxml;
 use std::path::PathBuf;
 
-
 use clap::{command, Parser, Subcommand};
 use cli_table::{print_stdout, WithTitle};
 use eyre::Result;
@@ -14,7 +13,6 @@ use eyre::Result;
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
 struct Cli {
-
     /// Turn debugging information on
     #[arg(short, long, action = clap::ArgAction::Count)]
     debug: u8,
