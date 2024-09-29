@@ -6,7 +6,10 @@ use crate::dom::{
 use crate::element::base::{StArray, StBox, StId, StLoc, StRefId};
 use crate::element::common::{Actions, Cap, CtColor, Join};
 use crate::element::file::document::CtPageArea;
-use crate::element::file::page::{Content, CtPageBlock, ImageObject, Layer, PageXmlFile, PathObject, Template, TextCode, TextObject};
+use crate::element::file::page::{
+    Content, CtPageBlock, ImageObject, Layer, PageXmlFile, PathObject, Template, TextCode,
+    TextObject,
+};
 use minidom::Element;
 use std::str::FromStr;
 
@@ -100,9 +103,9 @@ impl TryFromDom<&Element> for CtPageBlock {
                 let weight = parse_optional_from_attr(dom, "Weight", u32::from_str)?;
                 let italic = parse_optional_from_attr(dom, "Italic", bool::from_str)?;
                 let fill_color = parse_optional_from_ele(dom, "FillColor", CtColor::try_from_dom)?;
-                let stroke_color = parse_optional_from_ele(dom, "StrokeColor", CtColor::try_from_dom)?;
-                let text_codes =
-                    parse_required_vec(dom, Some("TextCode"), TextCode::try_from_dom)?;
+                let stroke_color =
+                    parse_optional_from_ele(dom, "StrokeColor", CtColor::try_from_dom)?;
+                let text_codes = parse_required_vec(dom, Some("TextCode"), TextCode::try_from_dom)?;
                 let mut to = TextObject {
                     font,
                     size,

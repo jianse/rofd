@@ -134,7 +134,7 @@ pub struct TextObject {
     #[serde(rename = "@Fill")]
     pub fill: Option<bool>,
 
-    #[serde(rename= "@HScale")]
+    #[serde(rename = "@HScale")]
     pub h_scale: Option<f32>,
 
     #[serde(rename = "@ReadDirection")]

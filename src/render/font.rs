@@ -151,12 +151,12 @@ mod tests {
         let font_mgr = skia_safe::FontMgr::new();
         let sys_kai = font_mgr.match_family_style("楷体", skia_safe::FontStyle::default());
         // assert!(sys_kai.is_some());
-        if !sys_kai.is_some(){
+        if !sys_kai.is_some() {
             log::warn!("we are runing on system that not have some default fonts");
             return;
         }
         let sys_kai = sys_kai.unwrap();
-        if !std::fs::exists("simkai.ttf").unwrap(){
+        if !std::fs::exists("simkai.ttf").unwrap() {
             log::warn!("font [simkai.ttf] not found]");
             return;
         }
