@@ -62,6 +62,8 @@ mod test_skia {
     #[cfg(target_os = "linux")]
     #[ignore = "not yet implemented"]
     fn test_text() -> Result<()> {
+        use skia_safe::{Font, Point, TextBlob};
+
         let ii = ImageInfo::new_s32((300, 300), skia_safe::AlphaType::Unpremul);
         let mut surface = skia_safe::surfaces::raster(&ii, None, None).ok_or_eyre("message")?;
         let canvas = surface.canvas();

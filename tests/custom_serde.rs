@@ -7,11 +7,13 @@ use std::fmt::Display;
 use std::fs::File;
 use std::io::{BufReader, Read};
 
+#[allow(unused_variables,dead_code)]
 struct Deserializer<'de> {
     reader: Reader<&'de [u8]>,
     peek: Option<Event<'de>>,
 }
 
+#[allow(unused_variables,dead_code)]
 impl<'de> Deserializer<'de> {
     pub fn from_str(data: &'de str) -> Self {
         let reader = Reader::from_str(data);
@@ -73,11 +75,13 @@ impl<'de> Deserializer<'de> {
     }
 }
 
+#[allow(unused_variables,dead_code)]
 #[derive(Debug)]
 enum DeError {
     Custom(String),
 }
 
+#[allow(unused_variables,dead_code)]
 impl std::fmt::Display for DeError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         todo!()
@@ -95,6 +99,7 @@ impl serde::de::Error for DeError {
     }
 }
 
+#[allow(unused_variables,dead_code)]
 impl<'de, 'a> serde::de::Deserializer<'de> for &'a mut Deserializer<'de> {
     type Error = DeError;
 
@@ -327,6 +332,7 @@ impl<'de, 'a> serde::de::Deserializer<'de> for &'a mut Deserializer<'de> {
     }
 }
 
+#[allow(unused_variables,dead_code)]
 struct EMA<'de, 'd> {
     de: &'d mut Deserializer<'de>,
     ele: BytesStart<'de>,
@@ -359,6 +365,7 @@ enum ValueSource {
     Nested,
 }
 
+#[allow(unused_variables,dead_code)]
 impl<'de, 'd> MapAccess<'de> for EMA<'de, 'd> {
     type Error = DeError;
 
@@ -414,6 +421,7 @@ struct KeyDer {
     key: String,
 }
 
+#[allow(unused_variables,dead_code)]
 impl KeyDer {
     fn new_ele(key_der: String) -> Self {
         KeyDer { key: key_der }
@@ -425,6 +433,7 @@ impl KeyDer {
     }
 }
 
+#[allow(unused_variables,dead_code)]
 impl<'de> serde::Deserializer<'de> for KeyDer {
     type Error = DeError;
 
@@ -668,6 +677,7 @@ impl ValueDer {
     }
 }
 
+#[allow(unused_variables,dead_code)]
 impl<'de> serde::de::Deserializer<'de> for ValueDer {
     type Error = DeError;
 
@@ -904,10 +914,13 @@ impl<'de> serde::de::Deserializer<'de> for ValueDer {
     }
 }
 
+#[allow(unused_variables,dead_code)]
 struct MapValueDeserializer<'m, 'de, 'd> {
     map: &'m mut EMA<'de, 'd>,
 }
 
+
+#[allow(unused_variables,dead_code)]
 impl<'m, 'de, 'd> serde::de::Deserializer<'de> for MapValueDeserializer<'m, 'de, 'd> {
     type Error = DeError;
 

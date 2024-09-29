@@ -23,7 +23,7 @@ fn test() -> Result<()> {
 
 #[test]
 fn test_try_from_dom_ofd() -> Result<()> {
-    let file = File::open("samples/sample/ofd.xml")?;
+    let file = File::open("samples/sample/OFD.xml")?;
     let mut reader = BufReader::new(file);
     let mut data = String::new();
     let _ = reader.read_to_string(&mut data);
