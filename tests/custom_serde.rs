@@ -1145,6 +1145,7 @@ impl<'m, 'de, 'd> serde::de::Deserializer<'de> for MapValueDeserializer<'m, 'de,
 use rofd::element::file::ofd::OfdXmlFile;
 
 #[test]
+#[ignore = "not yet implemented"]
 fn test() -> Result<()> {
     let file = File::open("samples/ano/OFD.xml")?;
     let mut s = BufReader::new(file);

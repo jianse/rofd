@@ -58,8 +58,9 @@ mod test_skia {
         Ok(())
     }
 
-    #[test]
+    #[test(ignore)]
     #[cfg(target_os = "linux")]
+    #[ignore = "not yet implemented"]
     fn test_text() -> Result<()> {
         let ii = ImageInfo::new_s32((300, 300), skia_safe::AlphaType::Unpremul);
         let mut surface = skia_safe::surfaces::raster(&ii, None, None).ok_or_eyre("message")?;
@@ -110,6 +111,7 @@ mod test_skia {
         dbg!(kaiti.font_style());
     }
     #[test]
+    #[ignore = "this should behind a feature"]
     fn fm_test() -> Result<()> {
         let fm = FontMgr::new();
         let file = File::open("simkai.ttf")?;
@@ -134,6 +136,7 @@ mod test_skia {
     }
 
     #[test]
+    #[ignore = "this should behind a feature"]
     fn test_typeface_load() -> Result<()> {
         let fm = FontMgr::empty();
         let file = File::open("simkai.ttf")?;

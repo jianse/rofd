@@ -152,6 +152,10 @@ mod tests {
         let sys_kai = font_mgr.match_family_style("楷体", skia_safe::FontStyle::default());
         assert!(sys_kai.is_some());
         let sys_kai = sys_kai.unwrap();
+        if !std::fs::exists("simkai.ttf").unwrap(){
+            log::warn!("font [simkai.ttf] not found]");
+            return;
+        }
         let bytes = std::fs::read("simkai.ttf").unwrap();
 
         let cur_kai = font_mgr.new_from_data(&bytes, 0);

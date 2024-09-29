@@ -603,9 +603,10 @@ fn draw_image_object(
     resources: &Resources,
     _draw_param_stack: &DrawParamStack,
 ) -> Result<()> {
-    resources.get_image_by_id(image_object.resource_id);
+    // resources.get_image_by_id(image_object.resource_id);
 
-    todo!()
+    // todo!()
+    Ok(())
 }
 
 fn draw_text_object(

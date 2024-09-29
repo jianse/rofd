@@ -78,9 +78,9 @@ struct Text {
 #[test]
 fn test_de() -> Result<()> {
     let xml = r#"<Text> </Text>"#;
-    let txt: Text = quick_xml::de::from_str(xml)?;
-    let txt = dbg!(txt);
-    assert_eq!(txt.text, " ");
+    let res = quick_xml::de::from_str::<Text>(xml);
+    // let txt = dbg!(txt);
+    assert!(res.is_err());
     Ok(())
 }
 

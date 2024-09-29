@@ -16,7 +16,7 @@ quick-xml = { version = "0.36.2", features = ["serde", "serialize"] }
 relative-path = "1.9.3"
 serde = { version = "1.0.210", features = ["derive"] }
 serde_with = "3.9.0"
-skia-safe = "0.78.0"
+skia-safe = "0.78.1"
 thiserror = "1.0.64"
 walkdir = "2.5.0"
 zip = "2.2.0"
