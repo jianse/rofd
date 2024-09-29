@@ -58,7 +58,7 @@ mod test_skia {
         Ok(())
     }
 
-    #[test(ignore)]
+    #[test]
     #[cfg(target_os = "linux")]
     #[ignore = "not yet implemented"]
     fn test_text() -> Result<()> {
