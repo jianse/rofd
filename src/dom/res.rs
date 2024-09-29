@@ -67,15 +67,6 @@ impl TryFromDom<&Element> for CompositeGraphicUnit {
     }
 }
 
-impl TryFromDom<&Element> for CtPageBlock {
-    type Error = TryFromDomError;
-
-    fn try_from_dom(dom: &Element) -> Result<Self, Self::Error> {
-        // TODO: this shell be done in page mod
-        todo!()
-    }
-}
-
 impl TryFromDom<&Element> for ColorSpaces {
     type Error = TryFromDomError;
 

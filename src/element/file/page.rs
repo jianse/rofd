@@ -23,13 +23,13 @@ pub struct PageXmlFile {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Layer {
     #[serde(rename = "@Type")]
-    r#type: Option<String>,
+    pub r#type: Option<String>,
 
     #[serde(rename = "@DrawParam")]
     pub draw_param: Option<StRefId>,
 
     #[serde(rename = "@ID")]
-    id: StId,
+    pub id: StId,
 
     #[serde(rename = "$value")]
     pub objects: Option<Vec<CtPageBlock>>,
@@ -80,9 +80,9 @@ pub struct ImageObject {
     #[serde(rename = "@LineWidth")]
     pub line_width: Option<f32>,
     #[serde(rename = "@Cap")]
-    pub cap: Option<String>,
+    pub cap: Option<Cap>,
     #[serde(rename = "@Join")]
-    pub join: Option<String>,
+    pub join: Option<Join>,
     #[serde(rename = "@MiterLimit")]
     pub miter_limit: Option<f32>,
     #[serde(rename = "@DashOffset")]
@@ -131,16 +131,23 @@ pub struct TextObject {
     #[serde(rename = "@Stroke")]
     pub stroke: Option<bool>,
 
+    #[serde(rename = "@Fill")]
     pub fill: Option<bool>,
 
+    #[serde(rename= "@HScale")]
     pub h_scale: Option<f32>,
 
+    #[serde(rename = "@ReadDirection")]
     pub read_direction: Option<u32>,
 
+    #[serde(rename = "@CharDirection")]
     pub char_direction: Option<u32>,
 
+    /// default 400
+    #[serde(rename = "@Weight")]
     pub weight: Option<u32>,
 
+    #[serde(rename = "@Italic")]
     pub italic: Option<bool>,
 
     #[serde(rename = "FillColor")]
@@ -168,9 +175,9 @@ pub struct TextObject {
     #[serde(rename = "@LineWidth")]
     pub line_width: Option<f32>,
     #[serde(rename = "@Cap")]
-    pub cap: Option<String>,
+    pub cap: Option<Cap>,
     #[serde(rename = "@Join")]
-    pub join: Option<String>,
+    pub join: Option<Join>,
     #[serde(rename = "@MiterLimit")]
     pub miter_limit: Option<f32>,
     #[serde(rename = "@DashOffset")]
