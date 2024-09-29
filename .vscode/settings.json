@@ -13,5 +13,5 @@
         "walkdir",
         "xywh"
     ],
-    "crates.indexServerURL": "sparse+https://mirrors.ustc.edu.cn/crates.io-index/"
+    "crates.indexServerURL": "sparse+https://rsproxy.cn/index/"
 }
