@@ -57,6 +57,7 @@ pub type StId = u64;
 pub type StRefId = StId;
 
 #[allow(dead_code)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 pub struct StPos {
     x: f32,
     y: f32,

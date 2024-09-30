@@ -13,6 +13,8 @@ use crate::element::file::res::{
 use minidom::Element;
 use std::str::FromStr;
 
+use super::parse_required_vec;
+
 impl TryFromDom<&Element> for ResourceXmlFile {
     type Error = TryFromDomError;
 
@@ -119,9 +121,12 @@ impl TryFromDom<&Element> for ColorSpace {
 impl TryFromDom<&Element> for Palette {
     type Error = TryFromDomError;
 
-    fn try_from_dom(_dom: &Element) -> Result<Self, Self::Error> {
-        // TODO: follow struct definitions
-        Ok(Palette {})
+    fn try_from_dom(dom: &Element) -> Result<Self, Self::Error> {
+        let cv = parse_required_vec(dom, Some("CV"), |e| {
+            let text = e.text();
+            StArray::from_str(&text)
+        })?;
+        Ok(Palette { cv })
     }
 }
 
@@ -180,6 +185,7 @@ impl TryFromDom<&Element> for CtColor {
             index,
             color_space,
             alpha,
+            pattern: None,
         })
     }
 }

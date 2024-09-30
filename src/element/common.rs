@@ -1,6 +1,7 @@
-use super::base::{StArray, StBox, StLoc, StRefId};
+use super::base::{StArray, StBox, StLoc, StPos, StRefId};
 use serde::{Deserialize, Serialize};
 use strum::EnumString;
+use crate::element::file::page::CtPageBlock;
 
 #[derive(Debug, Deserialize, Serialize, Clone, Copy, EnumString)]
 pub enum Join {
@@ -27,7 +28,7 @@ pub struct CtLayer {
     draw_param: Option<StRefId>,
 }
 
-#[derive(Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct CtGraphicUnit {
     #[serde(rename = "@Boundary")]
     boundary: StBox,
@@ -46,17 +47,17 @@ pub struct CtGraphicUnit {
     actions: Option<Actions>,
 }
 
-#[derive(Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Actions {
     #[serde(rename = "Action")]
     actions: Vec<CtAction>,
 }
 
-#[derive(Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct CtAction {}
 
 /// 包括基本颜色、底纹和渐变
-#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct CtColor {
     /// 各通道颜色的分量
     #[serde(rename = "@Value")]
@@ -74,7 +75,68 @@ pub struct CtColor {
     /// 颜色透明度 取值范围是0~255 默认255
     #[serde(rename = "@Alpha")]
     pub alpha: Option<u8>,
+
+    /// 底纹
+    #[serde(rename = "Pattern")]
+    pub pattern: Option<CtPattern>,
+
+    // a color only contains one of these shadows
+
+    #[serde(rename = "AxialShd")]
+    pub axial_shd: Option<CtAxialShd>,
     // TODO: p39
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct CtAxialShd {
+    pub map_type: Option<String>,
+    pub map_unit: Option<f32>,
+    pub extend: Option<u8>,
+    pub start_point: StPos,
+    pub end_point: StPos,
+    
+    // at lease 2 element
+    pub segment: Vec<Segment>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct Segment {
+    
+    /// [0, 1.0]
+    pub position: Option<f32>,
+    
+    /// this must be basic color
+    pub color: CtColor,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct CtPattern {
+    #[serde(rename = "@Width")]
+    pub width: f32,
+
+    #[serde(rename = "@Height")]
+    pub height: f32,
+
+    pub x_step: Option<f32>,
+
+    pub y_step: Option<f32>,
+
+    pub reflect_method: Option<String>,
+
+    pub relative_to: Option<String>,
+
+    pub ctm: Option<StArray<f32>>,
+
+    pub cell_content: Vec<CellContent>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct CellContent {
+    pub thumbnail: Option<StRefId>,
+
+    /// inherit
+    /// TODO: how do we deserialize this
+    pub base: CtPageBlock,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -93,9 +155,15 @@ pub struct CtColorSpace {
     pub palette: Palette,
 }
 
-/// TODO: CV field?
 #[derive(Debug, Serialize, Deserialize)]
-pub struct Palette {}
+pub struct Palette {
+    /// this is a table
+    /// 0 -> color_value1
+    /// 1 -> color_value2
+    /// etc.
+    #[serde(rename = "CV")]
+    pub cv: Vec<StArray<u16>>,
+}
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CtDrawParam {

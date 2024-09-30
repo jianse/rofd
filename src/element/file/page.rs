@@ -44,7 +44,7 @@ pub struct Content {
     pub layer: Vec<Layer>,
 }
 #[serde_as]
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum CtPageBlock {
     TextObject(TextObject),
     PathObject(PathObject),
@@ -53,7 +53,7 @@ pub enum CtPageBlock {
     PageBlock {},
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ImageObject {
     #[serde(rename = "@ResourceID")]
     pub resource_id: StRefId,
@@ -98,7 +98,7 @@ pub struct ImageObject {
     pub actions: Option<Actions>,
     // endregion
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Border {
     /// default 0.353 mm
     #[serde(rename = "@LineWidth")]
@@ -123,7 +123,7 @@ pub struct Border {
 }
 
 #[serde_as]
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct TextObject {
     #[serde(rename = "@Font")]
     pub font: StRefId,
@@ -290,7 +290,7 @@ pub struct CGTransform {
     pub glyphs: StArray<u32>,
 }
 
-#[derive(Debug, Serialize, Deserialize, EnumString)]
+#[derive(Debug, Serialize, Deserialize, EnumString, Clone)]
 pub enum FillRule {
     NoneZero,
     // #[serde]
@@ -298,7 +298,7 @@ pub enum FillRule {
 }
 
 #[serde_as]
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct PathObject {
     /// default true
     #[serde(rename = "@Stroke")]
@@ -482,6 +482,7 @@ mod tests {
     struct AnyXml {
         #[serde(rename = "FillColor")]
         fill_color: Option<CtColor>,
+        
         #[serde(rename = "$value")]
         text_val: Vec<UnifiedText>,
 
