@@ -3,7 +3,6 @@ mod element;
 mod error;
 mod ofd_utils;
 mod render;
-// mod qxml;
 use std::path::PathBuf;
 
 use clap::{command, Parser, Subcommand};
@@ -46,7 +45,7 @@ enum Commands {
         page_index: usize,
 
         /// only render template page
-        #[arg(short, long)]
+        #[arg(short, long, default_value_t = false)]
         template: bool,
     },
 }
