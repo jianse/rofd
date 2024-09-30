@@ -9,6 +9,7 @@
         "skia",
         "SRGB",
         "stbox",
+        "thiserror",
         "tpls",
         "Unpremul",
         "vals",
