@@ -482,7 +482,7 @@ mod tests {
     struct AnyXml {
         #[serde(rename = "FillColor")]
         fill_color: Option<CtColor>,
-        
+
         #[serde(rename = "$value")]
         text_val: Vec<UnifiedText>,
 

@@ -8,10 +8,13 @@ use crate::element::file::document::{
 use minidom::Element;
 use std::str::FromStr;
 
+impl TryFromDom<Element> for DocumentXmlFile {
+    fn try_from_dom(dom: Element) -> Result<Self, TryFromDomError> {
+        DocumentXmlFile::try_from_dom(&dom)
+    }
+}
 impl TryFromDom<&Element> for DocumentXmlFile {
-    type Error = TryFromDomError;
-
-    fn try_from_dom(dom: &Element) -> Result<Self, Self::Error> {
+    fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
         if dom.name() != "Document" {
             return Err(TryFromDomError::ElementNameNotExpected(
                 "Document",
@@ -57,9 +60,7 @@ impl TryFromDom<&Element> for DocumentXmlFile {
 }
 
 impl TryFromDom<&Element> for CommonData {
-    type Error = TryFromDomError;
-
-    fn try_from_dom(dom: &Element) -> Result<Self, Self::Error> {
+    fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
         let max_unit_id = dom
             .get_child("MaxUnitID", OFD_NS)
             .ok_or(TryFromDomError::NoSuchAttribute("MaxUnitID"))
@@ -124,8 +125,7 @@ impl TryFromDom<&Element> for CommonData {
 }
 
 impl TryFromDom<&Element> for CtPageArea {
-    type Error = TryFromDomError;
-    fn try_from_dom(dom: &Element) -> Result<Self, Self::Error> {
+    fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
         #[inline(always)]
         fn parse_optional_from_ele(
             dom: &Element,
@@ -163,9 +163,7 @@ impl TryFromDom<&Element> for CtPageArea {
 }
 
 impl TryFromDom<&Element> for Pages {
-    type Error = TryFromDomError;
-
-    fn try_from_dom(dom: &Element) -> Result<Self, Self::Error> {
+    fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
         let page = dom
             .children()
             .map(Page::try_from_dom)
@@ -174,9 +172,7 @@ impl TryFromDom<&Element> for Pages {
     }
 }
 impl TryFromDom<&Element> for Page {
-    type Error = TryFromDomError;
-
-    fn try_from_dom(dom: &Element) -> Result<Self, Self::Error> {
+    fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
         let id = parse_required_from_attr(dom, "ID", StId::from_str)?;
         let base_loc = parse_required_from_attr(dom, "BaseLoc", StLoc::from_str)?;
         Ok(Page { id, base_loc })
@@ -184,9 +180,7 @@ impl TryFromDom<&Element> for Page {
 }
 
 impl TryFromDom<&Element> for TemplatePage {
-    type Error = TryFromDomError;
-
-    fn try_from_dom(dom: &Element) -> Result<Self, Self::Error> {
+    fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
         let id = parse_required_from_attr(dom, "ID", StId::from_str)?;
 
         let name = parse_optional_from_attr(dom, "Name", String::from_str)?;

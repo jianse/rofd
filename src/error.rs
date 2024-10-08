@@ -1,3 +1,4 @@
+use crate::dom::TryFromDomError;
 use thiserror::Error;
 use zip::result::ZipError;
 
@@ -9,9 +10,17 @@ pub enum MyError {
     #[error("parse error")]
     ParseError,
 
-    #[error("unknow path command {0}.")]
+    #[error("unknown path command {0}.")]
     UnknownPathCommand(String),
 
     #[error("invalid")]
     Invalid,
+
+    #[error(transparent)]
+    MiniDomError(#[from] minidom::Error),
+
+    #[error(transparent)]
+    TryFromDomError(#[from] TryFromDomError),
+    #[error(transparent)]
+    IOError(#[from] std::io::Error),
 }

@@ -30,3 +30,7 @@ strum = { version = "0.26.3", features = ["derive"] }
 
 [dev-dependencies]
 xml_dom = "0.2.8"
+
+[features]
+default = []
+qxml = []

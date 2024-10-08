@@ -1,9 +1,4 @@
-use std::{fs::File, io::BufReader, path::PathBuf};
-
-use eyre::{Ok, OptionExt, Result};
-use relative_path::RelativePathBuf;
-use zip::{read::ZipFile, ZipArchive};
-
+use crate::dom::TryFromDom;
 use crate::element::file::res::Resource;
 use crate::{
     element::{
@@ -17,6 +12,12 @@ use crate::{
     },
     error::MyError,
 };
+use eyre::{OptionExt, Result};
+use minidom::Element;
+use relative_path::RelativePathBuf;
+use std::io::BufRead;
+use std::{fs::File, io::BufReader, path::PathBuf};
+use zip::{read::ZipFile, ZipArchive};
 
 pub struct Container {
     // container:
@@ -141,6 +142,32 @@ impl<T> InnerFile<T> {
 }
 
 impl Container {
+    #[cfg(not(feature = "qxml"))]
+    fn from_reader<T, R>(reader: R) -> Result<T, MyError>
+    where
+        T: TryFromDom<Element>,
+        R: BufRead,
+    {
+        let mut reader = BufReader::new(reader);
+        let buf = reader.fill_buf()?;
+
+        // UTF-8 BOM
+        // handle u+FEFF in utf-8 file
+        // just skip this three bytes
+        if buf.starts_with(&[0xef_u8, 0xbb, 0xbf]) {
+            reader.consume(3);
+        }
+        let root = Element::from_reader(reader)?;
+        T::try_from_dom(root).map_err(MyError::from)
+    }
+    #[cfg(feature = "qxml")]
+    fn from_reader<T, R>(reader: R) -> T
+    where
+        R: Read,
+    {
+        todo!()
+    }
+
     pub fn open(&mut self, path: String) -> Result<ZipFile> {
         let file = self
             .zip_archive
@@ -151,8 +178,7 @@ impl Container {
     pub fn entry(&mut self) -> Result<InnerFile<OfdXmlFile>> {
         let file = self.zip_archive.by_name("OFD.xml")?;
         let reader = BufReader::new(file);
-
-        let xml: OfdXmlFile = quick_xml::de::from_reader(reader)?;
+        let xml = Container::from_reader::<OfdXmlFile, _>(reader)?;
         Ok(InnerFile {
             // container: self,
             path: "OFD.xml".into(),
@@ -171,7 +197,7 @@ impl Container {
         let inner = self.open(path.to_string())?;
 
         let reader = BufReader::new(inner);
-        let xml: DocumentXmlFile = quick_xml::de::from_reader(reader)?;
+        let xml: DocumentXmlFile = Container::from_reader(reader)?;
         Ok(InnerFile {
             // container: self,
             path,
@@ -195,7 +221,7 @@ impl Container {
         let tpl_path = doc.resolve(tpl_path);
         let inner = self.open(tpl_path.to_string())?;
         let reader = BufReader::new(inner);
-        let xml: PageXmlFile = quick_xml::de::from_reader(reader)?;
+        let xml: PageXmlFile = Container::from_reader(reader)?;
         // let cont = &*self;
         Ok(InnerFile {
             // container: self,
@@ -223,7 +249,7 @@ impl Container {
         let tpl_path = doc.resolve(tpl_path);
         let inner = self.open(tpl_path.to_string())?;
         let reader = BufReader::new(inner);
-        let xml: PageXmlFile = quick_xml::de::from_reader(reader)?;
+        let xml: PageXmlFile = Container::from_reader(reader)?;
         // let cont = &*self;
         Ok(InnerFile {
             // container: self,
@@ -243,7 +269,7 @@ impl Container {
         let tpl_path = doc.resolve(tpl_path);
         let inner = self.open(tpl_path.to_string())?;
         let reader = BufReader::new(inner);
-        let xml: PageXmlFile = quick_xml::de::from_reader(reader)?;
+        let xml: PageXmlFile = Container::from_reader(reader)?;
         // let cont = &*self;
         Ok(InnerFile {
             // container: self,
@@ -303,7 +329,7 @@ impl Container {
                         let file = self.open(rp.to_string())?;
                         let reader = BufReader::new(file);
 
-                        let xml: ResourceXmlFile = quick_xml::de::from_reader(reader)?;
+                        let xml: ResourceXmlFile = Container::from_reader(reader)?;
 
                         Ok(InnerFile {
                             path: rp,
@@ -323,7 +349,7 @@ impl Container {
 pub fn from_path(path: &PathBuf) -> Result<Container> {
     let f = File::open(path)?;
     let reader = BufReader::new(f);
-    let zip = zip::ZipArchive::new(reader)?;
+    let zip = ZipArchive::new(reader)?;
 
     zip.index_for_name("OFD.xml")
         .ok_or_eyre("OFD entry point not found!!")?;

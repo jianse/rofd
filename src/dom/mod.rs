@@ -12,8 +12,7 @@ mod page;
 mod res;
 
 pub trait TryFromDom<T>: Sized {
-    type Error: std::error::Error;
-    fn try_from_dom(dom: T) -> Result<Self, Self::Error>;
+    fn try_from_dom(dom: T) -> Result<Self, TryFromDomError>;
 }
 #[derive(Error, Debug)]
 pub enum TryFromDomError {

@@ -8,6 +8,7 @@ use std::str::FromStr;
 use eyre::eyre;
 use eyre::OptionExt;
 use eyre::Result;
+use log::{debug, error, warn};
 use skia_safe::path::ArcSize;
 use skia_safe::BlendMode;
 use skia_safe::Color;
@@ -521,9 +522,11 @@ pub fn render_page(
     can.draw_color(Color::WHITE, BlendMode::Color);
     let scale = calc_scale(dpi);
     can.scale((scale, scale));
+    debug!("drawing templates");
     for tpl in tpls {
         draw_page(can, tpl, &resources)?;
     }
+    debug!("drawing page");
     draw_page(can, &page.content, &resources)?;
     can.restore();
     let snap = sur.image_snapshot();
@@ -531,6 +534,7 @@ pub fn render_page(
 }
 
 fn draw_page(can: &Canvas, tpl: &PageXmlFile, resources: &Resources) -> Result<()> {
+    let init_sc = can.save_count();
     let mut draw_param_stack = DrawParamStack::new();
     if let Some(content) = tpl.content.as_ref() {
         for layer in &content.layer {
@@ -540,10 +544,12 @@ fn draw_page(can: &Canvas, tpl: &PageXmlFile, resources: &Resources) -> Result<(
             draw_layer(can, layer, resources, &mut draw_param_stack);
             draw_param_stack.pop(dp);
             if !draw_param_stack.is_empty() {
-                println!("warn! draw_param stack is imbalance!");
+                warn!("draw_param stack is imbalance!");
             }
         }
     }
+    let after_sc = can.save_count();
+    assert_eq!(init_sc, after_sc);
     Ok(())
 }
 
@@ -551,7 +557,7 @@ fn get_draw_param_by_id(resources: &Resources, id: Option<StRefId>) -> Option<Dr
     if let Some(dp_id) = id {
         let dp = resources.get_draw_param_by_id(dp_id);
         if dp.is_none() {
-            println!("warn! required DrawParam id = {dp_id} is not defined!");
+            warn!("required DrawParam id = {dp_id} is not defined!");
         }
         dp
     } else {
@@ -567,40 +573,53 @@ fn draw_layer(
 ) {
     if let Some(objects) = layer.objects.as_ref() {
         for obj in objects {
-            match obj {
+            let init_sc = canvas.save_count();
+            let r = match obj {
                 crate::element::file::page::CtPageBlock::TextObject(text) => {
                     let dp_id = text.draw_param;
                     let dp = get_draw_param_by_id(resources, dp_id);
                     draw_param_stack.push(dp.clone());
-                    let _ = draw_text_object(canvas, text, resources, draw_param_stack);
+                    let dtr = draw_text_object(canvas, text, resources, draw_param_stack);
                     draw_param_stack.pop(dp);
+                    dtr
                 }
                 crate::element::file::page::CtPageBlock::PathObject(path) => {
                     let dp_id = path.draw_param;
                     let dp = get_draw_param_by_id(resources, dp_id);
                     draw_param_stack.push(dp.clone());
-                    let _ = draw_path_object(canvas, path, resources, draw_param_stack);
+                    let dpr = draw_path_object(canvas, path, resources, draw_param_stack);
                     draw_param_stack.pop(dp);
+                    dpr
                 }
                 crate::element::file::page::CtPageBlock::ImageObject(image) => {
                     let dp_id = image.draw_param;
                     let dp = get_draw_param_by_id(resources, dp_id);
                     draw_param_stack.push(dp.clone());
                     // TODO: draw image
-                    let _ = draw_image_object(canvas, image, resources, draw_param_stack);
+                    let dir = draw_image_object(canvas, image, resources, draw_param_stack);
                     draw_param_stack.pop(dp);
+                    dir
                 }
                 crate::element::file::page::CtPageBlock::CompositeObject {} => todo!(),
                 crate::element::file::page::CtPageBlock::PageBlock {} => todo!(),
             };
+            if r.is_err() {
+                error!("draw_text_error: {:?}", r);
+            }
+            let after_sc = canvas.save_count();
+            assert_eq!(
+                init_sc, after_sc,
+                "imbalanced skia save count , obj: {:?}",
+                obj
+            );
         }
     }
 }
 
 fn draw_image_object(
     _canvas: &Canvas,
-    image_object: &ImageObject,
-    resources: &Resources,
+    _image_object: &ImageObject,
+    _resources: &Resources,
     _draw_param_stack: &DrawParamStack,
 ) -> Result<()> {
     // resources.get_image_by_id(image_object.resource_id);
@@ -623,6 +642,12 @@ fn draw_text_object(
     let boundary = text_object.boundary;
     apply_boundary(canvas, boundary);
 
+    // debug!("??: {:?}", text_object.f);
+    debug!("boundary: {:?}", text_object.boundary);
+    debug!("bounds: {:?}", canvas.local_clip_bounds());
+    // debug
+    // canvas.draw_color(Color::from_argb(0xcc, 0, 0xcc, 0), None);
+
     let ctm = text_object.ctm.as_ref();
     apply_ctm(canvas, ctm);
 
@@ -632,25 +657,28 @@ fn draw_text_object(
     let mut last_pos = (tc0.x.unwrap(), tc0.y.unwrap());
     let font_id = text_object.font;
     let font = resources.get_font_by_id(font_id);
-    let typeface = if font.is_none() {
-        println!("warn! required font id = {font_id} is not defined!");
-        // fallback font
-        todo!()
-    } else {
-        let font = font.unwrap();
+    let typeface = if let Some(font) = font {
         let fm = FontMgr::new();
+        if let Some(font_file) = font.font_file {
+            warn!("embedded font file: {}", font_file.display());
+        }
         fm.match_family_style(font.font_name, FontStyle::normal())
             .ok_or_eyre("no font found!")?
+    } else {
+        warn!("required font id = {font_id} is not defined!");
+        // fallback font
+        todo!()
     };
+    debug!("font: {}", typeface.family_name());
 
     let font = Font::from_typeface(typeface, Some(text_object.size));
     for text_val in &text_object.text_vals {
         let text_code = &text_val.text_code;
-
-        let val = &text_code.val;
-        if val.is_empty() {
-            // skip when text code is empty
-            log::warn!("skipped an empty text code!");
+        if let Some(cgf) = &text_val.cg_transform {
+            warn!("text transform not implemented. {:?}", cgf);
+        }
+        if text_code.val.is_empty() {
+            warn!("skipped an empty text code!");
             continue;
         }
         let origin = (
@@ -696,7 +724,7 @@ fn from_text_code(
 ) -> Result<TextBlob> {
     let origin = (0.0, 0.0);
     let text = &text_code.val;
-    // if text.is_empty()
+
     let pos = decode_dx_dy(
         origin,
         text_code.delta_x.as_ref(),
@@ -730,7 +758,7 @@ fn decode_dx_dy(
         dxs
     );
     if dxs.len() > len - 1 {
-        println!("warn! dx for textCode is longer than text! truncating!");
+        debug!("dx for textCode is longer than text! truncating!");
         dxs.truncate(len - 1);
     }
     assert!(
@@ -741,7 +769,7 @@ fn decode_dx_dy(
         dys
     );
     if dys.len() > len - 1 {
-        println!("warn! dy for textCode is longer than text! truncating!");
+        debug!("dy for textCode is longer than text! truncating!");
         dys.truncate(len - 1);
     }
     let mut last_pos = origin;

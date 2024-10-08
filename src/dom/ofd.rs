@@ -1,15 +1,26 @@
-use crate::dom::{TryFromDom, TryFromDomError, OFD_NS};
+use crate::dom::{
+    parse_required_from_attr, parse_required_vec, TryFromDom, TryFromDomError, OFD_NS,
+};
 use crate::element::base::StLoc;
 use crate::element::file::ofd::{CtDocInfo, CustomData, CustomDatas, DocBody, OfdXmlFile};
 use chrono::NaiveDate;
 use minidom::Element;
 use std::path::PathBuf;
 use std::str::FromStr;
-
+impl TryFromDom<Element> for OfdXmlFile {
+    fn try_from_dom(dom: Element) -> Result<Self, TryFromDomError> {
+        let version = parse_required_from_attr(&dom, "Version", String::from_str)?;
+        let doc_type = parse_required_from_attr(&dom, "DocType", String::from_str)?;
+        let doc_body = parse_required_vec(&dom, None, DocBody::try_from_dom)?;
+        Ok(OfdXmlFile {
+            version,
+            doc_type,
+            doc_body,
+        })
+    }
+}
 impl TryFromDom<&Element> for OfdXmlFile {
-    type Error = TryFromDomError;
-
-    fn try_from_dom(dom: &Element) -> Result<Self, Self::Error> {
+    fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
         let name = dom.name();
         if name != "OFD" {
             return Err(TryFromDomError::ElementNameNotExpected(
@@ -17,20 +28,12 @@ impl TryFromDom<&Element> for OfdXmlFile {
                 name.to_string(),
             ));
         }
-        let version = dom
-            .attr("Version")
-            .ok_or(TryFromDomError::NoSuchAttribute("Version"))?;
-        let doc_type = dom
-            .attr("DocType")
-            .ok_or(TryFromDomError::NoSuchAttribute("DocType"))?;
-        let doc_body_result = dom
-            .children()
-            .map(DocBody::try_from_dom)
-            .collect::<eyre::Result<_, _>>();
-        let doc_body: Vec<DocBody> = doc_body_result?;
+        let version = parse_required_from_attr(dom, "Version", String::from_str)?;
+        let doc_type = parse_required_from_attr(dom, "DocType", String::from_str)?;
+        let doc_body = parse_required_vec(dom, None, DocBody::try_from_dom)?;
         let res = OfdXmlFile {
-            version: version.to_string(),
-            doc_type: doc_type.to_string(),
+            version,
+            doc_type,
             doc_body,
         };
         Ok(res)
@@ -38,9 +41,7 @@ impl TryFromDom<&Element> for OfdXmlFile {
 }
 
 impl TryFromDom<&Element> for DocBody {
-    type Error = TryFromDomError;
-
-    fn try_from_dom(dom: &Element) -> Result<Self, Self::Error>
+    fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError>
     where
         Self: Sized,
     {
@@ -78,9 +79,7 @@ impl TryFromDom<&Element> for DocBody {
 }
 
 impl TryFromDom<&Element> for CtDocInfo {
-    type Error = TryFromDomError;
-
-    fn try_from_dom(dom: &Element) -> Result<Self, Self::Error>
+    fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError>
     where
         Self: Sized,
     {
@@ -108,9 +107,7 @@ impl TryFromDom<&Element> for CtDocInfo {
     }
 }
 impl TryFromDom<&Element> for CustomDatas {
-    type Error = TryFromDomError;
-
-    fn try_from_dom(dom: &Element) -> Result<Self, Self::Error> {
+    fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
         let custom_data_result = dom
             .children()
             .map(CustomData::try_from_dom)
@@ -121,9 +118,7 @@ impl TryFromDom<&Element> for CustomDatas {
 }
 
 impl TryFromDom<&Element> for CustomData {
-    type Error = TryFromDomError;
-
-    fn try_from_dom(dom: &Element) -> Result<Self, Self::Error> {
+    fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
         if dom.name() != "CustomData" {
             return Err(TryFromDomError::ElementNameNotExpected(
                 "CustomData",
@@ -143,8 +138,7 @@ impl TryFromDom<&Element> for CustomData {
 
 /// impl StLoc from an element
 impl TryFromDom<&Element> for StLoc {
-    type Error = TryFromDomError;
-    fn try_from_dom(dom: &Element) -> Result<Self, Self::Error> {
+    fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
         let p = dom.text();
         Ok(PathBuf::from(p))
     }
@@ -165,7 +159,7 @@ mod tests {
         let mut data = String::new();
         let _ = reader.read_to_string(&mut data);
         let root: Element = data.parse()?;
-        let st = OfdXmlFile::try_from_dom(&root)?;
+        let st = OfdXmlFile::try_from_dom(root)?;
         // dbg!(&root);
         dbg!(&st);
         Ok(())

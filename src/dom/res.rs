@@ -4,7 +4,7 @@ use crate::dom::{
     parse_required_from_text, TryFromDom, TryFromDomError,
 };
 use crate::element::base::{StArray, StId, StLoc, StRefId};
-use crate::element::common::{Cap, CtColor, Join, Palette};
+use crate::element::common::{Cap, CellContent, CtColor, CtPattern, Join, Palette};
 use crate::element::file::page::CtPageBlock;
 use crate::element::file::res::{
     ColorSpace, ColorSpaces, CompositeGraphicUnit, CompositeGraphicUnits, DrawParam, DrawParams,
@@ -15,10 +15,14 @@ use std::str::FromStr;
 
 use super::parse_required_vec;
 
-impl TryFromDom<&Element> for ResourceXmlFile {
-    type Error = TryFromDomError;
+impl TryFromDom<Element> for ResourceXmlFile {
+    fn try_from_dom(dom: Element) -> Result<Self, TryFromDomError> {
+        ResourceXmlFile::try_from_dom(&dom)
+    }
+}
 
-    fn try_from_dom(dom: &Element) -> Result<Self, Self::Error> {
+impl TryFromDom<&Element> for ResourceXmlFile {
+    fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
         let base_loc = parse_required_from_attr(dom, "BaseLoc", StLoc::from_str)?;
 
         let resources = parse_optional_vec(dom, None, Resource::try_from_dom)?;
@@ -30,9 +34,7 @@ impl TryFromDom<&Element> for ResourceXmlFile {
 }
 
 impl TryFromDom<&Element> for Resource {
-    type Error = TryFromDomError;
-
-    fn try_from_dom(dom: &Element) -> Result<Self, Self::Error> {
+    fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
         let name = dom.name();
         match name {
             "ColorSpaces" => {
@@ -64,9 +66,7 @@ impl TryFromDom<&Element> for Resource {
 }
 
 impl TryFromDom<&Element> for CompositeGraphicUnits {
-    type Error = TryFromDomError;
-
-    fn try_from_dom(dom: &Element) -> Result<Self, Self::Error> {
+    fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
         let composite_graphic_units = dom
             .children()
             .map(CompositeGraphicUnit::try_from_dom)
@@ -78,9 +78,7 @@ impl TryFromDom<&Element> for CompositeGraphicUnits {
 }
 
 impl TryFromDom<&Element> for CompositeGraphicUnit {
-    type Error = TryFromDomError;
-
-    fn try_from_dom(dom: &Element) -> Result<Self, Self::Error> {
+    fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
         let id = parse_required_from_attr(dom, "ID", StId::from_str)?;
         let content = parse_required_from_ele(dom, "Content", CtPageBlock::try_from_dom)?;
         Ok(CompositeGraphicUnit { id, content })
@@ -88,9 +86,7 @@ impl TryFromDom<&Element> for CompositeGraphicUnit {
 }
 
 impl TryFromDom<&Element> for ColorSpaces {
-    type Error = TryFromDomError;
-
-    fn try_from_dom(dom: &Element) -> Result<Self, Self::Error> {
+    fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
         let color_spaces = dom
             .children()
             .map(ColorSpace::try_from_dom)
@@ -100,9 +96,7 @@ impl TryFromDom<&Element> for ColorSpaces {
 }
 
 impl TryFromDom<&Element> for ColorSpace {
-    type Error = TryFromDomError;
-
-    fn try_from_dom(dom: &Element) -> Result<Self, Self::Error> {
+    fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
         let id = parse_required_from_attr(dom, "ID", StId::from_str)?;
         let r#type = parse_required_from_attr(dom, "Type", Type::from_str)?;
         let bits_per_component = parse_optional_from_attr(dom, "BitsPerComponent", u8::from_str)?;
@@ -119,9 +113,7 @@ impl TryFromDom<&Element> for ColorSpace {
 }
 
 impl TryFromDom<&Element> for Palette {
-    type Error = TryFromDomError;
-
-    fn try_from_dom(dom: &Element) -> Result<Self, Self::Error> {
+    fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
         let cv = parse_required_vec(dom, Some("CV"), |e| {
             let text = e.text();
             StArray::from_str(&text)
@@ -131,9 +123,7 @@ impl TryFromDom<&Element> for Palette {
 }
 
 impl TryFromDom<&Element> for DrawParams {
-    type Error = TryFromDomError;
-
-    fn try_from_dom(dom: &Element) -> Result<Self, Self::Error> {
+    fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
         let draw_params = dom
             .children()
             .map(DrawParam::try_from_dom)
@@ -143,9 +133,7 @@ impl TryFromDom<&Element> for DrawParams {
 }
 
 impl TryFromDom<&Element> for DrawParam {
-    type Error = TryFromDomError;
-
-    fn try_from_dom(dom: &Element) -> Result<Self, Self::Error> {
+    fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
         let id = parse_required_from_attr(dom, "ID", StId::from_str)?;
         let relative = parse_optional_from_attr(dom, "Relative", StRefId::from_str)?;
         let line_width = parse_optional_from_attr(dom, "LineWidth", f32::from_str)?;
@@ -173,27 +161,60 @@ impl TryFromDom<&Element> for DrawParam {
 }
 
 impl TryFromDom<&Element> for CtColor {
-    type Error = TryFromDomError;
-
-    fn try_from_dom(dom: &Element) -> Result<Self, Self::Error> {
+    fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
         let value = parse_optional_from_attr(dom, "Value", StArray::from_str)?;
         let index = parse_optional_from_attr(dom, "Index", usize::from_str)?;
         let color_space = parse_optional_from_attr(dom, "ColorSpace", StRefId::from_str)?;
         let alpha = parse_optional_from_attr(dom, "Alpha", u8::from_str)?;
+        let pattern = parse_optional_from_ele(dom, "Pattern", CtPattern::try_from_dom)?;
+
+        // TODO: SHADOWS
         Ok(CtColor {
             value,
             index,
             color_space,
             alpha,
-            pattern: None,
+            pattern,
+            axial_shd: None,
+            radial_shd: None,
+            gouraud_shd: None,
+            la_gouraud_shd: None,
         })
     }
 }
 
-impl TryFromDom<&Element> for Fonts {
-    type Error = TryFromDomError;
+impl TryFromDom<&Element> for CtPattern {
+    fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
+        let width = parse_required_from_attr(dom, "Width", f32::from_str)?;
+        let height = parse_required_from_attr(dom, "Height", f32::from_str)?;
+        let x_step = parse_optional_from_attr(dom, "XStep", f32::from_str)?;
+        let y_step = parse_optional_from_attr(dom, "YStep", f32::from_str)?;
+        let reflect_method = parse_optional_from_attr(dom, "ReflectMethod", String::from_str)?;
+        let relative_to = parse_optional_from_attr(dom, "RelativeTo", String::from_str)?;
+        let ctm = parse_optional_from_attr(dom, "CTM", StArray::from_str)?;
+        let cell_content = parse_required_vec(dom, Some("CellContent"), CellContent::try_from_dom)?;
+        Ok(CtPattern {
+            width,
+            height,
+            x_step,
+            y_step,
+            reflect_method,
+            relative_to,
+            ctm,
+            cell_content,
+        })
+    }
+}
+impl TryFromDom<&Element> for CellContent {
+    fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
+        let thumbnail = parse_optional_from_attr(dom, "Thumbnail", StRefId::from_str)?;
+        let base = CtPageBlock::try_from_dom(dom)?;
+        Ok(CellContent { thumbnail, base })
+    }
+}
 
-    fn try_from_dom(dom: &Element) -> Result<Self, Self::Error> {
+impl TryFromDom<&Element> for Fonts {
+    fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
         let fonts = dom
             .children()
             .map(Font::try_from_dom)
@@ -203,9 +224,7 @@ impl TryFromDom<&Element> for Fonts {
 }
 
 impl TryFromDom<&Element> for Font {
-    type Error = TryFromDomError;
-
-    fn try_from_dom(dom: &Element) -> Result<Self, Self::Error> {
+    fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
         let id = parse_required_from_attr(dom, "ID", StId::from_str)?;
         let font_name = parse_required_from_attr(dom, "FontName", String::from_str)?;
         let family_name = parse_optional_from_attr(dom, "FamilyName", String::from_str)?;
@@ -230,9 +249,7 @@ impl TryFromDom<&Element> for Font {
 }
 
 impl TryFromDom<&Element> for MultiMedias {
-    type Error = TryFromDomError;
-
-    fn try_from_dom(dom: &Element) -> Result<Self, Self::Error> {
+    fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
         let multi_medias = dom
             .children()
             .map(MultiMedia::try_from_dom)
@@ -242,9 +259,7 @@ impl TryFromDom<&Element> for MultiMedias {
 }
 
 impl TryFromDom<&Element> for MultiMedia {
-    type Error = TryFromDomError;
-
-    fn try_from_dom(dom: &Element) -> Result<Self, Self::Error> {
+    fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
         let id = parse_required_from_attr(dom, "ID", StId::from_str)?;
         let r#type = parse_required_from_attr(dom, "Type", String::from_str)?;
         let format = parse_optional_from_attr(dom, "Format", String::from_str)?;

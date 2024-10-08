@@ -1,7 +1,7 @@
 use super::base::{StArray, StBox, StLoc, StPos, StRefId};
+use crate::element::file::page::CtPageBlock;
 use serde::{Deserialize, Serialize};
 use strum::EnumString;
-use crate::element::file::page::CtPageBlock;
 
 #[derive(Debug, Deserialize, Serialize, Clone, Copy, EnumString)]
 pub enum Join {
@@ -81,31 +81,124 @@ pub struct CtColor {
     pub pattern: Option<CtPattern>,
 
     // a color only contains one of these shadows
-
     #[serde(rename = "AxialShd")]
     pub axial_shd: Option<CtAxialShd>,
-    // TODO: p39
+
+    #[serde(rename = "RadialShd")]
+    pub radial_shd: Option<CtRadialShd>,
+
+    #[serde(rename = "GouraudShd")]
+    pub gouraud_shd: Option<Box<CtGouraudShd>>,
+
+    #[serde(rename = "LaGouraudShd")]
+    pub la_gouraud_shd: Option<Box<CtLaGouraudShd>>,
+}
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct CtLaGouraudShd {
+    #[serde(rename = "@VerticesPerRow")]
+    pub vertices_per_row: u32,
+
+    /// could be 0,1 default is 0
+    #[serde(rename = "@Extend")]
+    pub extend: Option<u8>,
+
+    /// at least 4 elements
+    #[serde(rename = "Point")]
+    pub points: Vec<Point>,
+
+    /// must be a basic color
+    #[serde(rename = "BackColor")]
+    pub back_color: Option<CtColor>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct CtGouraudShd {
+    /// could be 0,1 default is 0
+    #[serde(rename = "@Extend")]
+    pub extend: Option<u8>,
+
+    /// at least 3 elements
+    #[serde(rename = "Point")]
+    pub points: Vec<Point>,
+
+    /// must be a basic color
+    #[serde(rename = "BackColor")]
+    pub back_color: Option<CtColor>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct Point {
+    pub x: f32,
+    pub y: f32,
+    pub edge_flag: Option<u8>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct CtRadialShd {
+    #[serde(rename = "@MapType")]
+    pub map_type: Option<String>,
+
+    #[serde(rename = "@MapUnit")]
+    pub map_unit: Option<f32>,
+
+    /// default 0
+    #[serde(rename = "@Eccentricity")]
+    pub eccentricity: Option<f32>,
+
+    #[serde(rename = "@Angle")]
+    pub angle: Option<f32>,
+
+    #[serde(rename = "@StartPoint")]
+    pub start_point: StPos,
+
+    /// default 0
+    #[serde(rename = "@StartRadius")]
+    pub start_radius: Option<f32>,
+
+    #[serde(rename = "@EndPoint")]
+    pub end_point: StPos,
+
+    #[serde(rename = "@EndRadius")]
+    pub end_radius: f32,
+
+    /// could be 0,1,2,3 default is 0
+    #[serde(rename = "@Extend")]
+    pub extend: Option<u8>,
+
+    // at lease 2 element
+    pub segment: Vec<Segment>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct CtAxialShd {
+    #[serde(rename = "@MapType")]
     pub map_type: Option<String>,
+
+    #[serde(rename = "@MapUnit")]
     pub map_unit: Option<f32>,
+
+    /// could be 0,1,2,3 default is 0
+    #[serde(rename = "@Extend")]
     pub extend: Option<u8>,
+
+    #[serde(rename = "@StartPoint")]
     pub start_point: StPos,
+
+    #[serde(rename = "@EndPoint")]
     pub end_point: StPos,
-    
+
     // at lease 2 element
     pub segment: Vec<Segment>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Segment {
-    
     /// [0, 1.0]
+    #[serde(rename = "@Position")]
     pub position: Option<f32>,
-    
+
     /// this must be basic color
+    #[serde(rename = "Color")]
     pub color: CtColor,
 }
 
@@ -117,21 +210,30 @@ pub struct CtPattern {
     #[serde(rename = "@Height")]
     pub height: f32,
 
+    #[serde(rename = "@XStep")]
     pub x_step: Option<f32>,
 
+    #[serde(rename = "@YStep")]
     pub y_step: Option<f32>,
 
+    #[serde(rename = "@ReflectMethod")]
     pub reflect_method: Option<String>,
 
+    /// can be `Page` or `Object`
+    /// default `Object`
+    #[serde(rename = "@RelativeTo")]
     pub relative_to: Option<String>,
 
+    #[serde(rename = "@CTM")]
     pub ctm: Option<StArray<f32>>,
 
+    #[serde(rename = "CellContent")]
     pub cell_content: Vec<CellContent>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct CellContent {
+    #[serde(rename = "@Thumbnail")]
     pub thumbnail: Option<StRefId>,
 
     /// inherit

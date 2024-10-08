@@ -1,13 +1,14 @@
 mod container;
+pub mod dom;
 mod element;
 mod error;
 mod ofd_utils;
 mod render;
-use std::path::PathBuf;
 
 use clap::{command, Parser, Subcommand};
 use cli_table::{print_stdout, WithTitle};
 use eyre::Result;
+use std::path::PathBuf;
 
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
@@ -50,7 +51,19 @@ enum Commands {
     },
 }
 
+fn init_logger() {
+    let e = env_logger::builder()
+        // Include info events
+        // .filter_level(log::LevelFilter::Info)
+        // Ignore errors initializing the logger if tests race to configure it
+        .try_init();
+    if e.is_err() {
+        println!("warn! init logger error");
+    }
+}
+
 fn main() -> Result<()> {
+    init_logger();
     let ops = Cli::parse();
     match ops.command {
         Commands::Info { ofd_file } => {

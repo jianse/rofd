@@ -27,7 +27,7 @@ impl<T: FromStr + Display> FromStr for StArray<T> {
         let s = s.trim();
         let parts = s.split(' ');
         let data = parts
-            .into_iter()
+            .filter(|p| !p.is_empty())
             .map(T::from_str)
             .collect::<Result<Vec<T>, <T as FromStr>::Err>>();
         match data {
@@ -202,6 +202,28 @@ mod tests {
         let res = quick_xml::de::from_str::<E>(xml)?;
         // dbg!(res);
         assert_eq!(res.val, StArray::from(vec![2, 3, 4]));
+        Ok(())
+    }
+
+    #[serde_as]
+    #[derive(Debug, Deserialize)]
+    struct StrList {
+        #[serde_as(as = "DisplayFromStr")]
+        #[serde(rename = "$value")]
+        val: StArray<String>,
+    }
+    #[test]
+    fn test_st_array_blank_de() -> Result<()> {
+        let xml = r#"<e>g 4 1.5875  3.175 g 2 1.5875  3.175 g 2 1.5875 -19.05</e>"#;
+        let res = quick_xml::de::from_str::<StrList>(xml)?;
+        // dbg!(res);
+        assert_eq!(
+            res.val.0,
+            vec![
+                "g", "4", "1.5875", "3.175", "g", "2", "1.5875", "3.175", "g", "2", "1.5875",
+                "-19.05"
+            ]
+        );
         Ok(())
     }
 }

@@ -13,10 +13,13 @@ use crate::element::file::page::{
 use minidom::Element;
 use std::str::FromStr;
 
+impl TryFromDom<Element> for PageXmlFile {
+    fn try_from_dom(dom: Element) -> Result<Self, TryFromDomError> {
+        PageXmlFile::try_from_dom(&dom)
+    }
+}
 impl TryFromDom<&Element> for PageXmlFile {
-    type Error = TryFromDomError;
-
-    fn try_from_dom(dom: &Element) -> Result<Self, Self::Error> {
+    fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
         let area = parse_optional_from_ele(dom, "Area", CtPageArea::try_from_dom)?;
         let template = parse_optional_vec(dom, Some("Template"), Template::try_from_dom)?;
         let page_res = parse_optional_vec(dom, Some("PageRes"), StLoc::try_from_dom)?;
@@ -31,9 +34,7 @@ impl TryFromDom<&Element> for PageXmlFile {
 }
 
 impl TryFromDom<&Element> for Template {
-    type Error = TryFromDomError;
-
-    fn try_from_dom(dom: &Element) -> Result<Self, Self::Error> {
+    fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
         let template_id = parse_required_from_attr(dom, "TemplateID", StRefId::from_str)?;
         let z_order = parse_optional_from_attr(dom, "zOrder", String::from_str)?;
         Ok(Template {
@@ -44,17 +45,14 @@ impl TryFromDom<&Element> for Template {
 }
 
 impl TryFromDom<&Element> for Content {
-    type Error = TryFromDomError;
-
-    fn try_from_dom(dom: &Element) -> Result<Self, Self::Error> {
+    fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
         let layer = parse_required_vec(dom, Some("Layer"), Layer::try_from_dom)?;
         Ok(Content { layer })
     }
 }
 
 impl TryFromDom<&Element> for Layer {
-    type Error = TryFromDomError;
-    fn try_from_dom(dom: &Element) -> Result<Self, Self::Error> {
+    fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
         let r#type = parse_optional_from_attr(dom, "Type", String::from_str)?;
         let draw_param = parse_optional_from_attr(dom, "DrawParam", StRefId::from_str)?;
         let id = parse_required_from_attr(dom, "ID", StId::from_str)?;
@@ -87,9 +85,7 @@ macro_rules! parse_graphic_unit {
 }
 
 impl TryFromDom<&Element> for CtPageBlock {
-    type Error = TryFromDomError;
-
-    fn try_from_dom(dom: &Element) -> Result<Self, Self::Error> {
+    fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
         let name = dom.name();
         match name {
             "TextObject" => {
@@ -250,9 +246,7 @@ impl TryFromDom<&Element> for CtPageBlock {
 }
 
 impl TryFromDom<&Element> for Border {
-    type Error = TryFromDomError;
-
-    fn try_from_dom(dom: &Element) -> Result<Self, Self::Error> {
+    fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
         let line_width = parse_required_from_attr(dom, "LineWidth", f32::from_str)?;
         let horizontal_corner_radius =
             parse_optional_from_attr(dom, "HorizontalCornerRadius", f32::from_str)?;
@@ -273,9 +267,7 @@ impl TryFromDom<&Element> for Border {
 }
 
 impl TryFromDom<&Element> for CGTransform {
-    type Error = TryFromDomError;
-
-    fn try_from_dom(dom: &Element) -> Result<Self, Self::Error> {
+    fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
         let code_position = parse_required_from_attr(dom, "CodePosition", u32::from_str)?;
         let code_count = parse_optional_from_attr(dom, "CodeCount", u32::from_str)?;
         let glyph_count = parse_optional_from_attr(dom, "GlyphCount", u32::from_str)?;
@@ -290,17 +282,13 @@ impl TryFromDom<&Element> for CGTransform {
 }
 
 impl TryFromDom<&Element> for Actions {
-    type Error = TryFromDomError;
-
-    fn try_from_dom(_dom: &Element) -> Result<Self, Self::Error> {
+    fn try_from_dom(_dom: &Element) -> Result<Self, TryFromDomError> {
         todo!()
     }
 }
 
 impl TryFromDom<&Element> for TextCode {
-    type Error = TryFromDomError;
-
-    fn try_from_dom(dom: &Element) -> Result<Self, Self::Error> {
+    fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
         let x = parse_optional_from_attr(dom, "X", f32::from_str)?;
         let y = parse_optional_from_attr(dom, "Y", f32::from_str)?;
         let delta_x = parse_optional_from_attr(dom, "DeltaX", StArray::from_str)?;
