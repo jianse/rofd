@@ -10,8 +10,8 @@ pub enum MyError {
     #[error("parse error")]
     ParseError,
 
-    #[error("unknown path command {0}.")]
-    UnknownPathCommand(String),
+    #[error("unknown path command {0}. At {1}")]
+    UnknownPathCommand(String, usize),
 
     #[error("invalid")]
     Invalid,

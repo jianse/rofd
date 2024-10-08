@@ -1,11 +1,11 @@
 #[cfg(test)]
 mod test_skia {
+    use skia_safe::{Color, Color4f, FontMgr, FontStyle, Image, ImageInfo, Paint, Path, Typeface};
+    use std::path::PathBuf;
     use std::{
         fs::File,
         io::{BufReader, Read, Write},
     };
-
-    use skia_safe::{Color, Color4f, FontMgr, FontStyle, Image, ImageInfo, Paint, Path, Typeface};
 
     use eyre::{OptionExt, Result};
 
@@ -30,7 +30,7 @@ mod test_skia {
             .ok_or_eyre("message")?;
         // data.
         let mut out = File::create("output/res.png")?;
-        out.write(&data)?;
+        let _ = out.write(&data)?;
 
         Ok(())
     }
@@ -191,8 +191,22 @@ mod test_skia {
             .ok_or_eyre("message")?;
         // data.
         let mut out = File::create(path)?;
-        out.write(&data)?;
+        let _ = out.write(&data)?;
 
+        Ok(())
+    }
+
+    #[test]
+    fn test_load_cff() -> Result<()> {
+        let fm = FontMgr::new();
+
+        let path = PathBuf::from("samples/ano/Doc_0/Res/font_84_84.cff");
+        let mut file = File::open(path)?;
+        let mut data = Vec::new();
+        file.read_to_end(&mut data)?;
+        let tf = fm.new_from_data(&data, None);
+        // dbg!(tf);
+        assert!(tf.is_some());
         Ok(())
     }
 }

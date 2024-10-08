@@ -346,13 +346,11 @@ fn draw_path_object(
 
 fn abbreviated_data_2_path(abbr: &StArray<String>) -> Result<Path> {
     let mut path = Path::new();
-    let mut iter = abbr.0.iter().enumerate();
+    let mut iter = abbr.iter().enumerate();
 
-    // TODO: make error contains _idx
-    while let Some((_idx, ele)) = iter.next() {
+    while let Some((idx, ele)) = iter.next() {
         let s: Result<()> = match ele as &str {
-            "S" => Ok(()),
-            "M" => {
+            "S" | "M" => {
                 let x = next_val::<f32>(&mut iter)?;
                 let y = next_val::<f32>(&mut iter)?;
                 path.move_to((x, y));
@@ -398,7 +396,7 @@ fn abbreviated_data_2_path(abbr: &StArray<String>) -> Result<Path> {
                 path.close();
                 Ok(())
             }
-            _ => { Err(MyError::UnknownPathCommand(ele.into())) }?,
+            _ => { Err(MyError::UnknownPathCommand(ele.into(), idx)) }?,
         };
         s?;
     }
@@ -609,7 +607,7 @@ fn draw_layer(
             let after_sc = canvas.save_count();
             assert_eq!(
                 init_sc, after_sc,
-                "imbalanced skia save count , obj: {:?}",
+                "imbalanced skia save count. obj: {:?}",
                 obj
             );
         }
