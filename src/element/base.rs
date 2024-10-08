@@ -1,18 +1,24 @@
-use std::{fmt::Display, path::PathBuf, str::FromStr};
-
-// use eyre::Ok;
 use serde::{
     de::{self, Visitor},
     Deserialize, Serialize,
 };
-use serde_with::serde_as;
+use std::fmt::Debug;
+use std::ops::Deref;
+use std::{fmt::Display, path::PathBuf, str::FromStr};
 use thiserror::Error;
 
 pub type StLoc = PathBuf;
 
-#[serde_as]
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 pub struct StArray<T: FromStr + Display>(pub Vec<T>);
+
+impl<T: FromStr + Display> Deref for StArray<T> {
+    type Target = Vec<T>;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
 
 impl<T: FromStr + Display> FromStr for StArray<T> {
     type Err = <T as FromStr>::Err;
@@ -40,6 +46,7 @@ impl<T: FromStr + Display> Display for StArray<T> {
         write!(f, "{}", r.join(" "))
     }
 }
+
 impl<T: FromStr + Display> From<Vec<T>> for StArray<T> {
     fn from(value: Vec<T>) -> Self {
         Self(value)
@@ -177,5 +184,23 @@ mod tests {
         let res = dbg!(res);
         let r = res.unwrap();
         assert_eq!(r, StBox::new(0.0, 0.0, 160.0, 35.5))
+    }
+    use eyre::Result;
+    use serde_with::serde_as;
+    use serde_with::DisplayFromStr;
+    #[serde_as]
+    #[derive(Debug, Deserialize)]
+    struct E {
+        #[serde_as(as = "DisplayFromStr")]
+        #[serde(rename = "$value")]
+        val: StArray<u32>,
+    }
+    #[test]
+    fn test_st_array_de() -> Result<()> {
+        let xml = r#"<e>2 3 4</e>"#;
+        let res = quick_xml::de::from_str::<E>(xml)?;
+        // dbg!(res);
+        assert_eq!(res.val, StArray::from(vec![2, 3, 4]));
+        Ok(())
     }
 }

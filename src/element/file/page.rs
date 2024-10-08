@@ -3,6 +3,9 @@ use crate::element::base::{StArray, StBox, StId, StLoc, StRefId};
 use crate::element::common::{Actions, Cap, CtColor, Join};
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
+use serde_with::TryFromInto;
+use strum::EnumString;
+use thiserror::Error;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct PageXmlFile {
@@ -156,9 +159,11 @@ pub struct TextObject {
     #[serde(rename = "StrokeColor")]
     pub stroke_color: Option<CtColor>,
 
-    #[serde(rename = "TextCode")]
-    pub text_codes: Vec<TextCode>,
+    #[serde(rename = "$value")]
+    #[serde_as(as = "TryFromInto<UnifiedTextValVec>")]
+    pub text_vals: Vec<TextVal>,
 
+    // pub text_v
     // region:common fields
 
     // common fields on graphic unit
@@ -192,6 +197,100 @@ pub struct TextObject {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+pub enum UnifiedText {
+    CGTransform(CGTransform),
+    TextCode(TextCode),
+}
+
+#[derive(Error, Debug)]
+pub enum TryIntoTextValError {
+    #[error("CGTransform more than one")]
+    CgtNotValid,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct UnifiedTextValVec(Vec<UnifiedText>);
+impl TryInto<Vec<TextVal>> for UnifiedTextValVec {
+    type Error = TryIntoTextValError;
+
+    fn try_into(self) -> Result<Vec<TextVal>, Self::Error> {
+        let mut iter = self.0.into_iter();
+        let mut cur_c = None;
+        let mut res = vec![];
+        for v in iter.by_ref() {
+            match v {
+                UnifiedText::CGTransform(c) => {
+                    if cur_c.is_some() {
+                        return Err(TryIntoTextValError::CgtNotValid);
+                    } else {
+                        cur_c = Some(c)
+                    }
+                }
+                UnifiedText::TextCode(t) => res.push(TextVal {
+                    cg_transform: cur_c.take(),
+                    text_code: t,
+                }),
+            }
+        }
+        Ok(res)
+    }
+}
+impl From<Vec<TextVal>> for UnifiedTextValVec {
+    // type Error = TryIntoTextValError;
+    //
+    // fn try_from(value: Vec<TextVal>) -> Result<Self, Self::Error> {
+    //     value.iter().map(UnifiedText::try_into).collect();
+    //     // todo!()
+    // }
+
+    fn from(value: Vec<TextVal>) -> Self {
+        let v0 = value
+            .into_iter()
+            .map(|v| {
+                if v.cg_transform.is_some() {
+                    vec![
+                        UnifiedText::CGTransform(v.cg_transform.unwrap()),
+                        UnifiedText::TextCode(v.text_code),
+                    ]
+                } else {
+                    vec![UnifiedText::CGTransform(v.cg_transform.unwrap())]
+                }
+            })
+            .flat_map(|v| v.into_iter())
+            .collect::<Vec<UnifiedText>>();
+        UnifiedTextValVec(v0)
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct TextVal {
+    #[serde(rename = "CGTransform")]
+    pub cg_transform: Option<CGTransform>,
+
+    #[serde(rename = "TextCode")]
+    pub text_code: TextCode,
+}
+
+#[serde_as]
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct CGTransform {
+    #[serde(rename = "@CodePosition")]
+    pub code_position: u32,
+
+    /// default 1
+    #[serde(rename = "@CodeCount")]
+    pub code_count: Option<u32>,
+
+    /// default 1
+    #[serde(rename = "@GlyphCount")]
+    pub glyph_count: Option<u32>,
+
+    #[serde_as(as = "serde_with::DisplayFromStr")]
+    #[serde(rename = "Glyphs")]
+    pub glyphs: StArray<u32>,
+}
+
+#[derive(Debug, Serialize, Deserialize, EnumString)]
 pub enum FillRule {
     NoneZero,
     // #[serde]
@@ -261,7 +360,7 @@ pub struct PathObject {
     // endregion
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct TextCode {
     #[serde(rename = "@X")]
     pub x: Option<f32>,
@@ -271,8 +370,12 @@ pub struct TextCode {
     pub delta_x: Option<StArray<String>>,
     #[serde(rename = "@DeltaY")]
     pub delta_y: Option<StArray<String>>,
-    #[serde(rename = "$text")]
+    #[serde(rename = "$text", default = "empty_string")]
     pub val: String,
+}
+
+fn empty_string() -> String {
+    "".to_string()
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -313,6 +416,34 @@ mod tests {
     }
 
     #[test]
+    fn test_text_val() -> Result<()> {
+        let path = "samples/ano/Doc_0/Pages/Page_0/Content.xml";
+        let file = File::open(path)?;
+        let reader = BufReader::new(file);
+        let xml: PageXmlFile = quick_xml::de::from_reader(reader)?;
+        if let Some(content) = xml.content {
+            for layer in content.layer {
+                if let Some(objs) = layer.objects {
+                    for obj in objs {
+                        match obj {
+                            CtPageBlock::TextObject(to) => {
+                                // dbg!(&to.text_vals.);
+                                for tv in to.text_vals {
+                                    if let Some(cgt) = tv.cg_transform {
+                                        dbg!(cgt.glyphs);
+                                    }
+                                }
+                            }
+                            _ => {}
+                        }
+                    }
+                }
+            }
+        }
+        Ok(())
+    }
+
+    #[test]
     fn test_text_object() -> Result<()> {
         let xml_str = r#"
         <ofd:Layer DrawParam="4" ID="11">
@@ -344,6 +475,41 @@ mod tests {
                 val: vec![12_u64, 13, 15].into()
             }
         );
+        Ok(())
+    }
+
+    #[derive(Debug, Deserialize)]
+    struct AnyXml {
+        #[serde(rename = "FillColor")]
+        fill_color: Option<CtColor>,
+        #[serde(rename = "$value")]
+        text_val: Vec<UnifiedText>,
+
+        #[serde(rename = "Actions")]
+        actions: Option<Actions>,
+    }
+    #[test]
+    fn test_unified_text() -> Result<()> {
+        let xml_str = r#"<Data><ofd:CGTransform CodePosition="0" CodeCount="1" GlyphCount="1">
+                    <ofd:Glyphs>1</ofd:Glyphs>
+                </ofd:CGTransform>
+                <ofd:TextCode X="0" Y="0"> </ofd:TextCode></Data>"#;
+        let xml = quick_xml::de::from_str::<AnyXml>(&xml_str)?;
+        dbg!(&xml);
+        Ok(())
+    }
+
+    #[test]
+    fn test_parse_text_object() -> Result<()> {
+        let xml_str = r#"<ofd:TextObject ID="112" CTM="0.3528 0 0 0.3528 0 0" Boundary="25.4085 242.817 0.8445 0"
+                Font="115" Size="15.96">
+                <ofd:CGTransform CodePosition="0" CodeCount="1" GlyphCount="1">
+                    <ofd:Glyphs>1</ofd:Glyphs>
+                </ofd:CGTransform>
+                <ofd:TextCode X="0" Y="0"> </ofd:TextCode>
+            </ofd:TextObject>"#;
+        let xml = quick_xml::de::from_str::<TextObject>(&xml_str)?;
+        dbg!(&xml);
         Ok(())
     }
 }

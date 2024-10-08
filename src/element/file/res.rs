@@ -13,22 +13,18 @@ pub struct ResourceXmlFile {
     #[serde(rename = "@BaseLoc")]
     pub base_loc: StLoc,
 
-    #[serde(rename = "ColorSpaces")]
-    pub color_spaces: Option<ColorSpaces>,
-
-    #[serde(rename = "DrawParams")]
-    pub draw_params: Option<DrawParams>,
-
-    #[serde(rename = "Fonts")]
-    pub fonts: Option<Fonts>,
-
-    #[serde(rename = "MultiMedias")]
-    pub multi_medias: Option<MultiMedias>,
-
-    #[serde(rename = "CompositeGraphicUnits")]
-    pub composite_graphic_units: Option<CompositeGraphicUnits>,
+    #[serde(rename = "$value")]
+    pub resources: Option<Vec<Resource>>,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+pub enum Resource {
+    ColorSpaces(ColorSpaces),
+    DrawParams(DrawParams),
+    Fonts(Fonts),
+    MultiMedias(MultiMedias),
+    CompositeGraphicUnits(CompositeGraphicUnits),
+}
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ColorSpaces {
     #[serde(rename = "ColorSpace")]

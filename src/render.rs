@@ -505,9 +505,9 @@ pub fn render_page(
         .map(|i| &i.content)
         .collect::<Vec<&PageXmlFile>>();
 
-    if templates.is_empty() {
-        return Err(eyre!("no such template!"));
-    }
+    // if templates.is_empty() {
+    //     return Err(eyre!("no such template!"));
+    // }
     let pa = decide_size(page_xml, tpls, doc_xml);
 
     let size = (
@@ -626,9 +626,10 @@ fn draw_text_object(
     let ctm = text_object.ctm.as_ref();
     apply_ctm(canvas, ctm);
 
-    let text_codes = &text_object.text_codes;
-    assert!(!text_codes.is_empty(), "textCode must not be empty!");
-    let mut last_pos = (text_codes[0].x.unwrap(), text_codes[0].y.unwrap());
+    let text_vals = &text_object.text_vals;
+    assert!(!text_vals.is_empty(), "text_vals must not be empty!");
+    let tc0 = &text_vals[0].text_code;
+    let mut last_pos = (tc0.x.unwrap(), tc0.y.unwrap());
     let font_id = text_object.font;
     let font = resources.get_font_by_id(font_id);
     let typeface = if font.is_none() {
@@ -643,7 +644,15 @@ fn draw_text_object(
     };
 
     let font = Font::from_typeface(typeface, Some(text_object.size));
-    for text_code in &text_object.text_codes {
+    for text_val in &text_object.text_vals {
+        let text_code = &text_val.text_code;
+
+        let val = &text_code.val;
+        if val.is_empty() {
+            // skip when text code is empty
+            log::warn!("skipped an empty text code!");
+            continue;
+        }
         let origin = (
             text_code.x.unwrap_or(last_pos.0),
             text_code.y.unwrap_or(last_pos.1),
@@ -687,6 +696,7 @@ fn from_text_code(
 ) -> Result<TextBlob> {
     let origin = (0.0, 0.0);
     let text = &text_code.val;
+    // if text.is_empty()
     let pos = decode_dx_dy(
         origin,
         text_code.delta_x.as_ref(),

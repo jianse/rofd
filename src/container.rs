@@ -4,6 +4,7 @@ use eyre::{Ok, OptionExt, Result};
 use relative_path::RelativePathBuf;
 use zip::{read::ZipFile, ZipArchive};
 
+use crate::element::file::res::Resource;
 use crate::{
     element::{
         base::StRefId,
@@ -16,6 +17,7 @@ use crate::{
     },
     error::MyError,
 };
+
 pub struct Container {
     // container:
     // path:
@@ -78,7 +80,12 @@ impl Resources {
     pub fn get_color_space_by_id(&self, color_space_id: StRefId) -> Option<&ColorSpace> {
         let cs = self
             .iter()
-            .filter_map(|f| f.content.color_spaces.as_ref())
+            .filter_map(|f| f.content.resources.as_ref())
+            .flat_map(|r| r.iter())
+            .filter_map(|r| match r {
+                Resource::ColorSpaces(css) => Some(css),
+                _ => None,
+            })
             .flat_map(|css| css.color_spaces.iter())
             .find(|cs| cs.id == color_space_id);
         cs
@@ -87,7 +94,12 @@ impl Resources {
     pub fn get_draw_param_by_id(&self, draw_param_id: StRefId) -> Option<DrawParam> {
         let dp = self
             .iter()
-            .filter_map(|f| f.content.draw_params.as_ref())
+            .filter_map(|f| f.content.resources.as_ref())
+            .flat_map(|r| r.iter())
+            .filter_map(|r| match r {
+                Resource::DrawParams(dp) => Some(dp),
+                _ => None,
+            })
             .flat_map(|dps| dps.draw_params.iter())
             .find(|dp| dp.id == draw_param_id);
         dp.cloned()
@@ -95,7 +107,12 @@ impl Resources {
     pub fn get_font_by_id(&self, font_id: StRefId) -> Option<Font> {
         let font = self
             .iter()
-            .filter_map(|f| f.content.fonts.as_ref())
+            .filter_map(|f| f.content.resources.as_ref())
+            .flat_map(|v| v.iter())
+            .filter_map(|r| match r {
+                Resource::Fonts(fts) => Some(fts),
+                _ => None,
+            })
             .flat_map(|f| f.fonts.iter())
             .find(|f| f.id == font_id);
         font.cloned()

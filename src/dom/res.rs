@@ -1,14 +1,14 @@
 use crate::dom::{
     parse_optional_from_attr, parse_optional_from_ele, parse_optional_from_text,
-    parse_required_from_attr, parse_required_from_ele, parse_required_from_text, TryFromDom,
-    TryFromDomError,
+    parse_optional_vec, parse_required_from_attr, parse_required_from_ele,
+    parse_required_from_text, TryFromDom, TryFromDomError,
 };
 use crate::element::base::{StArray, StId, StLoc, StRefId};
 use crate::element::common::{Cap, CtColor, Join, Palette};
 use crate::element::file::page::CtPageBlock;
 use crate::element::file::res::{
     ColorSpace, ColorSpaces, CompositeGraphicUnit, CompositeGraphicUnits, DrawParam, DrawParams,
-    Font, Fonts, MultiMedia, MultiMedias, ResourceXmlFile, Type,
+    Font, Fonts, MultiMedia, MultiMedias, Resource, ResourceXmlFile, Type,
 };
 use minidom::Element;
 use std::str::FromStr;
@@ -19,27 +19,45 @@ impl TryFromDom<&Element> for ResourceXmlFile {
     fn try_from_dom(dom: &Element) -> Result<Self, Self::Error> {
         let base_loc = parse_required_from_attr(dom, "BaseLoc", StLoc::from_str)?;
 
-        let color_spaces = parse_optional_from_ele(dom, "ColorSpaces", ColorSpaces::try_from_dom)?;
-
-        let draw_params = parse_optional_from_ele(dom, "DrawParams", DrawParams::try_from_dom)?;
-
-        let fonts = parse_optional_from_ele(dom, "Fonts", Fonts::try_from_dom)?;
-
-        let multi_medias = parse_optional_from_ele(dom, "MultiMedias", MultiMedias::try_from_dom)?;
-
-        let composite_graphic_units = parse_optional_from_ele(
-            dom,
-            "CompositeGraphicUnits",
-            CompositeGraphicUnits::try_from_dom,
-        )?;
+        let resources = parse_optional_vec(dom, None, Resource::try_from_dom)?;
         Ok(ResourceXmlFile {
             base_loc,
-            color_spaces,
-            draw_params,
-            fonts,
-            multi_medias,
-            composite_graphic_units,
+            resources,
         })
+    }
+}
+
+impl TryFromDom<&Element> for Resource {
+    type Error = TryFromDomError;
+
+    fn try_from_dom(dom: &Element) -> Result<Self, Self::Error> {
+        let name = dom.name();
+        match name {
+            "ColorSpaces" => {
+                let color_spaces = ColorSpaces::try_from_dom(dom)?;
+                Ok(Resource::ColorSpaces(color_spaces))
+            }
+            "DrawParams" => {
+                let draw_params = DrawParams::try_from_dom(dom)?;
+                Ok(Resource::DrawParams(draw_params))
+            }
+            "Fonts" => {
+                let fonts = Fonts::try_from_dom(dom)?;
+                Ok(Resource::Fonts(fonts))
+            }
+            "MultiMedias" => {
+                let multi_medias = MultiMedias::try_from_dom(dom)?;
+                Ok(Resource::MultiMedias(multi_medias))
+            }
+            "CompositeGraphicUnits" => {
+                let composite_graphic_units = CompositeGraphicUnits::try_from_dom(dom)?;
+                Ok(Resource::CompositeGraphicUnits(composite_graphic_units))
+            }
+            _ => Err(TryFromDomError::ElementNameNotExpected(
+                "one of\"ColorSpaces, DrawParams, Fonts, MultiMedias, CompositeGraphicUnits\"",
+                name.into(),
+            )),
+        }
     }
 }
 

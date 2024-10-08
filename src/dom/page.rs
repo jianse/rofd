@@ -7,8 +7,8 @@ use crate::element::base::{StArray, StBox, StId, StLoc, StRefId};
 use crate::element::common::{Actions, Cap, CtColor, Join};
 use crate::element::file::document::CtPageArea;
 use crate::element::file::page::{
-    Content, CtPageBlock, ImageObject, Layer, PageXmlFile, PathObject, Template, TextCode,
-    TextObject,
+    Border, CGTransform, Content, CtPageBlock, FillRule, ImageObject, Layer, PageXmlFile,
+    PathObject, Template, TextCode, TextObject, TextVal,
 };
 use minidom::Element;
 use std::str::FromStr;
@@ -105,7 +105,41 @@ impl TryFromDom<&Element> for CtPageBlock {
                 let fill_color = parse_optional_from_ele(dom, "FillColor", CtColor::try_from_dom)?;
                 let stroke_color =
                     parse_optional_from_ele(dom, "StrokeColor", CtColor::try_from_dom)?;
-                let text_codes = parse_required_vec(dom, Some("TextCode"), TextCode::try_from_dom)?;
+                #[inline]
+                fn parse_text_vals(dom: &Element) -> Result<Vec<TextVal>, TryFromDomError> {
+                    let elements = dom
+                        .children()
+                        .filter(|e| e.name() == "TextCode" || e.name() == "CGTransform")
+                        .collect::<Vec<_>>();
+                    let mut res = vec![];
+                    let mut temp_cg = None;
+                    for ele in elements {
+                        let name = ele.name();
+                        match name {
+                            "CGTransform" => {
+                                if temp_cg.is_some() {
+                                    return Err(TryFromDomError::ElementNameNotExpected(
+                                        "TextCode",
+                                        "CGTransform".into(),
+                                    ));
+                                } else {
+                                    let cgt = CGTransform::try_from_dom(ele)?;
+                                    temp_cg = Some(cgt);
+                                }
+                            }
+                            "TextCode" => {
+                                let text_code = TextCode::try_from_dom(ele)?;
+                                res.push(TextVal {
+                                    cg_transform: temp_cg.take(),
+                                    text_code,
+                                });
+                            }
+                            _ => unreachable!(),
+                        };
+                    }
+                    Ok(res)
+                }
+                let text_vals = parse_text_vals(dom)?;
                 let mut to = TextObject {
                     font,
                     size,
@@ -118,7 +152,7 @@ impl TryFromDom<&Element> for CtPageBlock {
                     italic,
                     fill_color,
                     stroke_color,
-                    text_codes,
+                    text_vals,
                     // following fields are common graphic unit fields
                     boundary: StBox::zero(),
                     name: None,
@@ -138,14 +172,21 @@ impl TryFromDom<&Element> for CtPageBlock {
                 Ok(CtPageBlock::TextObject(to))
             }
             "PathObject" => {
+                let stroke = parse_optional_from_attr(dom, "Stroke", bool::from_str)?;
+                let fill = parse_optional_from_attr(dom, "Fill", bool::from_str)?;
+                let rule = parse_optional_from_attr(dom, "Rule", FillRule::from_str)?;
+                let fill_color = parse_optional_from_ele(dom, "FillColor", CtColor::try_from_dom)?;
+                let stroke_color =
+                    parse_optional_from_ele(dom, "StrokeColor", CtColor::try_from_dom)?;
                 let abbreviated_data =
                     parse_required_from_text(dom, "AbbreviatedData", StArray::from_str)?;
+
                 let mut po = PathObject {
-                    stroke: None,
-                    fill: None,
-                    rule: None,
-                    fill_color: None,
-                    stroke_color: None,
+                    stroke,
+                    fill,
+                    rule,
+                    fill_color,
+                    stroke_color,
                     abbreviated_data,
                     // following fields are common graphic unit fields
                     boundary: StBox::zero(),
@@ -166,11 +207,17 @@ impl TryFromDom<&Element> for CtPageBlock {
                 Ok(CtPageBlock::PathObject(po))
             }
             "ImageObject" => {
+                let resource_id = parse_required_from_attr(dom, "ResourceID", StRefId::from_str)?;
+                let substitution =
+                    parse_optional_from_attr(dom, "Substitution", StRefId::from_str)?;
+                let image_mask = parse_optional_from_attr(dom, "ImageMask", StRefId::from_str)?;
+                let border = parse_optional_from_ele(dom, "Border", Border::try_from_dom)?;
                 let mut io = ImageObject {
-                    resource_id: 0,
-                    substitution: None,
-                    image_mask: None,
-                    border: None,
+                    resource_id,
+                    substitution,
+                    image_mask,
+                    border,
+                    // following fields are common graphic unit fields
                     boundary: StBox::zero(),
                     name: None,
                     visible: None,
@@ -202,10 +249,50 @@ impl TryFromDom<&Element> for CtPageBlock {
     }
 }
 
-impl TryFromDom<&Element> for Actions {
+impl TryFromDom<&Element> for Border {
     type Error = TryFromDomError;
 
     fn try_from_dom(dom: &Element) -> Result<Self, Self::Error> {
+        let line_width = parse_required_from_attr(dom, "LineWidth", f32::from_str)?;
+        let horizontal_corner_radius =
+            parse_optional_from_attr(dom, "HorizontalCornerRadius", f32::from_str)?;
+        let vertical_corner_radius =
+            parse_optional_from_attr(dom, "VerticalCornerRadius", f32::from_str)?;
+        let dash_offset = parse_optional_from_attr(dom, "DashOffset", f32::from_str)?;
+        let dash_pattern = parse_optional_from_attr(dom, "DashPattern", StArray::from_str)?;
+        let border_color = parse_optional_from_ele(dom, "BorderColor", CtColor::try_from_dom)?;
+        Ok(Border {
+            line_width,
+            horizontal_corner_radius,
+            vertical_corner_radius,
+            dash_offset,
+            dash_pattern,
+            border_color,
+        })
+    }
+}
+
+impl TryFromDom<&Element> for CGTransform {
+    type Error = TryFromDomError;
+
+    fn try_from_dom(dom: &Element) -> Result<Self, Self::Error> {
+        let code_position = parse_required_from_attr(dom, "CodePosition", u32::from_str)?;
+        let code_count = parse_optional_from_attr(dom, "CodeCount", u32::from_str)?;
+        let glyph_count = parse_optional_from_attr(dom, "GlyphCount", u32::from_str)?;
+        let glyphs = parse_required_from_text(dom, "Glyphs", StArray::from_str)?;
+        Ok(CGTransform {
+            code_position,
+            code_count,
+            glyph_count,
+            glyphs,
+        })
+    }
+}
+
+impl TryFromDom<&Element> for Actions {
+    type Error = TryFromDomError;
+
+    fn try_from_dom(_dom: &Element) -> Result<Self, Self::Error> {
         todo!()
     }
 }
@@ -239,8 +326,20 @@ mod tests {
     use std::io::{BufReader, Read};
 
     #[test]
-    fn test_try_from_dom() -> Result<()> {
+    fn test_try_from_dom0() -> Result<()> {
         let file = File::open("samples/sample/Doc_0/Pages/Page_0/Content.xml")?;
+        let mut reader = BufReader::new(file);
+        let mut data = String::new();
+        let _ = reader.read_to_string(&mut data);
+        let root: Element = data.parse()?;
+        let st = PageXmlFile::try_from_dom(&root)?;
+        dbg!(&st);
+        Ok(())
+    }
+
+    #[test]
+    fn test_try_from_dom1() -> Result<()> {
+        let file = File::open("samples/ano/Doc_0/Pages/Page_0/Content.xml")?;
         let mut reader = BufReader::new(file);
         let mut data = String::new();
         let _ = reader.read_to_string(&mut data);
