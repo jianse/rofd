@@ -49,12 +49,20 @@ impl TryFromDom<&Element> for DocumentXmlFile {
         let annotations = parse_optional_st_loc_from_ele(dom, "Annotations")?;
         let attachments = parse_optional_st_loc_from_ele(dom, "Attachments")?;
         let custom_tags = parse_optional_st_loc_from_ele(dom, "CustomTags")?;
+
+        // TODO: parse missing fields
         Ok(DocumentXmlFile {
             common_data,
             pages,
+            outlines: None,
+            permissions: None,
+            actions: None,
+            v_preferences: None,
+            bookmarks: None,
             annotations,
             attachments,
             custom_tags,
+            extensions: None,
         })
     }
 }

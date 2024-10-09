@@ -1,10 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use std::io::{BufRead, BufReader};
-
-    use eyre::Result;
     use quick_xml::{events::Event, Reader};
-    use serde::Deserialize;
     use skia_safe::{Color, Color4f};
 
     #[test]

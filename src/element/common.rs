@@ -54,7 +54,9 @@ pub struct Actions {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct CtAction {}
+pub struct CtAction {
+    // TODO: action
+}
 
 /// 包括基本颜色、底纹和渐变
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -237,7 +239,7 @@ pub struct CellContent {
     pub thumbnail: Option<StRefId>,
 
     /// inherit
-    /// TODO: how do we deserialize this
+    /// note: now we do not use serde to do this
     pub base: CtPageBlock,
 }
 

@@ -236,13 +236,6 @@ impl TryInto<Vec<TextVal>> for UnifiedTextValVec {
     }
 }
 impl From<Vec<TextVal>> for UnifiedTextValVec {
-    // type Error = TryIntoTextValError;
-    //
-    // fn try_from(value: Vec<TextVal>) -> Result<Self, Self::Error> {
-    //     value.iter().map(UnifiedText::try_into).collect();
-    //     // todo!()
-    // }
-
     fn from(value: Vec<TextVal>) -> Self {
         let v0 = value
             .into_iter()
@@ -425,16 +418,13 @@ mod tests {
             for layer in content.layer {
                 if let Some(objs) = layer.objects {
                     for obj in objs {
-                        match obj {
-                            CtPageBlock::TextObject(to) => {
-                                // dbg!(&to.text_vals.);
-                                for tv in to.text_vals {
-                                    if let Some(cgt) = tv.cg_transform {
-                                        dbg!(cgt.glyphs);
-                                    }
+                        if let CtPageBlock::TextObject(to) = obj {
+                            // dbg!(&to.text_vals.);
+                            for tv in to.text_vals {
+                                if let Some(cgt) = tv.cg_transform {
+                                    dbg!(cgt.glyphs);
                                 }
                             }
-                            _ => {}
                         }
                     }
                 }
@@ -452,7 +442,7 @@ mod tests {
         </ofd:PathObject>
         </ofd:Layer>
         "#;
-        let xml = quick_xml::de::from_str::<Layer>(&xml_str)?;
+        let xml = quick_xml::de::from_str::<Layer>(xml_str)?;
         dbg!(xml);
         Ok(())
     }
@@ -466,7 +456,7 @@ mod tests {
     #[test]
     fn test_sequence_of_str() -> Result<()> {
         let xml_str = r#"<Data>12 13 15</Data>"#;
-        let xml = quick_xml::de::from_str::<Data>(&xml_str)?;
+        let xml = quick_xml::de::from_str::<Data>(xml_str)?;
         // dbg!(xml);
         // xml =
         assert_eq!(
@@ -495,7 +485,7 @@ mod tests {
                     <ofd:Glyphs>1</ofd:Glyphs>
                 </ofd:CGTransform>
                 <ofd:TextCode X="0" Y="0"> </ofd:TextCode></Data>"#;
-        let xml = quick_xml::de::from_str::<AnyXml>(&xml_str)?;
+        let xml = quick_xml::de::from_str::<AnyXml>(xml_str)?;
         // dbg!(&xml);
         assert!(xml.fill_color.is_none());
         assert_eq!(xml.text_val.len(), 2);
@@ -512,7 +502,7 @@ mod tests {
                 </ofd:CGTransform>
                 <ofd:TextCode X="0" Y="0"> </ofd:TextCode>
             </ofd:TextObject>"#;
-        let xml = quick_xml::de::from_str::<TextObject>(&xml_str)?;
+        let xml = quick_xml::de::from_str::<TextObject>(xml_str)?;
         dbg!(&xml);
         Ok(())
     }
