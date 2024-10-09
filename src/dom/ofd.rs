@@ -97,11 +97,21 @@ impl TryFromDom<&Element> for CtDocInfo {
             .get_child("CustomDatas", OFD_NS)
             .map(CustomDatas::try_from_dom)
             .transpose()?;
+
+        // TODO: parse missing fields
         Ok(CtDocInfo {
             doc_id,
             title,
             author,
+            subject: None,
+            r#abstract: None,
             creation_date,
+            mod_date: None,
+            doc_usage: None,
+            cover: None,
+            keywords: None,
+            creator: None,
+            creator_version: None,
             custom_datas,
         })
     }

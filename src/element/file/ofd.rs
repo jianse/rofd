@@ -1,6 +1,5 @@
 use ::serde::{Deserialize, Serialize};
 use chrono::NaiveDate;
-// use serde::{Deserialize, Serialize};
 
 use crate::element::base::StLoc;
 
@@ -31,19 +30,53 @@ pub struct DocBody {
     #[serde(rename = "Signatures")]
     pub signatures: Option<StLoc>,
 }
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CtDocInfo {
-    // TODO missing some prop
     #[serde(rename = "DocID")]
     pub doc_id: Option<String>,
+
     #[serde(rename = "Title")]
     pub title: Option<String>,
+
     #[serde(rename = "Author")]
     pub author: Option<String>,
+
+    #[serde(rename = "Subject")]
+    pub subject: Option<String>,
+
+    #[serde(rename = "Abstract")]
+    pub r#abstract: Option<String>,
+
     #[serde(rename = "CreationDate")]
     pub creation_date: Option<NaiveDate>,
+
+    #[serde(rename = "ModDate")]
+    pub mod_date: Option<NaiveDate>,
+
+    #[serde(rename = "DocUsage")]
+    pub doc_usage: Option<String>,
+
+    #[serde(rename = "Cover")]
+    pub cover: Option<StLoc>,
+
+    #[serde(rename = "Keywords")]
+    pub keywords: Option<Keywords>,
+
+    #[serde(rename = "Creator")]
+    pub creator: Option<String>,
+
+    #[serde(rename = "CreatorVersion")]
+    pub creator_version: Option<String>,
+
     #[serde(rename = "CustomDatas")]
     pub custom_datas: Option<CustomDatas>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Keywords {
+    #[serde(rename = "Keyword")]
+    pub keywords: Option<String>,
 }
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CustomDatas {
@@ -89,6 +122,7 @@ mod tests {
         write!(file, "{}", buffer)?;
         Ok(())
     }
+
     fn new_ofd() -> OfdXmlFile {
         OfdXmlFile {
             version: "1.1".into(),
@@ -98,7 +132,15 @@ mod tests {
                     doc_id: Some("str".into()),
                     title: None,
                     author: Some("China Tex".into()),
+                    subject: None,
+                    r#abstract: None,
                     creation_date: NaiveDate::from_ymd_opt(2023, 12, 19),
+                    mod_date: None,
+                    doc_usage: None,
+                    cover: None,
+                    keywords: None,
+                    creator: None,
+                    creator_version: None,
                     custom_datas: None,
                 },
                 doc_root: Some("Doc_0".into()),
