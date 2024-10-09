@@ -496,7 +496,10 @@ mod tests {
                 </ofd:CGTransform>
                 <ofd:TextCode X="0" Y="0"> </ofd:TextCode></Data>"#;
         let xml = quick_xml::de::from_str::<AnyXml>(&xml_str)?;
-        dbg!(&xml);
+        // dbg!(&xml);
+        assert!(xml.fill_color.is_none());
+        assert_eq!(xml.text_val.len(), 2);
+        assert!(xml.actions.is_none());
         Ok(())
     }
 
