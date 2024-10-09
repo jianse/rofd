@@ -7,8 +7,8 @@ use crate::element::base::{StArray, StId, StLoc, StRefId};
 use crate::element::common::{Cap, CellContent, CtColor, CtPattern, Join, Palette};
 use crate::element::file::page::CtPageBlock;
 use crate::element::file::res::{
-    ColorSpace, ColorSpaces, CompositeGraphicUnit, CompositeGraphicUnits, DrawParam, DrawParams,
-    Font, Fonts, MultiMedia, MultiMedias, Resource, ResourceXmlFile, Type,
+    ColorSpace, ColorSpaces, CompositeGraphicUnit, CompositeGraphicUnits, CtVectorG, DrawParam,
+    DrawParams, Font, Fonts, MultiMedia, MultiMedias, Resource, ResourceXmlFile, Type,
 };
 use minidom::Element;
 use std::str::FromStr;
@@ -80,8 +80,25 @@ impl TryFromDom<&Element> for CompositeGraphicUnits {
 impl TryFromDom<&Element> for CompositeGraphicUnit {
     fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
         let id = parse_required_from_attr(dom, "ID", StId::from_str)?;
+        let base = CtVectorG::try_from_dom(&dom)?;
+        Ok(CompositeGraphicUnit { id, base })
+    }
+}
+
+impl TryFromDom<&Element> for CtVectorG {
+    fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
+        let width = parse_required_from_attr(dom, "Width", f32::from_str)?;
+        let height = parse_required_from_attr(dom, "Height", f32::from_str)?;
+        let thumbnail = parse_optional_from_text(dom, "Thumbnail", StRefId::from_str)?;
+        let substitution = parse_optional_from_text(dom, "Substitution", StRefId::from_str)?;
         let content = parse_required_from_ele(dom, "Content", CtPageBlock::try_from_dom)?;
-        Ok(CompositeGraphicUnit { id, content })
+        Ok(CtVectorG {
+            width,
+            height,
+            thumbnail,
+            substitution,
+            content,
+        })
     }
 }
 

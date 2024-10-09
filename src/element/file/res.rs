@@ -189,7 +189,21 @@ pub struct CompositeGraphicUnits {
 pub struct CompositeGraphicUnit {
     #[serde(rename = "@ID")]
     pub id: StId,
-    //TODO: P79
+
+    /// this prop is using for minidom
+    pub base: CtVectorG,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct CtVectorG {
+    #[serde(rename = "@Width")]
+    pub width: f32,
+    #[serde(rename = "@Height")]
+    pub height: f32,
+    #[serde(rename = "Thumbnail")]
+    pub thumbnail: Option<StRefId>,
+    #[serde(rename = "Substitution")]
+    pub substitution: Option<StRefId>,
     #[serde(rename = "Content")]
     pub content: CtPageBlock,
 }
