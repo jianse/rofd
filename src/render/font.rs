@@ -148,11 +148,13 @@ mod tests {
 
     #[test]
     fn test_typeface_eq() {
+        init_logger();
+
         let font_mgr = skia_safe::FontMgr::new();
         let sys_kai = font_mgr.match_family_style("楷体", skia_safe::FontStyle::default());
         // assert!(sys_kai.is_some());
-        if !sys_kai.is_some() {
-            log::warn!("we are runing on system that not have some default fonts");
+        if sys_kai.is_none() {
+            log::warn!("we are running on system that not have some default fonts");
             return;
         }
         let sys_kai = sys_kai.unwrap();
