@@ -7,8 +7,8 @@ use crate::element::base::{StArray, StBox, StId, StLoc, StRefId};
 use crate::element::common::{Actions, Cap, CtColor, Join};
 use crate::element::file::document::CtPageArea;
 use crate::element::file::page::{
-    Border, CGTransform, Content, CtPageBlock, FillRule, ImageObject, Layer, PageXmlFile,
-    PathObject, Template, TextCode, TextObject, TextVal,
+    Border, CGTransform, Content, FillRule, ImageObject, Layer, PageXmlFile, PathObject, Template,
+    TextCode, TextObject, TextVal, VtGraphicUnit,
 };
 use minidom::Element;
 use std::str::FromStr;
@@ -56,7 +56,7 @@ impl TryFromDom<&Element> for Layer {
         let r#type = parse_optional_from_attr(dom, "Type", String::from_str)?;
         let draw_param = parse_optional_from_attr(dom, "DrawParam", StRefId::from_str)?;
         let id = parse_required_from_attr(dom, "ID", StId::from_str)?;
-        let objects = parse_optional_vec(dom, None, CtPageBlock::try_from_dom)?;
+        let objects = parse_optional_vec(dom, None, VtGraphicUnit::try_from_dom)?;
         Ok(Layer {
             r#type,
             draw_param,
@@ -84,11 +84,12 @@ macro_rules! parse_graphic_unit {
     };
 }
 
-impl TryFromDom<&Element> for CtPageBlock {
+impl TryFromDom<&Element> for VtGraphicUnit {
     fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
         let name = dom.name();
         match name {
             "TextObject" => {
+                let id = parse_required_from_attr(dom, "ID", StId::from_str)?;
                 let font = parse_required_from_attr(dom, "Font", StRefId::from_str)?;
                 let size = parse_required_from_attr(dom, "Size", f32::from_str)?;
                 let stroke = parse_optional_from_attr(dom, "Stoke", bool::from_str)?;
@@ -137,6 +138,7 @@ impl TryFromDom<&Element> for CtPageBlock {
                 }
                 let text_vals = parse_text_vals(dom)?;
                 let mut to = TextObject {
+                    id,
                     font,
                     size,
                     stroke,
@@ -165,9 +167,10 @@ impl TryFromDom<&Element> for CtPageBlock {
                     actions: None,
                 };
                 parse_graphic_unit!(dom, &mut to);
-                Ok(CtPageBlock::TextObject(to))
+                Ok(VtGraphicUnit::TextObject(to))
             }
             "PathObject" => {
+                let id = parse_required_from_attr(dom, "ID", StId::from_str)?;
                 let stroke = parse_optional_from_attr(dom, "Stroke", bool::from_str)?;
                 let fill = parse_optional_from_attr(dom, "Fill", bool::from_str)?;
                 let rule = parse_optional_from_attr(dom, "Rule", FillRule::from_str)?;
@@ -178,6 +181,7 @@ impl TryFromDom<&Element> for CtPageBlock {
                     parse_required_from_text(dom, "AbbreviatedData", StArray::from_str)?;
 
                 let mut po = PathObject {
+                    id,
                     stroke,
                     fill,
                     rule,
@@ -200,15 +204,17 @@ impl TryFromDom<&Element> for CtPageBlock {
                     actions: None,
                 };
                 parse_graphic_unit!(dom, &mut po);
-                Ok(CtPageBlock::PathObject(po))
+                Ok(VtGraphicUnit::PathObject(po))
             }
             "ImageObject" => {
+                let id = parse_required_from_attr(dom, "ID", StId::from_str)?;
                 let resource_id = parse_required_from_attr(dom, "ResourceID", StRefId::from_str)?;
                 let substitution =
                     parse_optional_from_attr(dom, "Substitution", StRefId::from_str)?;
                 let image_mask = parse_optional_from_attr(dom, "ImageMask", StRefId::from_str)?;
                 let border = parse_optional_from_ele(dom, "Border", Border::try_from_dom)?;
                 let mut io = ImageObject {
+                    id,
                     resource_id,
                     substitution,
                     image_mask,
@@ -229,7 +235,7 @@ impl TryFromDom<&Element> for CtPageBlock {
                     actions: None,
                 };
                 parse_graphic_unit!(dom, &mut io);
-                Ok(CtPageBlock::ImageObject(io))
+                Ok(VtGraphicUnit::ImageObject(io))
             }
             "CompositeObject" => {
                 todo!()

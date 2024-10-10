@@ -6,7 +6,7 @@ use crate::element::{
     common::{Cap, CtColor, Join, Palette},
 };
 
-use super::page::CtPageBlock;
+use super::page::VtGraphicUnit;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ResourceXmlFile {
@@ -205,7 +205,7 @@ pub struct CtVectorG {
     #[serde(rename = "Substitution")]
     pub substitution: Option<StRefId>,
     #[serde(rename = "Content")]
-    pub content: CtPageBlock,
+    pub content: VtGraphicUnit,
 }
 
 #[cfg(test)]

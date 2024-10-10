@@ -5,7 +5,7 @@ use crate::dom::{
 };
 use crate::element::base::{StArray, StId, StLoc, StRefId};
 use crate::element::common::{Cap, CellContent, CtColor, CtPattern, Join, Palette};
-use crate::element::file::page::CtPageBlock;
+use crate::element::file::page::VtGraphicUnit;
 use crate::element::file::res::{
     ColorSpace, ColorSpaces, CompositeGraphicUnit, CompositeGraphicUnits, CtVectorG, DrawParam,
     DrawParams, Font, Fonts, MultiMedia, MultiMedias, Resource, ResourceXmlFile, Type,
@@ -91,7 +91,7 @@ impl TryFromDom<&Element> for CtVectorG {
         let height = parse_required_from_attr(dom, "Height", f32::from_str)?;
         let thumbnail = parse_optional_from_text(dom, "Thumbnail", StRefId::from_str)?;
         let substitution = parse_optional_from_text(dom, "Substitution", StRefId::from_str)?;
-        let content = parse_required_from_ele(dom, "Content", CtPageBlock::try_from_dom)?;
+        let content = parse_required_from_ele(dom, "Content", VtGraphicUnit::try_from_dom)?;
         Ok(CtVectorG {
             width,
             height,
@@ -225,7 +225,7 @@ impl TryFromDom<&Element> for CtPattern {
 impl TryFromDom<&Element> for CellContent {
     fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
         let thumbnail = parse_optional_from_attr(dom, "Thumbnail", StRefId::from_str)?;
-        let base = CtPageBlock::try_from_dom(dom)?;
+        let base = VtGraphicUnit::try_from_dom(dom)?;
         Ok(CellContent { thumbnail, base })
     }
 }

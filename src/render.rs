@@ -573,7 +573,7 @@ fn draw_layer(
         for obj in objects {
             let init_sc = canvas.save_count();
             let r = match obj {
-                crate::element::file::page::CtPageBlock::TextObject(text) => {
+                crate::element::file::page::VtGraphicUnit::TextObject(text) => {
                     let dp_id = text.draw_param;
                     let dp = get_draw_param_by_id(resources, dp_id);
                     draw_param_stack.push(dp.clone());
@@ -581,7 +581,7 @@ fn draw_layer(
                     draw_param_stack.pop(dp);
                     dtr
                 }
-                crate::element::file::page::CtPageBlock::PathObject(path) => {
+                crate::element::file::page::VtGraphicUnit::PathObject(path) => {
                     let dp_id = path.draw_param;
                     let dp = get_draw_param_by_id(resources, dp_id);
                     draw_param_stack.push(dp.clone());
@@ -589,7 +589,7 @@ fn draw_layer(
                     draw_param_stack.pop(dp);
                     dpr
                 }
-                crate::element::file::page::CtPageBlock::ImageObject(image) => {
+                crate::element::file::page::VtGraphicUnit::ImageObject(image) => {
                     let dp_id = image.draw_param;
                     let dp = get_draw_param_by_id(resources, dp_id);
                     draw_param_stack.push(dp.clone());
@@ -598,8 +598,8 @@ fn draw_layer(
                     draw_param_stack.pop(dp);
                     dir
                 }
-                crate::element::file::page::CtPageBlock::CompositeObject {} => todo!(),
-                crate::element::file::page::CtPageBlock::PageBlock {} => todo!(),
+                crate::element::file::page::VtGraphicUnit::CompositeObject(_co) => todo!(),
+                crate::element::file::page::VtGraphicUnit::PageBlock(_pb) => todo!(),
             };
             if r.is_err() {
                 error!("draw_text_error: {:?}", r);

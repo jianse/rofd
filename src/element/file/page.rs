@@ -23,6 +23,7 @@ pub struct PageXmlFile {
     pub content: Option<Content>,
 }
 
+/// extends `CT_PageBlock`
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Layer {
     #[serde(rename = "@Type")]
@@ -35,7 +36,7 @@ pub struct Layer {
     pub id: StId,
 
     #[serde(rename = "$value")]
-    pub objects: Option<Vec<CtPageBlock>>,
+    pub objects: Option<Vec<VtGraphicUnit>>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -43,22 +44,66 @@ pub struct Content {
     #[serde(rename = "Layer")]
     pub layer: Vec<Layer>,
 }
-#[serde_as]
+
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub enum CtPageBlock {
+pub enum VtGraphicUnit {
     TextObject(TextObject),
     PathObject(PathObject),
     ImageObject(ImageObject),
-    CompositeObject {
-        // TODO: impl
-    },
-    PageBlock {
-        // TODO: impl
-    },
+    CompositeObject(CompositeObject),
+    PageBlock(PageBlock),
 }
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct PageBlock {
+    #[serde(rename = "@ID")]
+    pub id: StId,
+    #[serde(rename = "$value")]
+    pub objects: Option<Vec<VtGraphicUnit>>,
+}
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct CompositeObject {
+    #[serde(rename = "@ID")]
+    pub id: StId,
 
+    #[serde(rename = "@ResourceID")]
+    pub resource_id: StRefId,
+
+    // region:common fields
+
+    // common fields on graphic unit
+    #[serde(rename = "@Boundary")]
+    pub boundary: StBox,
+    #[serde(rename = "@Name")]
+    pub name: Option<String>,
+    #[serde(rename = "@Visible")]
+    pub visible: Option<bool>,
+    #[serde(rename = "@CTM")]
+    pub ctm: Option<StArray<f32>>,
+    #[serde(rename = "@DrawParam")]
+    pub draw_param: Option<StRefId>,
+    #[serde(rename = "@LineWidth")]
+    pub line_width: Option<f32>,
+    #[serde(rename = "@Cap")]
+    pub cap: Option<Cap>,
+    #[serde(rename = "@Join")]
+    pub join: Option<Join>,
+    #[serde(rename = "@MiterLimit")]
+    pub miter_limit: Option<f32>,
+    #[serde(rename = "@DashOffset")]
+    pub dash_offset: Option<f32>,
+    #[serde(rename = "@DashPattern")]
+    pub dash_pattern: Option<StArray<f32>>,
+    #[serde(rename = "@Alpha")]
+    pub alpha: Option<u8>,
+    #[serde(rename = "Actions")]
+    pub actions: Option<Actions>,
+    // endregion
+}
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ImageObject {
+    #[serde(rename = "@ID")]
+    pub id: StId,
+
     #[serde(rename = "@ResourceID")]
     pub resource_id: StRefId,
 
@@ -129,6 +174,9 @@ pub struct Border {
 #[serde_as]
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct TextObject {
+    #[serde(rename = "@ID")]
+    pub id: StId,
+
     #[serde(rename = "@Font")]
     pub font: StRefId,
 
@@ -297,6 +345,9 @@ pub enum FillRule {
 #[serde_as]
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct PathObject {
+    #[serde(rename = "@ID")]
+    pub id: StId,
+
     /// default true
     #[serde(rename = "@Stroke")]
     pub stroke: Option<bool>,
@@ -422,7 +473,7 @@ mod tests {
             for layer in content.layer {
                 if let Some(objs) = layer.objects {
                     for obj in objs {
-                        if let CtPageBlock::TextObject(to) = obj {
+                        if let VtGraphicUnit::TextObject(to) = obj {
                             // dbg!(&to.text_vals.);
                             for tv in to.text_vals {
                                 if let Some(cgt) = tv.cg_transform {

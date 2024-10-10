@@ -1,5 +1,5 @@
 use super::base::{StArray, StBox, StLoc, StPos, StRefId};
-use crate::element::file::page::CtPageBlock;
+use crate::element::file::page::VtGraphicUnit;
 use serde::{Deserialize, Serialize};
 use strum::EnumString;
 
@@ -69,7 +69,8 @@ pub struct CtAction {
 pub enum ActionType {
     Goto(
         /// choice
-        VtTo),
+        VtTo,
+    ),
     #[serde(rename = "URI")]
     Uri {
         #[serde(rename = "@URI")]
@@ -382,7 +383,7 @@ pub struct CellContent {
 
     /// inherit
     /// note: now we do not use serde to do this
-    pub base: CtPageBlock,
+    pub base: VtGraphicUnit,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
