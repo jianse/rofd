@@ -1,8 +1,13 @@
+//! structs for OFD.xml
+//!
+//! [OfdXmlFile] main entry
+
 use ::serde::{Deserialize, Serialize};
 use chrono::NaiveDate;
 
 use crate::element::base::StLoc;
 
+/// main entry for an ofd file
 #[derive(Debug, Deserialize, Serialize)]
 #[serde(rename = "OFD")]
 pub struct OfdXmlFile {
