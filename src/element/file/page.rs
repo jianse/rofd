@@ -49,8 +49,12 @@ pub enum CtPageBlock {
     TextObject(TextObject),
     PathObject(PathObject),
     ImageObject(ImageObject),
-    CompositeObject {},
-    PageBlock {},
+    CompositeObject {
+        // TODO: impl
+    },
+    PageBlock {
+        // TODO: impl
+    },
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]

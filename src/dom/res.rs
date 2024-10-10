@@ -80,7 +80,7 @@ impl TryFromDom<&Element> for CompositeGraphicUnits {
 impl TryFromDom<&Element> for CompositeGraphicUnit {
     fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
         let id = parse_required_from_attr(dom, "ID", StId::from_str)?;
-        let base = CtVectorG::try_from_dom(&dom)?;
+        let base = CtVectorG::try_from_dom(dom)?;
         Ok(CompositeGraphicUnit { id, base })
     }
 }

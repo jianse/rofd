@@ -55,9 +55,151 @@ pub struct Actions {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct CtAction {
-    // TODO: action
+    #[serde(rename = "@Event")]
+    pub event: String,
+
+    #[serde(rename = "Region")]
+    pub region: Option<CtRegion>,
+
+    /// choice
+    #[serde(rename = "$value")]
+    pub action_type: ActionType,
+}
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub enum ActionType {
+    Goto(
+        /// choice
+        VtTo),
+    #[serde(rename = "URI")]
+    Uri {
+        #[serde(rename = "@URI")]
+        uri: String,
+
+        #[serde(rename = "@Base")]
+        base: Option<String>,
+    },
+    GotoA {
+        /// xs:IDREF
+        #[serde(rename = "@AttachID")]
+        attach_id: String,
+
+        /// default true
+        #[serde(rename = "@NewWindow")]
+        new_window: Option<bool>,
+    },
+    Sound {
+        #[serde(rename = "@ResourceID")]
+        resource_id: StRefId,
+        /// [0, 100] default 100
+        #[serde(rename = "@Volume")]
+        volume: Option<u32>,
+
+        /// default false
+        #[serde(rename = "@Repeat")]
+        repeat: Option<bool>,
+
+        /// default false
+        #[serde(rename = "@Synchronous")]
+        synchronous: Option<bool>,
+    },
+    Movie {
+        #[serde(rename = "@ResourceID")]
+        resource_id: StRefId,
+
+        /// default  Play
+        /// One of:
+        ///  - Play
+        ///  - Stop
+        ///  - Pause
+        ///  - Resume
+        #[serde(rename = "@Operator")]
+        operator: Option<String>,
+    },
 }
 
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub enum VtTo {
+    Dest(CtDest),
+    Bookmark {
+        #[serde(rename = "@Name")]
+        name: String,
+    },
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct CtDest {
+    #[serde(rename = "@Type")]
+    pub r#type: String,
+    #[serde(rename = "@PageID")]
+    pub page_id: StRefId,
+    #[serde(rename = "@Left")]
+    pub left: Option<f32>,
+    #[serde(rename = "@Right")]
+    pub right: Option<f32>,
+    #[serde(rename = "@Top")]
+    pub top: Option<f32>,
+    #[serde(rename = "@Bottom")]
+    pub bottom: Option<f32>,
+    #[serde(rename = "@Zoom")]
+    pub zoom: Option<f32>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct CtRegion {
+    pub areas: Vec<Area>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct Area {
+    #[serde(rename = "@Start")]
+    pub start: StPos,
+
+    #[serde(rename = "$value")]
+    pub path: Vec<VtPathOp>,
+}
+
+/// virtual type for path ops
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub enum VtPathOp {
+    Move {
+        #[serde(rename = "@Point1")]
+        point1: StPos,
+    },
+    Line {
+        #[serde(rename = "@Point1")]
+        point1: StPos,
+    },
+    QuadraticBezier {
+        #[serde(rename = "@Point1")]
+        point1: StPos,
+        #[serde(rename = "@Point2")]
+        point2: StPos,
+    },
+    CubicBezier {
+        #[serde(rename = "@Point1")]
+        point1: Option<StPos>,
+        #[serde(rename = "@Point2")]
+        point2: Option<StPos>,
+        #[serde(rename = "@Point3")]
+        point3: StPos,
+    },
+    Arc {
+        #[serde(rename = "@SweepDirection")]
+        sweep_direction: bool,
+        #[serde(rename = "@LargeArc")]
+        large_arc: bool,
+        #[serde(rename = "@RotationAngle")]
+        rotation_angle: f32,
+
+        /// expect 2 elements
+        #[serde(rename = "@EllipseSize")]
+        ellipse_size: StArray<f32>,
+
+        #[serde(rename = "@EndPoint")]
+        end_point: StPos,
+    },
+    Close,
+}
 /// 包括基本颜色、底纹和渐变
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct CtColor {

@@ -1,6 +1,7 @@
 use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 
+use crate::element::common::CtDest;
 use crate::element::{
     base::{StBox, StId, StLoc, StRefId},
     common::Actions,
@@ -57,23 +58,6 @@ pub struct CtBookmark {
     pub dest: CtDest,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct CtDest {
-    #[serde(rename = "@Type")]
-    pub r#type: String,
-    #[serde(rename = "@PageID")]
-    pub page_id: StRefId,
-    #[serde(rename = "@Left")]
-    pub left: Option<f32>,
-    #[serde(rename = "@Right")]
-    pub right: Option<f32>,
-    #[serde(rename = "@Top")]
-    pub top: Option<f32>,
-    #[serde(rename = "@Bottom")]
-    pub bottom: Option<f32>,
-    #[serde(rename = "@Zoom")]
-    pub zoom: Option<f32>,
-}
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CtVPreferences {
     /// default None
