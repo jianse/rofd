@@ -6,6 +6,8 @@
 //! - [res::ResourceXmlFile] for public/document/page resources
 //! - [annotation::AnnotationsXmlFile] for annotations xml file.
 //! - [annotation::AnnotationXmlFile] for annotation xml file.
+//! - [signature::SignaturesXmlFile] for signatures xml file.
+//! - [signature::SignatureXmlFile] for signature xml file.
 
 // ofd file related
 pub mod ofd;
@@ -21,6 +23,9 @@ pub mod res;
 
 // annotation related
 pub mod annotation;
+
+// signature related
+pub mod signature;
 
 //==============
 
