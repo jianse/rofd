@@ -30,10 +30,30 @@ pub struct DocBody {
     /// this prop type is unsure
     /// **see xsd**
     #[serde(rename = "Versions")]
-    pub versions: Option<String>,
+    pub versions: Option<Versions>,
 
     #[serde(rename = "Signatures")]
     pub signatures: Option<StLoc>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Versions {
+    #[serde(rename = "Version")]
+    pub version: Vec<Version>,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct Version {
+    #[serde(rename = "@ID")]
+    pub id: String,
+    #[serde(rename = "@Index")]
+    pub index: i32,
+    /// default `false`
+    #[serde(rename = "@Current")]
+    pub current: Option<bool>,
+
+    #[serde(rename = "BaseLoc")]
+    pub base_loc: StLoc,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

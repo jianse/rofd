@@ -285,7 +285,7 @@
         <xs:attribute name="Rule" default="NoneZero">
           <xs:simpleType>
             <xs:restriction base="xs:string">
-              <xs:enumeration value="NonZero"/>
+              <xs:enumeration value="NoneZero"/>
               <xs:enumeration value="Even-Odd"/>
             </xs:restriction>
           </xs:simpleType>
