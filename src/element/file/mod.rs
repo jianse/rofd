@@ -9,6 +9,7 @@
 //! - [signature::SignaturesXmlFile] for signatures xml file.
 //! - [signature::SignatureXmlFile] for signature xml file.
 //! - [version::VersionXmlFile] for version xml file.
+//! - [attachment::AttachmentsXmlFile] for attachments xml file.
 
 // ofd file related
 pub mod ofd;
@@ -28,8 +29,11 @@ pub mod annotation;
 // signature related
 pub mod signature;
 
-// doc version
+// doc version related
 pub mod version;
+
+// attachment related
+pub mod attachment;
 
 //==============
 
