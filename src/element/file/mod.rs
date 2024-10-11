@@ -8,6 +8,7 @@
 //! - [annotation::AnnotationXmlFile] for annotation xml file.
 //! - [signature::SignaturesXmlFile] for signatures xml file.
 //! - [signature::SignatureXmlFile] for signature xml file.
+//! - [version::VersionXmlFile] for version xml file.
 
 // ofd file related
 pub mod ofd;
@@ -26,6 +27,9 @@ pub mod annotation;
 
 // signature related
 pub mod signature;
+
+// doc version
+pub mod version;
 
 //==============
 

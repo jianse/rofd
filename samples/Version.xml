@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ofd:DocVersion xmlns:ofd="http://www.ofdspec.org/2016" ID="v1" Version="1" Name="v1" CreationDate="2024-10-11">
+  <ofd:FileList>
+    <ofd:File ID="fl1-ofd.xml">/versions/v1/OFD.xml</ofd:File>
+    <ofd:File ID="fl1-page1">/versions/v1/Page_1.xml</ofd:File>
+    <ofd:File ID="fl1-page2">/versions/v1/Page_2.xml</ofd:File>
+    <ofd:File ID="fl1-page3">/versions/v1/Page_3.xml</ofd:File>
+  </ofd:FileList>
+  <ofd:DocRoot>/versions/v1/</ofd:DocRoot>
+</ofd:DocVersion>
