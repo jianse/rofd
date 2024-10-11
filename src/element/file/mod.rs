@@ -6,6 +6,7 @@
 //! - [res::ResourceXmlFile] for public/document/page resources
 //! - [annotation::AnnotationsXmlFile] for annotations xml file.
 //! - [annotation::AnnotationXmlFile] for annotation xml file.
+//! - [extension::ExtensionXmlFile] for extension xml file.
 //! - [signature::SignaturesXmlFile] for signatures xml file.
 //! - [signature::SignatureXmlFile] for signature xml file.
 //! - [version::VersionXmlFile] for version xml file.
@@ -25,6 +26,9 @@ pub mod res;
 
 // annotation related
 pub mod annotation;
+
+// extension related
+pub mod extension;
 
 // signature related
 pub mod signature;
