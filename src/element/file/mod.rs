@@ -6,6 +6,7 @@
 //! - [res::ResourceXmlFile] for public/document/page resources
 //! - [annotation::AnnotationsXmlFile] for annotations xml file.
 //! - [annotation::AnnotationXmlFile] for annotation xml file.
+//! - [custom_tag::CustomTagsXmlFile] for custom tags xml file.
 //! - [extension::ExtensionXmlFile] for extension xml file.
 //! - [signature::SignaturesXmlFile] for signatures xml file.
 //! - [signature::SignatureXmlFile] for signature xml file.
@@ -26,6 +27,9 @@ pub mod res;
 
 // annotation related
 pub mod annotation;
+
+// custom tag related
+pub mod custom_tag;
 
 // extension related
 pub mod extension;
