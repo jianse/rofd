@@ -15,10 +15,10 @@ pub struct Extension {
     pub app_version: Option<String>,
     pub date: Option<NaiveDateTime>,
     pub ref_id: StRefId,
-    pub data: Vec<Data>,
+    pub props: Vec<Prop>,
 }
 #[derive(Debug, Serialize, Deserialize)]
-pub enum Data {
+pub enum Prop {
     Property {
         name: String,
         r#type: Option<String>,

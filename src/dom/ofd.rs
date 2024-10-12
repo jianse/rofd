@@ -1,12 +1,15 @@
-use crate::dom::{
-    parse_required_from_attr, parse_required_vec, TryFromDom, TryFromDomError, OFD_NS,
-};
 use crate::element::base::StLoc;
 use crate::element::file::ofd::{CtDocInfo, CustomData, CustomDatas, DocBody, OfdXmlFile};
 use chrono::NaiveDate;
 use minidom::Element;
 use std::path::PathBuf;
 use std::str::FromStr;
+
+use super::{
+    parse_optional_from_ele, parse_optional_from_text, parse_required_from_attr,
+    parse_required_from_ele, parse_required_vec, TryFromDom, TryFromDomError,
+};
+
 impl TryFromDom<Element> for OfdXmlFile {
     fn try_from_dom(dom: Element) -> Result<Self, TryFromDomError> {
         let version = parse_required_from_attr(&dom, "Version", String::from_str)?;
@@ -51,22 +54,13 @@ impl TryFromDom<&Element> for DocBody {
                 dom.name().to_string(),
             ));
         }
-        let doc_info_ele = dom
-            .get_child("DocInfo", OFD_NS)
-            .ok_or(TryFromDomError::NoSuchAttribute("DocInfo"))?;
-        let doc_info = CtDocInfo::try_from_dom(doc_info_ele)?;
 
-        let doc_root = dom
-            .get_child("DocRoot", OFD_NS)
-            .map(StLoc::try_from_dom)
-            .transpose()?;
+        let doc_info = parse_required_from_ele(dom, "DocInfo", CtDocInfo::try_from_dom)?;
+        let doc_root = parse_optional_from_text(dom, "DocRoot", StLoc::from_str)?;
 
         // TODO: The versions field is not implemented at this time
 
-        let signatures = dom
-            .get_child("Signatures", OFD_NS)
-            .map(StLoc::try_from_dom)
-            .transpose()?;
+        let signatures = parse_optional_from_ele(dom, "Signatures", StLoc::try_from_dom)?;
 
         let res = DocBody {
             doc_info,
@@ -83,20 +77,11 @@ impl TryFromDom<&Element> for CtDocInfo {
     where
         Self: Sized,
     {
-        let doc_id = dom.get_child("DocId", OFD_NS).map(Element::text);
-        let title = dom.get_child("Title", OFD_NS).map(Element::text);
-        let author = dom.get_child("Author", OFD_NS).map(Element::text);
-
-        let creation_date = dom
-            .get_child("CreationDate", OFD_NS)
-            .map(Element::text)
-            .map(|s| NaiveDate::from_str(s.as_str()))
-            .transpose()
-            .map_err(|e| TryFromDomError::Warp(Box::new(e)))?;
-        let custom_datas = dom
-            .get_child("CustomDatas", OFD_NS)
-            .map(CustomDatas::try_from_dom)
-            .transpose()?;
+        let doc_id = parse_optional_from_text(dom, "DocID", String::from_str)?;
+        let title = parse_optional_from_text(dom, "Title", String::from_str)?;
+        let author = parse_optional_from_text(dom, "Author", String::from_str)?;
+        let creation_date = parse_optional_from_text(dom, "CreationDate", NaiveDate::from_str)?;
+        let custom_datas = parse_optional_from_ele(dom, "CustomDatas", CustomDatas::try_from_dom)?;
 
         // TODO: parse missing fields
         Ok(CtDocInfo {
@@ -118,11 +103,7 @@ impl TryFromDom<&Element> for CtDocInfo {
 }
 impl TryFromDom<&Element> for CustomDatas {
     fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
-        let custom_data_result = dom
-            .children()
-            .map(CustomData::try_from_dom)
-            .collect::<eyre::Result<_, _>>();
-        let custom_data: Vec<CustomData> = custom_data_result?;
+        let custom_data = parse_required_vec(dom, None, CustomData::try_from_dom)?;
         Ok(CustomDatas { custom_data })
     }
 }
@@ -135,14 +116,9 @@ impl TryFromDom<&Element> for CustomData {
                 dom.name().to_string(),
             ));
         }
-        let name = dom
-            .attr("Name")
-            .ok_or(TryFromDomError::NoSuchAttribute("Name"))?;
+        let name = parse_required_from_attr(dom, "Name", String::from_str)?;
         let value = dom.text();
-        Ok(CustomData {
-            name: name.to_string(),
-            value,
-        })
+        Ok(CustomData { name, value })
     }
 }
 
@@ -172,6 +148,10 @@ mod tests {
         let st = OfdXmlFile::try_from_dom(root)?;
         // dbg!(&root);
         dbg!(&st);
+        assert_eq!(
+            st.doc_body[0].doc_info.doc_id,
+            Some(String::from("44107dc257034d38898838015df3e3ed"))
+        );
         Ok(())
     }
 }

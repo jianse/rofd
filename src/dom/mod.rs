@@ -61,6 +61,12 @@ impl From<ParseStBoxError> for TryFromDomError {
     }
 }
 
+impl From<chrono::ParseError> for TryFromDomError {
+    fn from(value: chrono::ParseError) -> Self {
+        Self::Warp(Box::new(value))
+    }
+}
+
 const OFD_NS: &str = "http://www.ofdspec.org/2016";
 
 #[inline]
