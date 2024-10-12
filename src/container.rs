@@ -118,7 +118,7 @@ impl Resources {
             .find(|f| f.id == font_id);
         font.cloned()
     }
-    pub fn get_image_by_id(&self, _image_id: StRefId) -> Option<String> {
+    pub fn _get_image_by_id(&self, _image_id: StRefId) -> Option<String> {
         todo!()
     }
 }

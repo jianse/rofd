@@ -19,7 +19,7 @@ pub struct OfdXmlFile {
     pub doc_body: Vec<DocBody>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Default)]
 pub struct DocBody {
     #[serde(rename = "DocInfo")]
     pub doc_info: CtDocInfo,
@@ -56,7 +56,7 @@ pub struct Version {
     pub base_loc: StLoc,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Default)]
 pub struct CtDocInfo {
     #[serde(rename = "DocID")]
     pub doc_id: Option<String>,

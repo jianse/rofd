@@ -132,9 +132,13 @@ impl TryFromDom<&Element> for StLoc {
 
 #[cfg(test)]
 mod tests {
-    use crate::dom::TryFromDom;
-    use crate::element::file::ofd::OfdXmlFile;
-    use minidom::Element;
+
+    use crate::dom::OFD_NS;
+
+    use super::*;
+    use eyre::Result;
+    use minidom::Node;
+    use std::borrow::Cow;
     use std::fs::File;
     use std::io::{BufReader, Read};
 
@@ -152,6 +156,105 @@ mod tests {
             st.doc_body[0].doc_info.doc_id,
             Some(String::from("44107dc257034d38898838015df3e3ed"))
         );
+        Ok(())
+    }
+
+    trait ToElement {
+        fn to_element<N: AsRef<str>, NS: Into<String>>(
+            &self,
+            name: N,
+            ns: NS,
+            prefix: Option<String>,
+        ) -> Element;
+    }
+
+    impl ToElement for CtDocInfo {
+        fn to_element<N: AsRef<str>, NS: Into<String>>(
+            &self,
+            name: N,
+            ns: NS,
+            prefix: Option<String>,
+        ) -> Element {
+            let namespace: String = ns.into();
+            let mut e = Element::builder(name, &namespace)
+                // we only specify this once so unwrap should be fine
+                .prefix(prefix.clone(), &namespace)
+                .unwrap()
+                .build();
+            if let Some(doc_id) = &self.doc_id {
+                let doc_id_ele = Element::builder("DocID", &namespace)
+                    .append(Node::Text(doc_id.clone()))
+                    .build();
+                e.append_child(doc_id_ele);
+            }
+            if let Some(title) = &self.title {
+                let title_ele = title.to_element("Title", &namespace, prefix.clone());
+                e.append_child(title_ele);
+            }
+            e
+        }
+    }
+
+    impl ToElement for String {
+        fn to_element<N: AsRef<str>, NS: Into<String>>(
+            &self,
+            name: N,
+            ns: NS,
+            prefix: Option<String>,
+        ) -> Element {
+            let namespace: String = ns.into();
+            Element::builder(name, &namespace)
+                // we only specify this once so unwrap should be fine
+                .prefix(prefix, &namespace)
+                .unwrap()
+                .append(Node::Text(self.clone()))
+                .build()
+        }
+    }
+
+    #[test]
+    fn test_write() -> Result<()> {
+        // let data = OfdXmlFile {
+        //     version: String::from("1.0"),
+        //     doc_type: String::from("ofd"),
+        //     doc_body: vec![DocBody {
+        //         doc_info: CtDocInfo {
+        //             doc_id: Some(String::from("44107dc257034d38898838015df3e3ed")),
+        //             title: Some(String::from("test")),
+        //             author: Some(String::from("test")),
+        //             ..Default::default()
+        //         },
+        //         ..Default::default()
+        //     }],
+        // };
+        let e = Element::builder("OFD", OFD_NS)
+            .prefix(Some("ofd".into()), OFD_NS)?
+            .attr("Version", "1.0")
+            .build();
+
+        let mut s = Vec::new();
+        e.write_to_decl(&mut s)?;
+        let string = String::from_utf8(s)?;
+        println!("{}", string);
+        Ok(())
+    }
+
+    #[test]
+    fn test_to_element() -> Result<()> {
+        let data = CtDocInfo {
+            doc_id: Some(String::from("44107dc257034d388\n98838015df3e3ed")),
+            title: Some(String::from("test")),
+            author: Some(String::from("test")),
+            ..Default::default()
+        };
+        let e = data.to_element("DocInfo", OFD_NS, None);
+        let mut s = Vec::new();
+        e.write_to_decl(&mut s)?;
+        let string = String::from_utf8(s)?;
+        println!("{}", string);
+        let root = string.parse::<Element>()?;
+        let parsed = CtDocInfo::try_from_dom(&root)?;
+        dbg!(&parsed);
         Ok(())
     }
 }
