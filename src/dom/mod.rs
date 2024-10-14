@@ -209,3 +209,12 @@ where
     let r = parse_optional_vec(dom, el_name, map_fn)?;
     r.ok_or(TryFromDomError::NoSuchElement(el_name.unwrap_or("$value")))
 }
+
+pub trait ToElement {
+    fn to_element<N: AsRef<str>, NS: Into<String>>(
+        &self,
+        name: N,
+        ns: NS,
+        prefix: Option<String>,
+    ) -> Element;
+}

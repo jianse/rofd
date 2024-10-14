@@ -22,11 +22,10 @@ walkdir = "2.5.0"
 zip = "2.2.0"
 minidom = "0.16.0"
 strum = { version = "0.26.3", features = ["derive"] }
-#strum_macros = "0.26.4"
+help-macro = { path = "help-macro" }
 
 [workspace]
-members = ["ofd_base_rw"]
-# members = ["help-macro"]
+members = ["ofd_base_rw", "help-macro"]
 
 
 [dev-dependencies]

@@ -1,87 +1,97 @@
+use proc_macro::TokenStream;
+use proc_macro2::Ident;
+use quote::{quote, ToTokens};
+use syn::{parse_macro_input, Attribute, Data, DeriveInput, LitStr, Token};
 
-// #[macro_export]
+#[proc_macro_derive(MyDerive, attributes(dom))]
+pub fn my_derive(input: TokenStream) -> TokenStream {
+    let input1 = parse_macro_input!(input as DeriveInput);
+    let name = input1.ident;
+    let (impl_generics, ty_generics, where_clause) = input1.generics.split_for_impl();
 
-macro_rules! define_add_field_macro {
-    ($macro_name:ident,
-       $(
-        $(#[$new_field_meta:meta])*
-        $new_field_vis:vis $new_field_name:ident : $new_field_type:ty
-        ),*$(,)?
-
-    )=>(
-        define_add_field_macro!{
-            #internal,
-            [$],
-            $macro_name,
-            $(
-                $(#[$new_field_meta])*
-                $new_field_vis $new_field_name : $new_field_type,
-            )*
-            }
-    );
-    (#internal,
-        [$dollar:tt],
-        $macro_name:ident,
-        $(
-            $(#[$new_field_meta:meta])*
-            $new_field_vis:vis $new_field_name:ident : $new_field_type:ty
-            ),*$(,)?
-    ) => {
-        #[macro_export]
-
-        macro_rules! $macro_name {
-            ($dollar(#[$meta:meta])*
-            $vis:vis struct $struct_name:ident {
-                $dollar(
-                    $dollar(#[$field_meta:meta])*
-                    $field_vis:vis $field_name:ident : $field_type:ty
-                ),*$dollar(,)?
-            }
-        ) => {
-                // $($Type::$variant { $dollar($field $dollar(: $p)?,)* .. } )|+
-                $dollar(#[$meta])*
-                $vis struct $struct_name{
-                    $(                        
-                        $(#[$new_field_meta])*
-                        $new_field_vis $new_field_name : $new_field_type ,
-                    )*
-
-                    $dollar(
-                        $dollar(#[$field_meta])*
-                        $field_vis $field_name : $field_type,
-                    )*
-                }
+    println!("{:#?}", input1.generics.to_token_stream());
+    let body = gen_body(input1.data, &name);
+    quote!(
+        impl #impl_generics ::rofd::dom::ToElement for #name #ty_generics #where_clause {
+            fn to_element<N: AsRef<str>, NS: Into<String>>(
+                &self,
+                name: N,
+                ns: NS,
+                prefix: Option<String>) -> ::minidom::Element {
+                #body
             }
         }
-    };
+    )
+    .into()
 }
 
-define_add_field_macro!(ct_layer,
-    #[serde(rename = "@Type")]
-    r#type: Option<String>,
+#[derive(Debug, Default)]
+struct Ano {
+    rename: Option<String>,
+}
+impl Ano {
+    fn from_ast(ast: &[Attribute]) -> Self {
+        let mut ano = Ano::default();
+        ast.iter().for_each(|attr| {
+            println!("{:#?}", attr.meta.path().to_token_stream());
+            let meta = &attr.meta;
+            if !meta.path().is_ident("dom") {
+                return;
+            }
+            if let syn::Meta::List(meta) = meta {
+                if meta.tokens.is_empty() {
+                    return;
+                }
+            }
+            attr.parse_nested_meta(|meta| {
+                if meta.path.is_ident("rename") {
+                    let lookahead = meta.input.lookahead1();
+                    if lookahead.peek(Token![=]) {
+                        let value: LitStr = meta.value()?.parse()?;
+                        ano.rename = Some(value.value());
+                    }
+                    // println!("{:#?}",meta.path.to_token_stream());
+                    // ano.rename =
+                }
+                Ok(())
+            })
+            .unwrap();
+        });
+        ano
+    }
+}
 
-    #[serde(rename = "@DrawParam")]
-    draw_param: Option<StRefId>,
-);
+fn gen_body(data: Data, _name: &Ident) -> proc_macro2::TokenStream {
+    match data {
+        Data::Struct(data) => {
+            let _stream: proc_macro2::TokenStream = data
+                .fields
+                .iter()
+                .enumerate()
+                .map(|(idx, f)| {
+                    let field_name = if let Some(ident) = f.ident.as_ref() {
+                        ident.to_string()
+                    } else {
+                        idx.to_string()
+                    };
+                    let ty = &f.ty;
+                    let _ano = Ano::from_ast(&f.attrs);
+                    println!("type = {:#?}", ty.to_token_stream());
+                    quote! {
+                        #field_name :
+                    }
+                })
+                .collect();
 
-define_add_field_macro!{
-    ct_graphic_unit,
-
-    #[serde(rename = "@Boundary")]
-    boundary: StBox,
-    name: Option<String>,
-    visible: Option<bool>,
-    ctm: Option<StArray<f32>>,
-    draw_param: Option<StRefId>,
-    line_width: Option<f32>,
-    cap: Option<String>,
-    join: Option<String>,
-    miter_limit: Option<f32>,
-    dash_offset: Option<f32>,
-    dash_pattern: Option<StArray<f32>>,
-    alapha: Option<u8>,
-    #[serde(rename = "Actions")]
-    actions: Option<Actions>,
-
-
+            quote! {
+                todo!()
+            }
+        }
+        Data::Enum(_) => {
+            todo!()
+        }
+        Data::Union(_) => {
+            todo!()
+        }
+    }
 }

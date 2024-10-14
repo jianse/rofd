@@ -138,7 +138,6 @@ mod tests {
     use super::*;
     use eyre::Result;
     use minidom::Node;
-    use std::borrow::Cow;
     use std::fs::File;
     use std::io::{BufReader, Read};
 
@@ -182,9 +181,7 @@ mod tests {
                 .unwrap()
                 .build();
             if let Some(doc_id) = &self.doc_id {
-                let doc_id_ele = Element::builder("DocID", &namespace)
-                    .append(Node::Text(doc_id.clone()))
-                    .build();
+                let doc_id_ele = doc_id.to_element("DocID", &namespace, prefix.clone());
                 e.append_child(doc_id_ele);
             }
             if let Some(title) = &self.title {
@@ -242,7 +239,7 @@ mod tests {
     #[test]
     fn test_to_element() -> Result<()> {
         let data = CtDocInfo {
-            doc_id: Some(String::from("44107dc257034d388\n98838015df3e3ed")),
+            doc_id: Some(String::from("44107dc257034d38898838015df3e3ed")),
             title: Some(String::from("test")),
             author: Some(String::from("test")),
             ..Default::default()

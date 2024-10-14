@@ -373,7 +373,7 @@ impl<'de, 'd> MapAccess<'de> for EMA<'de, 'd> {
     where
         K: serde::de::DeserializeSeed<'de>,
     {
-        let mut attrs = self.ele.attributes();
+        let attrs = self.ele.attributes();
         // attrs.skip(self.idx);
         let res = if let Some(Ok(attr)) = attrs.skip(self.idx).next() {
             let key = String::from_utf8_lossy(attr.key.local_name().as_ref()).into_owned();
