@@ -2,10 +2,9 @@
 //!
 //! [OfdXmlFile] main entry
 
+use crate::element::base::StLoc;
 use ::serde::{Deserialize, Serialize};
 use chrono::NaiveDate;
-
-use crate::element::base::StLoc;
 
 /// main entry for an ofd file
 #[derive(Debug, Deserialize, Serialize)]
@@ -19,11 +18,13 @@ pub struct OfdXmlFile {
     pub doc_body: Vec<DocBody>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Default)]
+#[derive(Debug, Deserialize, Serialize, Default, Clone)]
 pub struct DocBody {
     #[serde(rename = "DocInfo")]
     pub doc_info: CtDocInfo,
 
+    /// this field is optional by spec,
+    /// but it is required by the xsd
     #[serde(rename = "DocRoot")]
     pub doc_root: Option<StLoc>,
 
@@ -36,13 +37,13 @@ pub struct DocBody {
     pub signatures: Option<StLoc>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Versions {
     #[serde(rename = "Version")]
     pub version: Vec<Version>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Version {
     #[serde(rename = "@ID")]
     pub id: String,
@@ -56,7 +57,7 @@ pub struct Version {
     pub base_loc: StLoc,
 }
 
-#[derive(Debug, Serialize, Deserialize, Default)]
+#[derive(Debug, Serialize, Deserialize, Default, Clone)]
 pub struct CtDocInfo {
     #[serde(rename = "DocID")]
     pub doc_id: Option<String>,
@@ -98,18 +99,18 @@ pub struct CtDocInfo {
     pub custom_datas: Option<CustomDatas>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Keywords {
     #[serde(rename = "Keyword")]
-    pub keywords: Option<String>,
+    pub keywords: Vec<String>,
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct CustomDatas {
     #[serde(rename = "CustomData")]
     pub custom_data: Vec<CustomData>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct CustomData {
     #[serde(rename = "@Name")]
     pub name: String,
@@ -163,7 +164,9 @@ mod tests {
                     mod_date: None,
                     doc_usage: None,
                     cover: None,
-                    keywords: None,
+                    keywords: Some(Keywords {
+                        keywords: ["a", "b", "c", "d"].iter().map(|k| k.to_string()).collect(),
+                    }),
                     creator: None,
                     creator_version: None,
                     custom_datas: None,

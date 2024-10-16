@@ -164,10 +164,10 @@ mod test_skia {
         let mut fss = fm.match_family("楷体");
         for index in 0..fss.count() {
             let ff = fss.new_typeface(index).unwrap();
-            let family_name = ff.new_family_name_iterator().for_each(|f| {
+            ff.new_family_name_iterator().for_each(|f| {
                 dbg!(f);
             });
-            dbg!(family_name, ff);
+            dbg!((), ff);
         }
     }
     #[test]

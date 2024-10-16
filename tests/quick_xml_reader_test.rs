@@ -26,18 +26,15 @@ fn test_read_from_file() {
                     String::from_utf8_lossy(name.into_inner())
                 );
 
-                e.attributes()
-                    .into_iter()
-                    .filter_map(|a| a.ok())
-                    .for_each(|a| {
-                        let (name, _) = a.key.decompose();
-                        println!(
-                            "{}{}=\"{}\" ",
-                            "  ".repeat(level),
-                            String::from_utf8_lossy(name.into_inner()),
-                            String::from_utf8_lossy(a.value.as_ref())
-                        );
-                    });
+                e.attributes().filter_map(|a| a.ok()).for_each(|a| {
+                    let (name, _) = a.key.decompose();
+                    println!(
+                        "{}{}=\"{}\" ",
+                        "  ".repeat(level),
+                        String::from_utf8_lossy(name.into_inner()),
+                        String::from_utf8_lossy(a.value.as_ref())
+                    );
+                });
                 level += 1;
             }
             Ok(Event::End(_)) => {

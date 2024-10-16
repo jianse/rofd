@@ -1,0 +1,14 @@
+[package]
+name = "xdom"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+chrono = "0.4.38"
+minidom = "0.16.0"
+serde = "1.0.210"
+thiserror = "1.0.64"
+
+[dev-dependencies]
+eyre = "0.6.12"
+serde = { version = "1.0.210", features = ["derive"] }

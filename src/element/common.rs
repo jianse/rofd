@@ -50,11 +50,15 @@ pub struct CtGraphicUnit {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Actions {
     #[serde(rename = "Action")]
-    actions: Vec<CtAction>,
+    pub actions: Vec<CtAction>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct CtAction {
+    /// must be one of
+    /// - DO
+    /// - PO
+    /// - CLICK
     #[serde(rename = "@Event")]
     pub event: String,
 

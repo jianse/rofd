@@ -245,6 +245,7 @@ mod tests {
             ..Default::default()
         };
         let e = data.to_element("DocInfo", OFD_NS, None);
+        // e.append_node()
         let mut s = Vec::new();
         e.write_to_decl(&mut s)?;
         let string = String::from_utf8(s)?;

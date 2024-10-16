@@ -1,11 +1,12 @@
-use chrono::NaiveDateTime;
-use serde::{Deserialize, Serialize};
-
 use crate::element::common::CtDest;
 use crate::element::{
     base::{StBox, StId, StLoc, StRefId},
     common::Actions,
 };
+use chrono::NaiveDateTime;
+use serde::{Deserialize, Serialize};
+use serde_with::serde_as;
+use serde_with::DisplayFromStr;
 
 /// Document.xml 文件
 #[derive(Debug, Serialize, Deserialize)]
@@ -95,15 +96,15 @@ pub struct CtVPreferences {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CtPermission {
-    #[serde(rename = "@Edit")]
+    #[serde(rename = "Edit")]
     pub edit: Option<bool>,
-    #[serde(rename = "@Annot")]
+    #[serde(rename = "Annot")]
     pub annot: Option<bool>,
-    #[serde(rename = "@Export")]
+    #[serde(rename = "Export")]
     pub export: Option<bool>,
-    #[serde(rename = "@Signature")]
+    #[serde(rename = "Signature")]
     pub signature: Option<bool>,
-    #[serde(rename = "@Watermark")]
+    #[serde(rename = "Watermark")]
     pub watermark: Option<bool>,
     #[serde(rename = "PrintScreen")]
     pub print_screen: Option<bool>,
@@ -200,8 +201,10 @@ pub struct Page {
     pub base_loc: StLoc,
 }
 
+#[serde_as]
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CtPageArea {
+    #[serde_as(as = "DisplayFromStr")]
     #[serde(rename = "PhysicalBox")]
     pub physical_box: StBox,
 

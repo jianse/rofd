@@ -67,7 +67,7 @@ impl From<chrono::ParseError> for TryFromDomError {
     }
 }
 
-const OFD_NS: &str = "http://www.ofdspec.org/2016";
+pub const OFD_NS: &str = "http://www.ofdspec.org/2016";
 
 #[inline]
 fn parse_optional_from_attr<F, R, E>(
@@ -208,13 +208,4 @@ where
 {
     let r = parse_optional_vec(dom, el_name, map_fn)?;
     r.ok_or(TryFromDomError::NoSuchElement(el_name.unwrap_or("$value")))
-}
-
-pub trait ToElement {
-    fn to_element<N: AsRef<str>, NS: Into<String>>(
-        &self,
-        name: N,
-        ns: NS,
-        prefix: Option<String>,
-    ) -> Element;
 }
