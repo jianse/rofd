@@ -36,7 +36,7 @@ impl TryFromDom<&Element> for PageXmlFile {
 impl TryFromDom<&Element> for Template {
     fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
         let template_id = parse_required_from_attr(dom, "TemplateID", StRefId::from_str)?;
-        let z_order = parse_optional_from_attr(dom, "zOrder", String::from_str)?;
+        let z_order = parse_optional_from_attr(dom, "ZOrder", String::from_str)?;
         Ok(Template {
             template_id,
             z_order,

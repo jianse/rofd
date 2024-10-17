@@ -1,15 +1,16 @@
-use chrono::NaiveDate;
+use chrono::{NaiveDate, NaiveDateTime};
 use eyre::Result;
 use minidom::Element;
 use rofd::dom::{TryFromDom, OFD_NS};
 use rofd::element::base::StBox;
-use rofd::element::common::ActionType::Goto;
-use rofd::element::common::{Actions, CtAction, VtTo};
+use rofd::element::common::ActionType::{Goto, Uri};
+use rofd::element::common::{Actions, CtAction, Event, VtTo};
 use rofd::element::file::document::{
-    CommonData, CtOutlineElem, CtPageArea, CtPermission, DocumentXmlFile, Outlines, Page, Pages,
-    TemplatePage,
+    CommonData, CtOutlineElem, CtPageArea, CtPermission, CtVPreferences, DocumentXmlFile, Outlines,
+    Page, Pages, Print, TemplatePage, ValidPeriod,
 };
 use rofd::element::file::ofd::{CtDocInfo, CustomData, CustomDatas, DocBody, Keywords, OfdXmlFile};
+use rofd::element::file::page::PageXmlFile;
 use std::fs::File;
 use std::io::{BufReader, Read};
 use xdom::ser::XmlSer;
@@ -180,19 +181,44 @@ fn test_doc_ser_to_ele() -> Result<()> {
             signature: None,
             watermark: None,
             print_screen: None,
-            print: None,
-            valid_period: None,
+            print: Some(Print {
+                printable: false,
+                copies: Some(0),
+            }),
+            valid_period: Some(ValidPeriod {
+                start_date: Some(NaiveDateTime::default()),
+                end_date: None,
+            }),
         }),
         actions: Some(Actions {
-            actions: vec![CtAction {
-                event: "CLICK".to_string(),
-                region: None,
-                action_type: Goto(VtTo::Bookmark {
-                    name: "??".to_string(),
-                }),
-            }],
+            actions: vec![
+                CtAction {
+                    event: Event::Click,
+                    region: None,
+                    action_type: Goto(VtTo::Bookmark {
+                        name: "??".to_string(),
+                    }),
+                },
+                CtAction {
+                    event: Event::DO,
+                    region: None,
+                    action_type: Uri {
+                        uri: "abc".to_string(),
+                        base: None,
+                    },
+                },
+            ],
         }),
-        v_preferences: None,
+        v_preferences: Some(CtVPreferences {
+            page_mode: Some("None".into()),
+            page_layout: None,
+            tab_display: None,
+            hide_toolbar: None,
+            hide_menubar: None,
+            hide_window_ui: None,
+            zoom_mode: None,
+            zoom: None,
+        }),
         bookmarks: None,
         annotations: None,
         custom_tags: None,
@@ -210,6 +236,32 @@ fn test_doc_ser_to_ele() -> Result<()> {
 
     println!("{}", xml_str);
     let mut file = File::create("output/Doc2.xml")?;
+
+    // to file
+    e.write_to_decl(&mut file)?;
+
+    Ok(())
+}
+
+#[test]
+fn test_page_ser_to_ele() -> Result<()> {
+    let file = File::open("samples/sample/Doc_0/Pages/Page_0/Content.xml")?;
+    let reader = BufReader::new(file);
+    let root = minidom::Element::from_reader(reader)?;
+    let a = PageXmlFile::try_from_dom(&root)?;
+    // dbg!(&a);
+
+    // serialize
+    let ser = XmlSer::new_with_prefix("Page", OFD_NS, Some("ofd".into()));
+    let e = ser.der_to_element(&a)?;
+
+    // to string
+    let mut buf = Vec::new();
+    e.write_to_decl(&mut buf)?;
+    let xml_str = String::from_utf8(buf)?;
+
+    println!("{}", xml_str);
+    let mut file = File::create("output/Page_0_Content.xml")?;
 
     // to file
     e.write_to_decl(&mut file)?;

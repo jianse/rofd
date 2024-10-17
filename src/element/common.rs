@@ -52,6 +52,13 @@ pub struct Actions {
     #[serde(rename = "Action")]
     pub actions: Vec<CtAction>,
 }
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub enum Event {
+    DO,
+    PO,
+    #[serde(rename = "CLICK")]
+    Click,
+}
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct CtAction {
@@ -60,7 +67,7 @@ pub struct CtAction {
     /// - PO
     /// - CLICK
     #[serde(rename = "@Event")]
-    pub event: String,
+    pub event: Event,
 
     #[serde(rename = "Region")]
     pub region: Option<CtRegion>,

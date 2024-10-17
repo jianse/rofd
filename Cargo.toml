@@ -35,3 +35,6 @@ xml_dom = "0.2.8"
 [features]
 default = []
 qxml = []
+
+[profile.cov]
+inherits = "test"

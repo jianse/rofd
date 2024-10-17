@@ -7,18 +7,18 @@ $OLD_RUSTDOCFLAGS=$env:RUSTDOCFLAGS
 
 
 $env:RUSTFLAGS="-Cinstrument-coverage"
-$env:LLVM_PROFILE_FILE="./target/debug/grcov/grvov-%p-%m.profraw"
+$env:LLVM_PROFILE_FILE="./target/cov/grcov/grvov-%p-%m.profraw"
 
 # $env:RUSTC_BOOTSTRAP=1
 # $env:CARGO_INCREMENTAL=0
 # $env:RUSTFLAGS="-Zprofile -Ccodegen-units=1 -Copt-level=0 -Clink-dead-code -Coverflow-checks=off -Zpanic_abort_tests -Cpanic=abort"
 # $env:RUSTDOCFLAGS="-Cpanic=abort"
-cargo clean
-cargo build
+# cargo clean
+cargo build --profile cov
 
-cargo test
+cargo test --profile cov
 
-grcov . -s . --binary-path ./target/debug/ -t html --branch --ignore-not-existing --ignore "/*" -o ./target/debug/coverage/ --llvm
+grcov . -s . --binary-path ./target/cov/ -t html --branch --ignore-not-existing --ignore "/*" -o ./target/cov/coverage/ --llvm
 
 
 # restore env vars

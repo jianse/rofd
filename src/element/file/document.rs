@@ -62,27 +62,27 @@ pub struct CtBookmark {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CtVPreferences {
     /// default None
-    #[serde(rename = "@PageMode")]
+    #[serde(rename = "PageMode")]
     pub page_mode: Option<String>,
 
     /// default OneColumn
-    #[serde(rename = "@PageLayout")]
+    #[serde(rename = "PageLayout")]
     pub page_layout: Option<String>,
 
     /// default DocTitle
-    #[serde(rename = "@TabDisplay")]
+    #[serde(rename = "TabDisplay")]
     pub tab_display: Option<String>,
 
     /// default false
-    #[serde(rename = "@HideToolbar")]
+    #[serde(rename = "HideToolbar")]
     pub hide_toolbar: Option<bool>,
 
     /// default false
-    #[serde(rename = "@HideMenubar")]
+    #[serde(rename = "HideMenubar")]
     pub hide_menubar: Option<bool>,
 
     /// default false
-    #[serde(rename = "@HideWindowUI")]
+    #[serde(rename = "HideWindowUI")]
     pub hide_window_ui: Option<bool>,
 
     /// choice

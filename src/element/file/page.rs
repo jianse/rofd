@@ -292,13 +292,13 @@ impl From<Vec<TextVal>> for UnifiedTextValVec {
         let v0 = value
             .into_iter()
             .map(|v| {
-                if v.cg_transform.is_some() {
+                if let Some(c) = v.cg_transform {
                     vec![
-                        UnifiedText::CGTransform(v.cg_transform.unwrap()),
+                        UnifiedText::CGTransform(c),
                         UnifiedText::TextCode(v.text_code),
                     ]
                 } else {
-                    vec![UnifiedText::CGTransform(v.cg_transform.unwrap())]
+                    vec![UnifiedText::TextCode(v.text_code)]
                 }
             })
             .flat_map(|v| v.into_iter())

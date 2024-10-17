@@ -3,26 +3,99 @@
 mod attr;
 
 use crate::ser::attr::AttrValueSer;
-use minidom::{Element, Node};
+use minidom::{Element, IntoAttributeValue, Node};
 use serde::ser::{
     SerializeMap, SerializeSeq, SerializeStruct, SerializeStructVariant, SerializeTuple,
     SerializeTupleStruct, SerializeTupleVariant,
 };
 use serde::{Serialize, Serializer};
-use std::fmt::Display;
+use std::fmt::{format, Display};
+use std::sync::atomic::{AtomicUsize, Ordering};
 use thiserror::Error;
 
+macro_rules! write_primitive {
+    ($method:ident ( $ty:ty )) => {
+        fn $method(self, value: $ty) -> Result<Self::Ok, Self::Error> {
+            self.output.append_node(Node::Text(v.to_string()));
+            Ok(())
+        }
+    };
+}
+
+#[derive(Debug)]
+pub enum Output {
+    Ele(Element),
+    Vec(Vec<Element>),
+    Empty,
+}
+
+impl Output {
+    fn append_child(&mut self, out: Output) -> Result<(), XmlSerErr> {
+        match self {
+            Output::Ele(e) => {
+                match out {
+                    Output::Ele(o) => {
+                        e.append_child(o);
+                    }
+                    Output::Vec(l) => {
+                        for o in l.into_iter() {
+                            e.append_child(o);
+                        }
+                    }
+                    Output::Empty => {}
+                }
+                Ok(())
+            }
+            _ => Err(XmlSerErr::Common),
+        }
+    }
+    fn append_child_ele(&mut self, ele: Element) -> Result<(), XmlSerErr> {
+        match self {
+            Output::Ele(e) => {
+                e.append_child(ele);
+                Ok(())
+            }
+            _ => Err(XmlSerErr::Common),
+        }
+    }
+    fn set_attr<S: Into<String>, V: IntoAttributeValue>(&mut self, key: S, value: V) {}
+}
+
+static GLOBAL_ID_COUNTER: AtomicUsize = AtomicUsize::new(0);
+const MAX_ID: usize = usize::MAX / 2;
+
+fn generate_id() -> usize {
+    // 检查两次溢出，否则直接加一可能导致溢出
+    let current_val = GLOBAL_ID_COUNTER.load(Ordering::Relaxed);
+    if current_val > MAX_ID {
+        panic!("Factory ids overflowed");
+    }
+    GLOBAL_ID_COUNTER.fetch_add(1, Ordering::Relaxed);
+    let next_id = GLOBAL_ID_COUNTER.load(Ordering::Relaxed);
+    if next_id > MAX_ID {
+        panic!("Factory ids overflowed");
+    }
+    next_id
+}
+
+const SER_TAG: &str = "[xml_ser] ";
+#[derive(Debug, PartialEq)]
 enum XmlSerState {
     Seq,
     Ele,
+    StructVariant,
 }
 
 pub struct XmlSer {
-    output: Element,
+    name: String,
+    ns: String,
+    uid: usize,
+    output: Output,
     is_none: bool,
     state: XmlSerState,
     seq_output: Vec<Element>,
-    // sub_ser: Option<Box<XmlSer>>,
+    temp_ele: Option<Element>,
+    xml_seq_ser: XmlSeqSer,
 }
 
 impl XmlSer {
@@ -32,15 +105,22 @@ impl XmlSer {
         NS: Into<String>,
     {
         let ns = namespace.into();
+        let name = name.as_ref();
+        let ele = Element::builder(name, &ns)
+            .prefix(prefix, &ns)
+            .unwrap()
+            .build();
         XmlSer {
-            output: Element::builder(name, &ns)
-                .prefix(prefix, &ns)
-                .unwrap()
-                .build(),
+            name: String::from(name),
+            ns,
+            uid: generate_id(),
+            output: Output::Ele(ele),
             is_none: false,
             state: XmlSerState::Ele,
             seq_output: vec![],
             // sub_ser: None,
+            temp_ele: None,
+            xml_seq_ser: XmlSeqSer::new_empty(),
         }
     }
     pub fn new<N, NS>(name: N, namespace: NS) -> XmlSer
@@ -50,12 +130,18 @@ impl XmlSer {
     {
         let name = name.as_ref();
         let ns = namespace.into();
+        let ele = Element::bare(name, &ns);
+        // ele.set_attr()
         XmlSer {
-            output: Element::bare(name, ns),
+            name: String::from(name),
+            ns,
+            uid: generate_id(),
+            output: Output::Ele(ele),
             is_none: false,
             state: XmlSerState::Ele,
             seq_output: vec![],
-            // sub_ser: None,
+            temp_ele: None,
+            xml_seq_ser: XmlSeqSer::new_empty(),
         }
     }
     // type Result<T> = std::result::Result<T, XmlSerErr>;
@@ -65,7 +151,10 @@ impl XmlSer {
         T: Serialize,
     {
         value.serialize(&mut self)?;
-        Ok(self.output)
+        match self.output {
+            Output::Ele(e) => Ok(e),
+            _ => Err(XmlSerErr::Common),
+        }
     }
 }
 
@@ -94,32 +183,37 @@ impl<'a> Serializer for &'a mut XmlSer {
     type SerializeStructVariant = Self;
 
     fn serialize_bool(self, v: bool) -> Result<Self::Ok, Self::Error> {
-        self.output.append_node(Node::Text(v.to_string()));
-        Ok(())
+        match &mut self.output {
+            Output::Ele(e) => {
+                e.append_node(Node::Text(v.to_string()));
+                Ok(())
+            }
+            _ => Err(XmlSerErr::Common),
+        }
     }
 
     fn serialize_i8(self, v: i8) -> Result<Self::Ok, Self::Error> {
-        todo!()
+        self.serialize_i64(v as i64)
     }
 
     fn serialize_i16(self, v: i16) -> Result<Self::Ok, Self::Error> {
-        todo!()
+        self.serialize_i64(v as i64)
     }
 
     fn serialize_i32(self, v: i32) -> Result<Self::Ok, Self::Error> {
-        todo!()
+        self.serialize_i64(v as i64)
     }
 
     fn serialize_i64(self, v: i64) -> Result<Self::Ok, Self::Error> {
-        todo!()
+        self.serialize_str(v.to_string().as_str())
     }
 
     fn serialize_u8(self, v: u8) -> Result<Self::Ok, Self::Error> {
-        todo!()
+        self.serialize_u64(v as u64)
     }
 
     fn serialize_u16(self, v: u16) -> Result<Self::Ok, Self::Error> {
-        todo!()
+        self.serialize_u64(v as u64)
     }
 
     fn serialize_u32(self, v: u32) -> Result<Self::Ok, Self::Error> {
@@ -127,8 +221,13 @@ impl<'a> Serializer for &'a mut XmlSer {
     }
 
     fn serialize_u64(self, v: u64) -> Result<Self::Ok, Self::Error> {
-        self.output.append_node(Node::Text(v.to_string()));
-        Ok(())
+        match &mut self.output {
+            Output::Ele(e) => {
+                e.append_node(Node::Text(v.to_string()));
+                Ok(())
+            }
+            _ => Err(XmlSerErr::Common),
+        }
     }
 
     fn serialize_f32(self, v: f32) -> Result<Self::Ok, Self::Error> {
@@ -136,17 +235,27 @@ impl<'a> Serializer for &'a mut XmlSer {
     }
 
     fn serialize_f64(self, v: f64) -> Result<Self::Ok, Self::Error> {
-        self.output.append_node(Node::Text(v.to_string()));
-        Ok(())
+        match &mut self.output {
+            Output::Ele(e) => {
+                e.append_node(Node::Text(v.to_string()));
+                Ok(())
+            }
+            _ => Err(XmlSerErr::Common),
+        }
     }
 
     fn serialize_char(self, v: char) -> Result<Self::Ok, Self::Error> {
-        todo!()
+        self.serialize_str(&v.to_string())
     }
 
     fn serialize_str(self, v: &str) -> Result<Self::Ok, Self::Error> {
-        self.output.append_node(Node::Text(v.to_string()));
-        Ok(())
+        match &mut self.output {
+            Output::Ele(e) => {
+                e.append_node(Node::Text(v.to_string()));
+                Ok(())
+            }
+            _ => Err(XmlSerErr::Common),
+        }
     }
 
     fn serialize_bytes(self, v: &[u8]) -> Result<Self::Ok, Self::Error> {
@@ -154,7 +263,9 @@ impl<'a> Serializer for &'a mut XmlSer {
     }
 
     fn serialize_none(self) -> Result<Self::Ok, Self::Error> {
-        self.is_none = true;
+        if (self.state == XmlSerState::Ele) {
+            self.is_none = true;
+        }
         Ok(())
     }
 
@@ -179,7 +290,12 @@ impl<'a> Serializer for &'a mut XmlSer {
         variant_index: u32,
         variant: &'static str,
     ) -> Result<Self::Ok, Self::Error> {
-        todo!()
+        let uid = self.uid;
+        let msg = format!("{SER_TAG}{uid} serialize_unit_variant {name}::{variant}");
+        dbg!(msg);
+        let ele = Element::bare(variant, &self.ns);
+        self.output.append_child_ele(ele)?;
+        Ok(())
     }
 
     fn serialize_newtype_struct<T>(
@@ -190,7 +306,8 @@ impl<'a> Serializer for &'a mut XmlSer {
     where
         T: ?Sized + Serialize,
     {
-        todo!()
+        dbg!(name);
+        value.serialize(self)
     }
 
     fn serialize_newtype_variant<T>(
@@ -203,20 +320,25 @@ impl<'a> Serializer for &'a mut XmlSer {
     where
         T: ?Sized + Serialize,
     {
-        let msg = format!("[xml_ser] begin serialize_newtype_variant {_name}:{variant}");
+        let uid = self.uid;
+        let msg = format!("{SER_TAG}{uid} begin serialize_newtype_variant {_name}:{variant}");
         dbg!(msg);
-        let mut ser = XmlSer::new(variant, self.output.ns());
+        let mut ser = XmlSer::new(variant, self.ns.clone());
         value.serialize(&mut ser)?;
-        self.output.append_child(ser.output);
+
+        self.output.append_child(ser.output)?;
         Ok(())
         // todo!()
     }
 
     fn serialize_seq(self, _len: Option<usize>) -> Result<Self::SerializeSeq, Self::Error> {
+        let uid = self.uid;
+        let msg = format!("{SER_TAG}{uid} begin serialize_seq");
+        dbg!(msg);
         self.state = XmlSerState::Seq;
-        Ok(self)
+        // self.xml_seq_ser.output =self.seq_output;
 
-        // todo!()
+        Ok(self)
     }
 
     fn serialize_tuple(self, len: usize) -> Result<Self::SerializeTuple, Self::Error> {
@@ -250,8 +372,9 @@ impl<'a> Serializer for &'a mut XmlSer {
         name: &'static str,
         len: usize,
     ) -> Result<Self::SerializeStruct, Self::Error> {
-        // dbg!(name);
-        // todo!()
+        let uid = self.uid;
+        let msg = format!("{SER_TAG}{uid} begin serialize_struct {name}");
+        dbg!(msg);
         self.serialize_map(Some(len))
     }
 
@@ -262,11 +385,14 @@ impl<'a> Serializer for &'a mut XmlSer {
         variant: &'static str,
         _len: usize,
     ) -> Result<Self::SerializeStructVariant, Self::Error> {
-        let msg = format!("[xml_ser] serialize_struct_variant {name}:{variant}");
+        let uid = self.uid;
+        let msg = format!("{SER_TAG}{uid} serialize_struct_variant {name}:{variant}");
         dbg!(msg);
-        let _ser = XmlSer::new(variant, self.output.ns());
-        // self.sub_ser = Some(Box::new(ser));
-        // TODO: MAYBE WE NEED NEW SER
+
+        // self.state = XmlSerState::StructVariant;
+        // let element = Element::bare(variant, self.output.ns());
+        // let out = std::mem::replace(&mut self.output, element);
+        // self.temp_ele = Some(out);
         Ok(self)
     }
 }
@@ -279,27 +405,23 @@ impl<'a> SerializeSeq for &'a mut XmlSer {
     where
         T: ?Sized + Serialize,
     {
-        // todo!()
-        let msg = "begin serializing element";
+        let uid = self.uid;
+        let msg = format!("{SER_TAG}{uid} begin serialize seq element");
         dbg!(msg);
-        let mut ser = XmlSer::new(self.output.name(), self.output.ns());
-        value.serialize(&mut ser)?;
-        self.seq_output.push(ser.output);
+        // let mut ser = XmlSer::new(self.output.name(), self.output.ns());
+        // value.serialize(&mut ser)?;
+        // self.seq_output.push(ser.output);
         Ok(())
     }
 
     fn end(self) -> Result<Self::Ok, Self::Error> {
-        // self.output.
-        // let mut nodes = self.output.take_nodes();
-        // if nodes.is_empty() {
-        //     Ok(())
-        // } else {
-        //     nodes.remove(nodes.len() - 1);
-        //     for node in nodes {
-        //         self.output.append_node(node);
-        //     }
-        //     Ok(())
-        // }
+        let uid = self.uid;
+        let msg = format!("{SER_TAG}{uid} serialize seq end");
+        dbg!(msg);
+        // if self.
+        // if(self.output)
+        // dbg!()
+        // self.seq_output.push();
         Ok(())
     }
 }
@@ -384,7 +506,9 @@ impl<'a> SerializeStruct for &'a mut XmlSer {
     where
         T: ?Sized + Serialize,
     {
-        dbg!(key);
+        let uid = self.uid;
+        let msg = format!("{SER_TAG}{uid} serialize_field key = {key}");
+        dbg!(msg);
         match key {
             s if s.starts_with("@") => {
                 let v = AttrValueSer::to_string(&value)?;
@@ -392,22 +516,23 @@ impl<'a> SerializeStruct for &'a mut XmlSer {
                 self.output.set_attr(name, v);
             }
             "$value" => {
+                // let mut  ser = XmlSer::new(self.output.name(), self.output.ns());
+                // value.serialize(&mut ser)?;
                 value.serialize(&mut **self)?;
+                if uid == 12 {
+                    dbg!(&self.output);
+                    dbg!(&self.seq_output);
+                }
+                // self.
             }
             _ => {
-                let mut ser = XmlSer::new(key, self.output.ns());
+                let mut ser = XmlSer::new(key, self.ns.clone());
                 value.serialize(&mut ser)?;
                 if !ser.is_none {
-                    match ser.state {
-                        XmlSerState::Seq => {
-                            for ele in ser.seq_output {
-                                self.output.append_child(ele);
-                            }
-                        }
-                        XmlSerState::Ele => {
-                            self.output.append_child(ser.output);
-                        }
-                    }
+                    self.output.append_child(ser.output)?;
+                } else {
+                    let msg = format!("{SER_TAG}{uid} ser field {key} is empty!");
+                    dbg!(msg);
                 }
             }
         }
@@ -431,8 +556,12 @@ impl<'a> SerializeStructVariant for &'a mut XmlSer {
     }
 
     fn end(self) -> Result<Self::Ok, Self::Error> {
+        let root = self.temp_ele.take();
+        if let Some(mut element) = root {
+            // let ele = std::mem::replace(&mut self.output, element);
+            // self.output.append_child(ele);
+        }
         Ok(())
-        // todo!()
     }
 }
 
@@ -480,5 +609,58 @@ mod tests {
         // dbg!(&xml_str);
         println!("{}", xml_str);
         Ok(())
+    }
+
+    #[test]
+    fn ser_enum() -> Result<()> {
+        #[derive(Serialize)]
+        enum A {
+            Va,
+            Vb(u64),
+            Vc { size: f32 },
+        }
+
+        // test unit variant
+        let data = A::Va;
+        let ser = XmlSer::new_with_prefix("test", "https://123.com", None);
+        let e = ser.der_to_element(&data)?;
+        let mut buf = Vec::new();
+        e.write_to_decl(&mut buf)?;
+        let xml_str = String::from_utf8(buf)?;
+        println!("{}", xml_str);
+
+        // test newtype variant
+        let data = A::Vb(32);
+        let ser = XmlSer::new_with_prefix("test", "https://123.com", None);
+        let e = ser.der_to_element(&data)?;
+        let mut buf = Vec::new();
+        e.write_to_decl(&mut buf)?;
+        let xml_str = String::from_utf8(buf)?;
+        println!("{}", xml_str);
+
+        let data = A::Vc { size: 1.0 };
+        let ser = XmlSer::new_with_prefix("test", "https://123.com", None);
+        let e = ser.der_to_element(&data)?;
+        let mut buf = Vec::new();
+        e.write_to_decl(&mut buf)?;
+        let xml_str = String::from_utf8(buf)?;
+        println!("{}", xml_str);
+
+        Ok(())
+    }
+}
+
+pub struct XmlSeqSer {
+    name: String,
+    ns: String,
+    output: Vec<Element>,
+}
+impl XmlSeqSer {
+    fn new_empty() -> XmlSeqSer {
+        XmlSeqSer {
+            output: vec![],
+            name: String::new(),
+            ns: String::new(),
+        }
     }
 }

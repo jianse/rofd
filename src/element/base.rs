@@ -1,6 +1,6 @@
 use serde::{
     de::{self, Visitor},
-    Deserialize, Serialize,
+    Deserialize, Serialize, Serializer,
 };
 use std::fmt::Debug;
 use std::ops::Deref;
@@ -64,7 +64,7 @@ pub struct StPos {
 }
 
 // #[serde_as(as = "FromInto<(f32, f32, f32, f32)>")]
-#[derive(Debug, Serialize, PartialEq, PartialOrd, Clone, Copy)]
+#[derive(Debug, PartialEq, PartialOrd, Clone, Copy)]
 pub struct StBox {
     pub x: f32,
     pub y: f32,
@@ -172,6 +172,15 @@ impl<'de> Deserialize<'de> for StBox {
             }
         }
         deserializer.deserialize_string(StBoxVisitor)
+    }
+}
+
+impl serde::Serialize for StBox {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        serializer.serialize_str(format!("{}", self).as_str())
     }
 }
 
