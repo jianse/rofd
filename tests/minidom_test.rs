@@ -260,7 +260,7 @@ fn test_page_ser_to_ele() -> Result<()> {
     e.write_to_decl(&mut buf)?;
     let xml_str = String::from_utf8(buf)?;
 
-    println!("{}", xml_str);
+    // println!("{}", xml_str);
     let mut file = File::create("output/Page_0_Content.xml")?;
 
     // to file
