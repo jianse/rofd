@@ -45,7 +45,7 @@ impl<'a> SerializeSeq for &'a mut AttrValueSer {
     }
 
     fn end(self) -> Result<Self::Ok, Self::Error> {
-        dbg!(&self.output);
+        // dbg!(&self.output);
         if let Some(output) = &self.output {
             if output.is_empty() {
                 self.output = None;
@@ -231,7 +231,7 @@ impl<'a> Serializer for &'a mut AttrValueSer {
     }
 
     fn serialize_seq(self, len: Option<usize>) -> Result<Self::SerializeSeq, Self::Error> {
-        let msg = "serialize seq";
+        let msg = "[attr.rs] serialize seq";
         dbg!(msg);
         Ok(self)
     }

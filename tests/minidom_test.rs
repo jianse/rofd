@@ -115,6 +115,10 @@ fn test_ofd_ser_to_ele() -> Result<()> {
     let xml_str = String::from_utf8(buf)?;
 
     println!("{}", xml_str);
+    let mut file = File::create("output/OFD2.xml")?;
+
+    // to file
+    e.write_to_decl(&mut file)?;
     Ok(())
 }
 
@@ -256,9 +260,9 @@ fn test_page_ser_to_ele() -> Result<()> {
     let e = ser.der_to_element(&a)?;
 
     // to string
-    let mut buf = Vec::new();
-    e.write_to_decl(&mut buf)?;
-    let xml_str = String::from_utf8(buf)?;
+    // let mut buf = Vec::new();
+    // e.write_to_decl(&mut buf)?;
+    // let xml_str = String::from_utf8(buf)?;
 
     // println!("{}", xml_str);
     let mut file = File::create("output/Page_0_Content.xml")?;

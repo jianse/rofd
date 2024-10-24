@@ -20,10 +20,7 @@ macro_rules! write_primitive {
         fn $method(self, value: $ty) -> Result<Self::Ok, Self::Error> {
             let msg = format!("{} {} {}", SER_TAG, self.uid, stringify!($method));
             dbg!(msg);
-            let mut root = self.create_root_ele()?;
-            root.append_node(Node::Text(value.to_string()));
-            self.output = Output::Ele(root);
-            // self.output.append_node(Node::Text(v.to_string()));
+            self.output.append_child_node(value.to_string())?;
             Ok(())
         }
     };
@@ -69,12 +66,25 @@ impl Output {
             _ => Err(XmlSerErr::Message("append_child_ele".to_string())),
         }
     }
+
+    fn append_child_node<N>(&mut self, node: N) -> Result<(), XmlSerErr>
+    where
+        N: Into<Node>,
+    {
+        match self {
+            Output::Ele(e) => {
+                e.append_node(node.into());
+                Ok(())
+            }
+            _ => Err(XmlSerErr::Message("append_child_node".to_string())),
+        }
+    }
     fn set_attr<S: Into<String>, V: IntoAttributeValue>(
         &mut self,
         key: S,
         value: V,
     ) -> Result<(), XmlSerErr> {
-        dbg!(&self);
+        // dbg!(&self);
         if let Output::Ele(e) = self {
             e.set_attr(key, value);
             Ok(())
@@ -102,7 +112,7 @@ impl Output {
                 };
                 Ok(())
             }
-            _ => Err(XmlSerErr::Common),
+            _ => Err(XmlSerErr::Message("push output error".to_string())),
         }
     }
 }
@@ -126,17 +136,85 @@ fn generate_id() -> usize {
 
 const SER_TAG: &str = "[xml_ser]";
 
-pub struct XmlSer {
-    name: String,
+#[derive(Debug, Default)]
+pub struct XmlSerBuilder {
+    name: Option<String>,
     ns: String,
     prefix: Option<Option<String>>,
+    create_element: bool,
+    ele: Option<Element>,
+}
+
+impl XmlSerBuilder {
+    fn new() -> Self {
+        XmlSerBuilder::default()
+    }
+
+    fn name(mut self, name: impl Into<String>) -> Self {
+        self.name = Some(name.into());
+        self
+    }
+
+    fn ns(mut self, ns: impl Into<String>) -> Self {
+        self.ns = ns.into();
+        self
+    }
+    fn prefix(mut self, prefix: impl Into<Option<String>>) -> Self {
+        self.prefix = Some(prefix.into());
+        self
+    }
+    fn create_element(mut self, create_element: bool) -> Self {
+        self.create_element = create_element;
+        self
+    }
+
+    fn build(self) -> Result<XmlSer, XmlSerErr> {
+        let mut ser = XmlSer {
+            name: self.name,
+            ns: self.ns,
+            prefix: self.prefix,
+            uid: generate_id(),
+            output: Output::Empty,
+            seq_output: vec![],
+            temp_ele: None,
+        };
+        if self.create_element {
+            let ele = ser.create_ele_default()?;
+            ser.output = Output::Ele(ele);
+        }
+
+        Ok(ser)
+    }
+}
+
+pub struct XmlSer {
+    // replace element name if it has value
+    // or use struct name when this is `None`
+    name: Option<String>,
+    // namespace always inherit
+    ns: String,
+    // prefix for namespace
+    prefix: Option<Option<String>>,
+    // serializer uid
     uid: usize,
+    // serialized content
     output: Output,
     seq_output: Vec<Element>,
     temp_ele: Option<Element>,
 }
 
 impl XmlSer {
+    fn with_ele(element: Element) -> Self {
+        XmlSer {
+            name: Some(element.name().to_string()),
+            ns: element.ns(),
+            prefix: None,
+            uid: generate_id(),
+            output: Output::Ele(element),
+            seq_output: vec![],
+            temp_ele: None,
+        }
+    }
     pub fn new_with_prefix<N, NS>(name: N, namespace: NS, prefix: Option<String>) -> XmlSer
     where
         N: AsRef<str>,
@@ -146,7 +224,7 @@ impl XmlSer {
         let name = name.as_ref();
 
         XmlSer {
-            name: String::from(name),
+            name: Some(String::from(name)),
             ns,
             prefix: Some(prefix.clone()),
             uid: generate_id(),
@@ -155,7 +233,22 @@ impl XmlSer {
             temp_ele: None,
         }
     }
-    pub fn new<N, NS>(name: N, namespace: NS) -> XmlSer
+    pub fn new<N, NS>(namespace: NS) -> XmlSer
+    where
+        NS: Into<String>,
+    {
+        let ns = namespace.into();
+        XmlSer {
+            name: None,
+            ns,
+            prefix: None,
+            uid: generate_id(),
+            output: Output::Empty,
+            seq_output: vec![],
+            temp_ele: None,
+        }
+    }
+    pub fn new_with_name<N, NS>(name: N, namespace: NS) -> XmlSer
     where
         N: AsRef<str>,
         NS: Into<String>,
@@ -163,7 +256,7 @@ impl XmlSer {
         let name = name.as_ref();
         let ns = namespace.into();
         XmlSer {
-            name: String::from(name),
+            name: Some(String::from(name)),
             ns,
             prefix: None,
             uid: generate_id(),
@@ -181,16 +274,26 @@ impl XmlSer {
         // dbg!(&self.output);
         match self.output {
             Output::Ele(e) => Ok(e),
-            _ => Err(XmlSerErr::Common),
+            _ => Err(XmlSerErr::Message("result is not an element".to_string())),
         }
     }
-    fn create_root_ele(&mut self) -> Result<Element, XmlSerErr> {
+    fn create_ele(&self, name: &str) -> Result<Element, XmlSerErr> {
         if let Some(prefix) = &self.prefix {
-            Ok(Element::builder(&self.name, &self.ns)
+            Ok(Element::builder(name, &self.ns)
                 .prefix(prefix.clone(), &self.ns)?
                 .build())
         } else {
-            Ok(Element::builder(&self.name, &self.ns).build())
+            Ok(Element::builder(name, &self.ns).build())
+        }
+    }
+
+    fn create_ele_default(&self) -> Result<Element, XmlSerErr> {
+        if let Some(name) = self.name.as_ref() {
+            self.create_ele(name)
+        } else {
+            Err(XmlSerErr::Message(
+                "create_element error: missing name".to_string(),
+            ))
         }
     }
 }
@@ -276,8 +379,8 @@ impl<'a> Serializer for &'a mut XmlSer {
         let msg = format!("{SER_TAG} {uid} serialize_unit_variant {name}::{variant}");
         dbg!(msg);
 
-        let mut root = self.create_root_ele()?;
-        root.append_child(Element::bare(variant, self.ns.clone()));
+        let mut root = self.create_ele(variant)?;
+        // root.append_child(Element::bare(variant, self.ns.clone()));
         self.output = Output::Ele(root);
         Ok(())
     }
@@ -307,14 +410,9 @@ impl<'a> Serializer for &'a mut XmlSer {
         let uid = self.uid;
         let msg = format!("{SER_TAG} {uid} serialize_newtype_variant {_name}:{variant}");
         dbg!(msg);
-        let mut ser = XmlSer::new(variant, self.ns.clone());
+        let mut ser = XmlSer::with_ele(self.create_ele(variant)?);
         value.serialize(&mut ser)?;
-        if let Output::Empty = self.output {
-            let root = self.create_root_ele()?;
-            self.output = Output::Ele(root);
-        }
-
-        self.output.append_child(ser.output)?;
+        self.output = ser.output;
         Ok(())
     }
 
@@ -327,7 +425,7 @@ impl<'a> Serializer for &'a mut XmlSer {
                 self.temp_ele = Some(e);
             }
             Output::Vec(_) => {
-                return Err(XmlSerErr::Common);
+                return Err(XmlSerErr::Message("seq of seq".to_string()));
             }
             Output::Empty => {}
         }
@@ -371,12 +469,14 @@ impl<'a> Serializer for &'a mut XmlSer {
         len: usize,
     ) -> Result<Self::SerializeStruct, Self::Error> {
         let uid = self.uid;
-        let msg = format!(
-            "{SER_TAG} {uid} serialize_struct struct = {name} rename =  {}",
-            self.name
-        );
+        let msg = format!("{SER_TAG} {uid} serialize_struct struct = {name}",);
         dbg!(msg);
-        self.output = Output::Ele(self.create_root_ele()?);
+        // let name = &mut self.name.as_ref().map(|e|e.as_str()).unwrap_or(name);
+        if let Some(name) = self.name.clone() {
+            self.output = Output::Ele(self.create_ele(name.as_str())?);
+        } else {
+            self.output = Output::Ele(self.create_ele(name)?);
+        }
         // self.serialize_map(Some(len))
         Ok(self)
     }
@@ -391,17 +491,7 @@ impl<'a> Serializer for &'a mut XmlSer {
         let uid = self.uid;
         let msg = format!("{SER_TAG} {uid} serialize_struct_variant {name}:{variant}");
         dbg!(msg);
-        match self.output.take() {
-            Output::Ele(ele) => {
-                self.temp_ele = Some(ele);
-            }
-            Output::Vec(_) => {
-                return Err(XmlSerErr::Message("must be an element".to_string()));
-            }
-            Output::Empty => {
-                self.temp_ele = Some(self.create_root_ele()?);
-            }
-        }
+        self.output = Output::Ele(self.create_ele(variant)?);
         self.output = Output::Ele(Element::bare(variant, self.ns.clone()));
 
         Ok(self)
@@ -419,7 +509,16 @@ impl<'a> SerializeSeq for &'a mut XmlSer {
         let uid = self.uid;
         let msg = format!("{SER_TAG} {uid} SerializeSeq::serialize_element");
         dbg!(msg);
-        let mut ser = XmlSer::new(self.name.clone(), self.ns.clone());
+        let mut ser = if let Some(name) = self.name.as_ref() {
+            XmlSerBuilder::new()
+                .name(name)
+                .ns(self.ns.clone())
+                .create_element(true)
+                .build()?
+        } else {
+            XmlSerBuilder::new().ns(self.ns.clone()).build()?
+        };
+
         value.serialize(&mut ser)?;
         self.output.push(ser.output)?;
         Ok(())
@@ -546,13 +645,12 @@ impl<'a> SerializeStruct for &'a mut XmlSer {
                 // match self.output {  }
             }
             "$value" => {
-                // let mut  ser = XmlSer::new(self.output.name(), self.output.ns());
-                // value.serialize(&mut ser)?;
+                let name = self.name.take();
                 value.serialize(&mut **self)?;
-                // self.
+                self.name = name;
             }
             _ => {
-                let mut ser = XmlSer::new(key, self.ns.clone());
+                let mut ser = XmlSer::with_ele(Element::bare(key, &self.ns));
                 value.serialize(&mut ser)?;
                 if let Output::Empty = ser.output {
                     let msg = format!("{SER_TAG}{uid} ser field {key} is empty!");
@@ -638,40 +736,14 @@ mod tests {
             vec_attr: vec!["foo".to_string(), "bar".to_string()],
         };
 
-        let ser = XmlSer::new_with_prefix("test", "https://123.com", None);
+        let ser = XmlSerBuilder::new()
+            .name("test")
+            .ns("https://123.com")
+            .prefix(None)
+            .build()?;
         let e = ser.der_to_element(&a)?;
 
         let ns = "https://123.com";
-
-        assert_eq!(
-            e,
-            Element::builder("test", ns)
-                .prefix(None, ns)?
-                .attr("Attr1", "foo")
-                .attr("Attr2", "baz")
-                .attr("VecAttr", "foo bar")
-                .append(Node::Element(
-                    Element::builder("Ele1", ns)
-                        .append(Node::Text("bar".to_string()))
-                        .build()
-                ))
-                .append(Node::Element(
-                    Element::builder("VecEle", ns)
-                        .append(Node::Text("1".to_string()))
-                        .build()
-                ))
-                .append(Node::Element(
-                    Element::builder("VecEle", ns)
-                        .append(Node::Text("2".to_string()))
-                        .build()
-                ))
-                .append(Node::Element(
-                    Element::builder("idx", ns)
-                        .append(Node::Text("1".to_string()))
-                        .build()
-                ))
-                .build()
-        );
 
         // into string
         let mut buf = Vec::new();
@@ -679,12 +751,44 @@ mod tests {
         let xml_str = String::from_utf8(buf)?;
         // dbg!(&xml_str);
         println!("{}", xml_str);
+        let expected = Element::builder("test", ns)
+            .prefix(None, ns)?
+            .attr("Attr1", "foo")
+            .attr("Attr2", "baz")
+            .attr("VecAttr", "foo bar")
+            .append(Node::Element(
+                Element::builder("Ele1", ns)
+                    .append(Node::Text("bar".to_string()))
+                    .build(),
+            ))
+            .append(Node::Element(
+                Element::builder("VecEle", ns)
+                    .append(Node::Text("1".to_string()))
+                    .build(),
+            ))
+            .append(Node::Element(
+                Element::builder("VecEle", ns)
+                    .append(Node::Text("2".to_string()))
+                    .build(),
+            ))
+            .append(Node::Element(
+                Element::builder("idx", ns)
+                    .append(Node::Text("1".to_string()))
+                    .build(),
+            ))
+            .build();
+        // assert_eq!(e, expected);
         Ok(())
     }
     #[derive(Serialize)]
     enum A {
+        // test unit variant
         Va,
+        // newtype variant with primitive type
         Vb(u64),
+        // newtype variant with struct
+        Vb1(),
+
         Vc {
             size: f32,
             #[serde(rename = "@Weight")]
@@ -695,14 +799,18 @@ mod tests {
     fn ser_enum() -> Result<()> {
         // test unit variant
         let data = A::Va;
-        let ser = XmlSer::new_with_prefix("test", "https://123.com", None);
+        // "test", "https://123.com", None
+        let ser = XmlSerBuilder::new()
+            .name("test")
+            .ns("https://123.com")
+            .prefix(None)
+            .build()?;
         let e = ser.der_to_element(&data)?;
 
         assert_eq!(
             e,
-            Element::builder("test", "https://123.com")
+            Element::builder("Va", "https://123.com")
                 .prefix(None, "https://123.com")?
-                .append(Node::Element(Element::bare("Va", "https://123.com")))
                 .build()
         );
         let mut buf = Vec::new();
@@ -717,12 +825,8 @@ mod tests {
 
         assert_eq!(
             e,
-            Element::builder("test", "https://123.com")
-                .append(Node::Element(
-                    Element::builder("Vb", "https://123.com")
-                        .append(Node::Text("32".to_string()))
-                        .build()
-                ))
+            Element::builder("Vb", "https://123.com")
+                .append(Node::Text("32".to_string()))
                 .prefix(None, "https://123.com")?
                 .build()
         );
@@ -747,13 +851,51 @@ mod tests {
     }
 
     #[derive(Serialize)]
+    #[serde(rename = "AAA")]
     struct SA {
         enums: Vec<A>,
     }
     #[test]
     fn test_vec_enum() -> Result<()> {
         let data = SA {
-            enums: vec![A::Va, A::Va],
+            enums: vec![
+                A::Va,
+                A::Va,
+                A::Vb(12),
+                A::Vc {
+                    size: 12.0,
+                    weight: 24.0,
+                },
+            ],
+        };
+        let ser = XmlSer::new_with_prefix("test", "https://123.com", None);
+        let e = ser.der_to_element(&data)?;
+        // dbg!(e);
+        let mut buf = Vec::new();
+        e.write_to_decl(&mut buf)?;
+        let xml_str = String::from_utf8(buf)?;
+        println!("{}", xml_str);
+        Ok(())
+    }
+
+    #[derive(Serialize)]
+    #[serde(rename = "AAA")]
+    struct SB {
+        #[serde(rename = "$value")]
+        enums: Vec<A>,
+    }
+    #[test]
+    fn test_value_vec_enum() -> Result<()> {
+        let data = SB {
+            enums: vec![
+                A::Va,
+                A::Va,
+                A::Vb(12),
+                A::Vc {
+                    size: 12.0,
+                    weight: 24.0,
+                },
+            ],
         };
         let ser = XmlSer::new_with_prefix("test", "https://123.com", None);
         let e = ser.der_to_element(&data)?;
