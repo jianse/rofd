@@ -2,6 +2,7 @@
 // #![feature(error_generic_member_access)]
 
 mod attr;
+mod field;
 
 use crate::ser::attr::AttrValueSer;
 use minidom::{Element, IntoAttributeValue, Node};
@@ -120,7 +121,7 @@ impl Output {
 static GLOBAL_ID_COUNTER: AtomicUsize = AtomicUsize::new(0);
 const MAX_ID: usize = usize::MAX / 2;
 
-fn generate_id() -> usize {
+pub(crate) fn generate_id() -> usize {
     // 检查两次溢出，否则直接加一可能导致溢出
     let current_val = GLOBAL_ID_COUNTER.load(Ordering::Relaxed);
     if current_val > MAX_ID {
@@ -271,7 +272,7 @@ impl XmlSer {
         T: Serialize,
     {
         value.serialize(&mut self)?;
-        // dbg!(&self.output);
+        dbg!(&self.output);
         match self.output {
             Output::Ele(e) => Ok(e),
             _ => Err(XmlSerErr::Message("result is not an element".to_string())),
@@ -420,15 +421,15 @@ impl<'a> Serializer for &'a mut XmlSer {
         let uid = self.uid;
         let msg = format!("{SER_TAG} {uid} serialize_seq");
         dbg!(msg);
-        match self.output.take() {
-            Output::Ele(e) => {
-                self.temp_ele = Some(e);
-            }
-            Output::Vec(_) => {
-                return Err(XmlSerErr::Message("seq of seq".to_string()));
-            }
-            Output::Empty => {}
-        }
+        // match self.output.take() {
+        //     Output::Ele(e) => {
+        //         self.temp_ele = Some(e);
+        //     }
+        //     Output::Vec(_) => {
+        //         return Err(XmlSerErr::Message("seq of seq".to_string()));
+        //     }
+        //     Output::Empty => {}
+        // }
         self.output = Output::Vec(vec![]);
 
         Ok(self)
@@ -700,6 +701,14 @@ impl<'a> SerializeStructVariant for &'a mut XmlSer {
         }
         Ok(())
     }
+}
+
+#[cfg(test)]
+pub(crate) fn to_string(element: &Element) -> eyre::Result<String> {
+    let mut buf = Vec::new();
+    element.write_to_decl(&mut buf)?;
+    let xml_str = String::from_utf8(buf)?;
+    Ok(xml_str)
 }
 
 #[cfg(test)]
