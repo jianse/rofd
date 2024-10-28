@@ -28,7 +28,7 @@ repos:
         name: test
         language: system
         types: [file, rust]
-        entry: cargo test --lib
+        entry: cargo test --all
         pass_filenames: false
 
 default_language_version:

@@ -4,29 +4,29 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-chrono = { version = "0.4.38", features = ["serde"] }
-clap = { version = "4.5.20", features = ["derive", "string"] }
-cli-table = "0.4.9"
-derive_builder = "0.20.2"
-env_logger = "0.11.5"
-eyre = "0.6.12"
-log = "0.4.22"
-pdf = "0.9.0"
-quick-xml = { version = "0.36.2", features = ["serde", "serialize"] }
-relative-path = "1.9.3"
-serde = { version = "1.0.210", features = ["derive"] }
-serde_with = "3.11.0"
-skia-safe = "0.78.2"
-thiserror = "1.0.64"
-walkdir = "2.5.0"
-zip = "2.2.0"
-minidom = "0.16.0"
-strum = { version = "0.26.3", features = ["derive"] }
+chrono = { workspace = true, features = ["serde"] }
+clap = { workspace = true, features = ["derive", "string"] }
+cli-table = { workspace = true }
+derive_builder = { workspace = true }
+env_logger = { workspace = true }
+eyre = { workspace = true }
+log = { workspace = true }
+pdf = { workspace = true }
+quick-xml = { workspace = true, features = ["serde", "serialize"] }
+relative-path = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+serde_with = { workspace = true }
+skia-safe = { workspace = true }
+thiserror = { workspace = true }
+walkdir = { workspace = true }
+zip = { workspace = true }
+minidom = { workspace = true }
+strum = { workspace = true, features = ["derive"] }
 help-macro = { path = "help-macro" }
 xdom = { path = "xdom" }
 
 [workspace]
-members = ["ofd_base_rw", "help-macro", "xdom"]
+members = ["ofd_base_rw", "help-macro", "xdom", "cli"]
 
 
 [dev-dependencies]
@@ -38,3 +38,26 @@ qxml = []
 
 [profile.cov]
 inherits = "test"
+
+[workspace.dependencies]
+chrono = "0.4.38"
+clap = "4.5.20"
+cli-table = "0.4.9"
+derive_builder = "0.20.2"
+env_logger = "0.11.5"
+eyre = "0.6.12"
+log = "0.4.22"
+pdf = "0.9.0"
+quick-xml = "0.37.0"
+relative-path = "1.9.3"
+serde = "1.0.213"
+serde_with = "3.11.0"
+skia-safe = "0.78.2"
+thiserror = "1.0.65"
+walkdir = "2.5.0"
+zip = "2.2.0"
+minidom = "0.16.0"
+strum = "0.26.3"
+proc-macro2 = "1.0.89"
+quote = "1.0.37"
+syn = "2.0.85"

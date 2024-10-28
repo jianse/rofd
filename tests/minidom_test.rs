@@ -106,8 +106,13 @@ fn test_ofd_ser_to_ele() -> Result<()> {
     };
 
     // serialize
-    let ser = XmlSer::new_with_prefix("OFD", OFD_NS, Some("ofd".into()));
-    let e = ser.der_to_element(&a)?;
+    let ser = XmlSer::builder()
+        .name("OFD")
+        .ns(OFD_NS)
+        .prefix(Some("ofd".into()))
+        .build()?;
+
+    let e = ser.ser_to_element(&a)?;
 
     // to string
     let mut buf = Vec::new();
@@ -199,9 +204,11 @@ fn test_doc_ser_to_ele() -> Result<()> {
                 CtAction {
                     event: Event::Click,
                     region: None,
-                    action_type: Goto(VtTo::Bookmark {
-                        name: "??".to_string(),
-                    }),
+                    action_type: Goto {
+                        value: VtTo::Bookmark {
+                            name: "??".to_string(),
+                        },
+                    },
                 },
                 CtAction {
                     event: Event::DO,
@@ -230,8 +237,13 @@ fn test_doc_ser_to_ele() -> Result<()> {
         extensions: None,
     };
     // serialize
-    let ser = XmlSer::new_with_prefix("Document", OFD_NS, Some("ofd".into()));
-    let e = ser.der_to_element(&a)?;
+    let ser = XmlSer::builder()
+        .name("Document")
+        .ns(OFD_NS)
+        .prefix(Some("ofd".into()))
+        .build()?;
+
+    let e = ser.ser_to_element(&a)?;
 
     // to string
     let mut buf = Vec::new();
@@ -251,13 +263,17 @@ fn test_doc_ser_to_ele() -> Result<()> {
 fn test_page_ser_to_ele() -> Result<()> {
     let file = File::open("samples/sample/Doc_0/Pages/Page_0/Content.xml")?;
     let reader = BufReader::new(file);
-    let root = minidom::Element::from_reader(reader)?;
+    let root = Element::from_reader(reader)?;
     let a = PageXmlFile::try_from_dom(&root)?;
     // dbg!(&a);
 
     // serialize
-    let ser = XmlSer::new_with_prefix("Page", OFD_NS, Some("ofd".into()));
-    let e = ser.der_to_element(&a)?;
+    let ser = XmlSer::builder()
+        .name("Page")
+        .ns(OFD_NS)
+        .prefix(Some("ofd".into()))
+        .build()?;
+    let e = ser.ser_to_element(&a)?;
 
     // to string
     // let mut buf = Vec::new();
@@ -270,5 +286,38 @@ fn test_page_ser_to_ele() -> Result<()> {
     // to file
     e.write_to_decl(&mut file)?;
 
+    Ok(())
+}
+
+#[test]
+fn test_nested_enum() -> Result<()> {
+    let value = CtAction {
+        event: Event::Click,
+        region: None,
+        action_type: Goto {
+            value: VtTo::Bookmark {
+                name: "??".to_string(),
+            },
+        },
+    };
+    let ser = XmlSer::builder()
+        .name("Action")
+        .ns(OFD_NS)
+        .prefix(Some("ofd".into()))
+        .build()?;
+
+    let e = ser.ser_to_element(&value)?;
+    let mut buf = Vec::new();
+    e.write_to_decl(&mut buf)?;
+    let xml_str = String::from_utf8(buf)?;
+    println!("{}", xml_str);
+
+    Ok(())
+}
+
+#[test]
+fn float_format() -> Result<()> {
+    let v = format!("{:.2}", 3.1995).trim_end_matches('0').to_string();
+    println!("{}", v);
     Ok(())
 }

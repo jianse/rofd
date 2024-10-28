@@ -104,7 +104,16 @@ impl<'s> Serializer for &'s mut FieldSer {
     }
 
     fn serialize_unit_struct(self, name: &'static str) -> Result<Self::Ok, Self::Error> {
-        todo!()
+        // let name = match self.named_by {
+        //     NamedBy::External => {
+        //         self.name.as_deref().unwrap_or(name)
+        //     }
+        //     NamedBy::Internal => {
+        //         name
+        //     }
+        // };
+        self.output = Output::Ele(Element::bare(name, &self.ns));
+        Ok(())
     }
 
     fn serialize_unit_variant(
@@ -113,7 +122,9 @@ impl<'s> Serializer for &'s mut FieldSer {
         variant_index: u32,
         variant: &'static str,
     ) -> Result<Self::Ok, Self::Error> {
-        todo!()
+        self.named_by = NamedBy::Internal;
+        self.output = Output::Ele(Element::bare(variant, &self.ns));
+        Ok(())
     }
 
     fn serialize_newtype_struct<T>(
@@ -124,7 +135,8 @@ impl<'s> Serializer for &'s mut FieldSer {
     where
         T: ?Sized + Serialize,
     {
-        todo!()
+        // maybe we should honor the name of struct
+        value.serialize(self)
     }
 
     fn serialize_newtype_variant<T>(
@@ -137,7 +149,26 @@ impl<'s> Serializer for &'s mut FieldSer {
     where
         T: ?Sized + Serialize,
     {
-        todo!()
+        // self.named_by = NamedBy::Internal;
+        let mut ser = FieldSer {
+            name: Some(variant.to_string()),
+            ns: self.ns.clone(),
+            output: Output::Empty,
+            named_by: NamedBy::External,
+            ctx: Ctx::Normal,
+            uid: generate_id(),
+        };
+        value.serialize(&mut ser)?;
+        self.output = ser.output;
+        // let out = AttrValueSer::to_string(&value)?;
+        // if let Some(v) = out {
+        //     let ele = Element::builder(variant, &self.ns).append(v).build();
+        //     self.output = Output::Ele(ele);
+        // } else {
+        //     self.output = Output::Empty
+        // }
+
+        Ok(())
     }
 
     fn serialize_seq(self, len: Option<usize>) -> Result<Self::SerializeSeq, Self::Error> {
@@ -193,7 +224,8 @@ impl<'s> Serializer for &'s mut FieldSer {
         variant: &'static str,
         len: usize,
     ) -> Result<Self::SerializeStructVariant, Self::Error> {
-        todo!()
+        self.output = Output::Ele(Element::bare(variant, &self.ns));
+        Ok(self)
     }
 }
 
@@ -308,7 +340,7 @@ impl<'s> SerializeStruct for &'s mut FieldSer {
         dbg!(msg);
         match key {
             s if s.starts_with("@") => {
-                let v = AttrValueSer::to_string(&value)?;
+                let v = AttrValueSer::convert_to_string(&value)?;
                 // dbg!(&self.output);
                 // dbg!(&v);
                 let name = s[1..].to_string();
@@ -317,7 +349,7 @@ impl<'s> SerializeStruct for &'s mut FieldSer {
                 // dbg!(&self.output);
             }
             "$text" => {
-                let v = AttrValueSer::to_string(&value)?;
+                let v = AttrValueSer::convert_to_string(&value)?;
 
                 if let Some(v) = v {
                     if let Output::Ele(ele) = &mut self.output {
@@ -364,11 +396,56 @@ impl<'s> SerializeStructVariant for &'s mut FieldSer {
     where
         T: ?Sized + Serialize,
     {
-        todo!()
+        let uid = self.uid;
+        let msg = format!("{SER_TAG} {uid} SerializeStructVariant::serialize_field key = {key}");
+        dbg!(msg);
+        match key {
+            s if s.starts_with("@") => {
+                let v = AttrValueSer::convert_to_string(&value)?;
+                // dbg!(&self.output);
+                // dbg!(&v);
+                let name = s[1..].to_string();
+                // dbg!(&name);
+                self.output.set_attr(name, v)?;
+                // dbg!(&self.output);
+            }
+            "$text" => {
+                let v = AttrValueSer::convert_to_string(&value)?;
+
+                if let Some(v) = v {
+                    if let Output::Ele(ele) = &mut self.output {
+                        ele.append_node(Node::Text(v));
+                    } else {
+                        return Err(XmlSerErr::Message("$text on wrong element".to_string()));
+                    }
+                }
+
+                // self.output.append_node("")
+                // match self.output {  }
+            }
+            "$value" => {
+                todo!()
+            }
+            _ => {
+                let mut ser = FieldSer {
+                    name: Some(key.to_string()),
+                    ns: self.ns.clone(),
+                    output: Output::Empty,
+                    named_by: NamedBy::External,
+                    ctx: Ctx::Normal,
+                    uid: generate_id(),
+                };
+                value.serialize(&mut ser);
+                self.output.append_child(ser.output);
+            }
+        }
+        let msg = "serialize_field end".to_string();
+        dbg!(msg);
+        Ok(())
     }
 
     fn end(self) -> Result<Self::Ok, Self::Error> {
-        todo!()
+        Ok(())
     }
 }
 
@@ -397,7 +474,7 @@ mod tests {
         Ok(())
     }
     #[test]
-    fn test_vec() -> Result<()> {
+    fn test_vec_primitive() -> Result<()> {
         let mut ser = FieldSer {
             name: Some("Test".to_string()),
             ns: "".to_string(),
@@ -419,6 +496,8 @@ mod tests {
     fn test_struct() -> Result<()> {
         #[derive(Serialize)]
         struct AltName {
+            #[serde(rename = "@A1")]
+            attr1: String,
             field1: String,
             field2: String,
         }
@@ -434,6 +513,7 @@ mod tests {
 
         // a raw field without rename
         let value = AltName {
+            attr1: "attr1-value".to_string(),
             field1: "foo".to_string(),
             field2: "bar".to_string(),
         };
@@ -451,5 +531,122 @@ mod tests {
         // dbg!(&ser.output);
 
         Ok(())
+    }
+
+    #[test]
+    fn test_newtype_struct() -> Result<()> {
+        #[derive(Serialize)]
+        struct AltName(String);
+
+        let mut ser = create_ser();
+        let value = AltName("foo".to_string());
+        value.serialize(&mut ser)?;
+        assert!(matches!(&ser.output, Output::Ele(_)));
+        let e = ser.output.get_ele().unwrap();
+        let s = to_string(&e)?;
+        println!("{}", s);
+        Ok(())
+    }
+
+    #[test]
+    fn test_enum() -> Result<()> {
+        #[derive(Serialize)]
+        struct SubStruct {
+            value: f32,
+        }
+        #[derive(Serialize)]
+        enum MyEnum {
+            Variant1,
+            Variant2(f32),
+            VariantImpossible(f32, f32),
+            Variant3(SubStruct),
+            Variant4 { value: f32 },
+        }
+
+        // unit variant
+        let mut ser = create_ser();
+        let value = MyEnum::Variant1;
+        value.serialize(&mut ser)?;
+        let ele = ser.output.get_ele().unwrap();
+        let s = to_string(&ele)?;
+        println!("{}", s);
+
+        // newtype variant
+        let mut ser = create_ser();
+        let value = MyEnum::Variant2(10.0);
+        value.serialize(&mut ser)?;
+        let ele = ser.output.get_ele().unwrap();
+        let s = to_string(&ele)?;
+        println!("{}", s);
+
+        // newtype variant
+        let mut ser = create_ser();
+        let value = MyEnum::Variant3(SubStruct { value: 0.0 });
+        value.serialize(&mut ser)?;
+        let ele = ser.output.get_ele().unwrap();
+        let s = to_string(&ele)?;
+        println!("{}", s);
+
+        // struct_variant
+        let mut ser = create_ser();
+        let value = MyEnum::Variant4 { value: 0.0 };
+        value.serialize(&mut ser)?;
+        let ele = ser.output.get_ele().unwrap();
+        let s = to_string(&ele)?;
+        println!("{}", s);
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_unit_struct() -> Result<()> {
+        #[derive(Serialize)]
+        struct UnitStruct;
+
+        let mut ser = create_ser();
+        let value = UnitStruct;
+        value.serialize(&mut ser)?;
+        let ele = ser.output.get_ele().unwrap();
+        let s = to_string(&ele)?;
+        println!("{}", s);
+
+        Ok(())
+    }
+    #[test]
+    fn test_vec_enum() -> Result<()> {
+        #[derive(Serialize)]
+        struct SubStruct {
+            value: f32,
+        }
+        #[derive(Serialize)]
+        enum MyEnum {
+            Variant1,
+            Variant2(f32),
+            VariantImpossible(f32, f32),
+            Variant3(SubStruct),
+            Variant4 { value: f32 },
+        }
+
+        let mut ser = create_ser();
+        let value = vec![
+            MyEnum::Variant1,
+            MyEnum::Variant2(32.0),
+            MyEnum::Variant4 { value: 10.0 },
+        ];
+        value.serialize(&mut ser)?;
+        dbg!(ser.output);
+        Ok(())
+    }
+
+    fn create_ser() -> FieldSer {
+        // ser is created by serialize a filed so we always have a name and named by external.
+        FieldSer {
+            name: Some("Test".to_string()),
+            ns: "".to_string(),
+            output: Output::Empty,
+            named_by: NamedBy::External,
+            ctx: Ctx::Normal,
+            uid: generate_id(),
+        }
     }
 }

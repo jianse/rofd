@@ -1,15 +1,12 @@
 use crate::ser::XmlSerErr;
-use serde::ser::{
-    SerializeMap, SerializeSeq, SerializeStruct, SerializeStructVariant, SerializeTuple,
-    SerializeTupleStruct, SerializeTupleVariant,
-};
+use serde::ser::{Impossible, SerializeSeq};
 use serde::{Serialize, Serializer};
 
 pub(crate) struct AttrValueSer {
     output: Option<String>,
 }
 impl AttrValueSer {
-    pub fn to_string<T>(value: &T) -> Result<Option<String>, XmlSerErr>
+    pub fn convert_to_string<T>(value: &T) -> Result<Option<String>, XmlSerErr>
     where
         T: Serialize,
     {
@@ -28,7 +25,7 @@ impl<'a> SerializeSeq for &'a mut AttrValueSer {
     {
         let msg = "[attr.rs] serialize_element";
         dbg!(msg);
-        let result = AttrValueSer::to_string(&value)?;
+        let result = AttrValueSer::convert_to_string(&value)?;
         if let Some(ele_v) = result {
             if let Some(output) = &mut self.output {
                 if !output.is_empty() {
@@ -54,64 +51,17 @@ impl<'a> SerializeSeq for &'a mut AttrValueSer {
         Ok(())
     }
 }
-impl<'a> SerializeTuple for &'a mut AttrValueSer {
-    type Ok = ();
-    type Error = XmlSerErr;
-
-    fn serialize_element<T>(&mut self, value: &T) -> Result<(), Self::Error>
-    where
-        T: ?Sized + Serialize,
-    {
-        todo!()
-    }
-
-    fn end(self) -> Result<Self::Ok, Self::Error> {
-        todo!()
-    }
-}
-
-impl<'a> SerializeTupleStruct for &'a mut AttrValueSer {
-    type Ok = ();
-    type Error = XmlSerErr;
-
-    fn serialize_field<T>(&mut self, value: &T) -> Result<(), Self::Error>
-    where
-        T: ?Sized + Serialize,
-    {
-        todo!()
-    }
-
-    fn end(self) -> Result<Self::Ok, Self::Error> {
-        todo!()
-    }
-}
-
-impl<'a> SerializeTupleVariant for &'a mut AttrValueSer {
-    type Ok = ();
-    type Error = XmlSerErr;
-
-    fn serialize_field<T>(&mut self, value: &T) -> Result<(), Self::Error>
-    where
-        T: ?Sized + Serialize,
-    {
-        todo!()
-    }
-
-    fn end(self) -> Result<Self::Ok, Self::Error> {
-        todo!()
-    }
-}
 
 impl<'a> Serializer for &'a mut AttrValueSer {
     type Ok = ();
     type Error = XmlSerErr;
     type SerializeSeq = Self;
-    type SerializeTuple = Self;
-    type SerializeTupleStruct = Self;
-    type SerializeTupleVariant = Self;
-    type SerializeMap = Self;
-    type SerializeStruct = Self;
-    type SerializeStructVariant = Self;
+    type SerializeTuple = Impossible<(), Self::Error>;
+    type SerializeTupleStruct = Impossible<(), Self::Error>;
+    type SerializeTupleVariant = Impossible<(), Self::Error>;
+    type SerializeMap = Impossible<(), Self::Error>;
+    type SerializeStruct = Impossible<(), Self::Error>;
+    type SerializeStructVariant = Impossible<(), Self::Error>;
 
     fn serialize_bool(self, v: bool) -> Result<Self::Ok, Self::Error> {
         self.output = Some(v.to_string());
@@ -153,7 +103,8 @@ impl<'a> Serializer for &'a mut AttrValueSer {
     }
 
     fn serialize_f32(self, v: f32) -> Result<Self::Ok, Self::Error> {
-        self.serialize_f64(v as f64)
+        self.output = Some(v.to_string());
+        Ok(())
     }
 
     fn serialize_f64(self, v: f64) -> Result<Self::Ok, Self::Error> {
@@ -162,7 +113,8 @@ impl<'a> Serializer for &'a mut AttrValueSer {
     }
 
     fn serialize_char(self, v: char) -> Result<Self::Ok, Self::Error> {
-        todo!()
+        self.output = Some(v.to_string());
+        Ok(())
     }
 
     fn serialize_str(self, v: &str) -> Result<Self::Ok, Self::Error> {
@@ -170,8 +122,9 @@ impl<'a> Serializer for &'a mut AttrValueSer {
         Ok(())
     }
 
-    fn serialize_bytes(self, v: &[u8]) -> Result<Self::Ok, Self::Error> {
-        todo!()
+    fn serialize_bytes(self, _v: &[u8]) -> Result<Self::Ok, Self::Error> {
+        // HOW TO?
+        Ok(())
     }
 
     fn serialize_none(self) -> Result<Self::Ok, Self::Error> {
@@ -187,17 +140,19 @@ impl<'a> Serializer for &'a mut AttrValueSer {
     }
 
     fn serialize_unit(self) -> Result<Self::Ok, Self::Error> {
-        todo!()
+        self.output = None;
+        Ok(())
     }
 
     fn serialize_unit_struct(self, name: &'static str) -> Result<Self::Ok, Self::Error> {
-        todo!()
+        self.output = Some(name.to_string());
+        Ok(())
     }
 
     fn serialize_unit_variant(
         self,
         name: &'static str,
-        variant_index: u32,
+        _variant_index: u32,
         variant: &'static str,
     ) -> Result<Self::Ok, Self::Error> {
         let msg = format!("[attr.rs] serialize_unit_variant {name}::{variant}");
@@ -207,132 +162,91 @@ impl<'a> Serializer for &'a mut AttrValueSer {
 
     fn serialize_newtype_struct<T>(
         self,
-        name: &'static str,
+        _name: &'static str,
         value: &T,
     ) -> Result<Self::Ok, Self::Error>
     where
         T: ?Sized + Serialize,
     {
+        // just forward to self handling primitive types
         value.serialize(self)
-        // todo!()
     }
 
     fn serialize_newtype_variant<T>(
         self,
-        name: &'static str,
-        variant_index: u32,
-        variant: &'static str,
+        _name: &'static str,
+        _variant_index: u32,
+        _variant: &'static str,
         value: &T,
     ) -> Result<Self::Ok, Self::Error>
     where
         T: ?Sized + Serialize,
     {
-        todo!()
+        // just forward to self handling primitive types
+        value.serialize(self)
     }
 
-    fn serialize_seq(self, len: Option<usize>) -> Result<Self::SerializeSeq, Self::Error> {
+    fn serialize_seq(self, _len: Option<usize>) -> Result<Self::SerializeSeq, Self::Error> {
         let msg = "[attr.rs] serialize seq";
         dbg!(msg);
         Ok(self)
     }
 
-    fn serialize_tuple(self, len: usize) -> Result<Self::SerializeTuple, Self::Error> {
-        todo!()
+    fn serialize_tuple(self, _len: usize) -> Result<Self::SerializeTuple, Self::Error> {
+        Err(XmlSerErr::Message(
+            "tuple can not be serialized to attr.".into(),
+        ))
     }
 
     fn serialize_tuple_struct(
         self,
-        name: &'static str,
-        len: usize,
+        _name: &'static str,
+        _len: usize,
     ) -> Result<Self::SerializeTupleStruct, Self::Error> {
-        todo!()
+        Err(XmlSerErr::Message(
+            "tuple_struct can not be serialized to attr.".into(),
+        ))
     }
 
     fn serialize_tuple_variant(
         self,
-        name: &'static str,
-        variant_index: u32,
-        variant: &'static str,
-        len: usize,
+        _name: &'static str,
+        _variant_index: u32,
+        _variant: &'static str,
+        _len: usize,
     ) -> Result<Self::SerializeTupleVariant, Self::Error> {
-        todo!()
+        Err(XmlSerErr::Message(
+            "map can not be serialized to attr.".into(),
+        ))
     }
 
-    fn serialize_map(self, len: Option<usize>) -> Result<Self::SerializeMap, Self::Error> {
-        todo!()
+    fn serialize_map(self, _len: Option<usize>) -> Result<Self::SerializeMap, Self::Error> {
+        Err(XmlSerErr::Message(
+            "tuple_variant can not be serialized to attr.".into(),
+        ))
     }
 
     fn serialize_struct(
         self,
         name: &'static str,
-        len: usize,
+        _len: usize,
     ) -> Result<Self::SerializeStruct, Self::Error> {
         let msg = format!("[attr] serialize struct {name}");
         dbg!(msg);
-        Ok(self)
+        Err(XmlSerErr::Message(
+            "struct can not be serialized to attr.".to_string(),
+        ))
     }
 
     fn serialize_struct_variant(
         self,
-        name: &'static str,
-        variant_index: u32,
-        variant: &'static str,
-        len: usize,
+        _name: &'static str,
+        _variant_index: u32,
+        _variant: &'static str,
+        _len: usize,
     ) -> Result<Self::SerializeStructVariant, Self::Error> {
-        todo!()
-    }
-}
-
-impl<'a> SerializeMap for &'a mut AttrValueSer {
-    type Ok = ();
-    type Error = XmlSerErr;
-
-    fn serialize_key<T>(&mut self, key: &T) -> Result<(), Self::Error>
-    where
-        T: ?Sized + Serialize,
-    {
-        todo!()
-    }
-
-    fn serialize_value<T>(&mut self, value: &T) -> Result<(), Self::Error>
-    where
-        T: ?Sized + Serialize,
-    {
-        todo!()
-    }
-
-    fn end(self) -> Result<Self::Ok, Self::Error> {
-        todo!()
-    }
-}
-impl<'a> SerializeStruct for &'a mut AttrValueSer {
-    type Ok = ();
-    type Error = XmlSerErr;
-
-    fn serialize_field<T>(&mut self, key: &'static str, value: &T) -> Result<(), Self::Error>
-    where
-        T: ?Sized + Serialize,
-    {
-        todo!()
-    }
-
-    fn end(self) -> Result<Self::Ok, Self::Error> {
-        todo!()
-    }
-}
-
-impl<'a> SerializeStructVariant for &'a mut AttrValueSer {
-    type Ok = ();
-    type Error = XmlSerErr;
-
-    fn serialize_field<T>(&mut self, key: &'static str, value: &T) -> Result<(), Self::Error>
-    where
-        T: ?Sized + Serialize,
-    {
-        todo!()
-    }
-
-    fn end(self) -> Result<Self::Ok, Self::Error> {
-        todo!()
+        Err(XmlSerErr::Message(
+            "struct_variant can not be serialized to attr.".into(),
+        ))
     }
 }

@@ -114,7 +114,7 @@ pub struct CustomDatas {
 pub struct CustomData {
     #[serde(rename = "@Name")]
     pub name: String,
-    #[serde(rename = "$value")]
+    #[serde(rename = "$text")]
     pub value: String,
 }
 #[cfg(test)]

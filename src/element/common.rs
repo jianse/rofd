@@ -78,10 +78,11 @@ pub struct CtAction {
 }
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum ActionType {
-    Goto(
+    Goto {
         /// choice
-        VtTo,
-    ),
+        #[serde(rename = "$value")]
+        value: VtTo,
+    },
     #[serde(rename = "URI")]
     Uri {
         #[serde(rename = "@URI")]
