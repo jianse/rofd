@@ -1,10 +1,11 @@
+// #![feature(macro_metavar_expr_concat)]
 #![allow(dead_code, unused)]
 mod key;
 mod value;
 
 use crate::de::key::KeyDe;
-use crate::de::value::AttrValueDe;
-use minidom::element::Attrs;
+use crate::de::value::{AttrValueDe, TextValueDe};
+use minidom::element::{Attrs, Texts};
 use minidom::{Children, Element};
 use serde::de::{DeserializeSeed, EnumAccess, MapAccess, VariantAccess, Visitor};
 use serde::{Deserialize, Deserializer};
@@ -18,6 +19,15 @@ pub enum XmlDeError {
 
     #[error(transparent)]
     ParseFloat(#[from] std::num::ParseFloatError),
+
+    #[error(transparent)]
+    ParseInt(#[from] std::num::ParseIntError),
+
+    #[error(transparent)]
+    ParseBool(#[from] std::str::ParseBoolError),
+
+    #[error("operation not supported.")]
+    NotSupported,
 }
 
 impl serde::de::Error for XmlDeError {
@@ -27,6 +37,19 @@ impl serde::de::Error for XmlDeError {
     {
         Self::Message(msg.to_string())
     }
+}
+
+macro_rules! de_primitives {
+    ($func_name: ident  ($ty: ty, $f2:ident)) => {
+        fn $func_name<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+        where
+            V: Visitor<'de>,
+        {
+            let v = self.input.text();
+            let parsed = v.parse::<$ty>()?;
+            visitor.$f2(parsed)
+        }
+    };
 }
 
 pub struct XmlDe<'de> {
@@ -57,97 +80,38 @@ impl<'de, 'a> Deserializer<'de> for &'a mut XmlDe<'de> {
         todo!()
     }
 
-    fn deserialize_bool<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: Visitor<'de>,
-    {
-        todo!()
-    }
+    de_primitives!(deserialize_bool(bool, visit_bool));
 
-    fn deserialize_i8<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: Visitor<'de>,
-    {
-        todo!()
-    }
+    de_primitives!(deserialize_i8(i8, visit_i8));
+    de_primitives!(deserialize_i16(i16, visit_i16));
+    de_primitives!(deserialize_i32(i32, visit_i32));
+    de_primitives!(deserialize_i64(i64, visit_i64));
 
-    fn deserialize_i16<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: Visitor<'de>,
-    {
-        todo!()
-    }
+    de_primitives!(deserialize_u8(u8, visit_u8));
+    de_primitives!(deserialize_u16(u16, visit_u16));
+    de_primitives!(deserialize_u32(u32, visit_u32));
+    de_primitives!(deserialize_u64(u64, visit_u64));
 
-    fn deserialize_i32<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: Visitor<'de>,
-    {
-        todo!()
-    }
-
-    fn deserialize_i64<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: Visitor<'de>,
-    {
-        todo!()
-    }
-
-    fn deserialize_u8<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: Visitor<'de>,
-    {
-        todo!()
-    }
-
-    fn deserialize_u16<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: Visitor<'de>,
-    {
-        todo!()
-    }
-
-    fn deserialize_u32<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: Visitor<'de>,
-    {
-        todo!()
-    }
-
-    fn deserialize_u64<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: Visitor<'de>,
-    {
-        todo!()
-    }
-
-    fn deserialize_f32<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: Visitor<'de>,
-    {
-        let v = self.input.text();
-        let num = v.parse::<f64>()?;
-        visitor.visit_f64(num)
-    }
-
-    fn deserialize_f64<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: Visitor<'de>,
-    {
-        todo!()
-    }
+    de_primitives!(deserialize_f32(f32, visit_f32));
+    de_primitives!(deserialize_f64(f64, visit_f64));
 
     fn deserialize_char<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: Visitor<'de>,
     {
-        todo!()
+        let text = self.input.text();
+        if text.chars().count() == 1 {
+            visitor.visit_char(text.chars().next().unwrap())
+        } else {
+            Err(XmlDeError::Message("not a char".into()))
+        }
     }
 
     fn deserialize_str<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: Visitor<'de>,
     {
-        todo!()
+        visitor.visit_str(self.input.text().as_str())
     }
 
     fn deserialize_string<V>(self, visitor: V) -> Result<V::Value, Self::Error>
@@ -161,28 +125,28 @@ impl<'de, 'a> Deserializer<'de> for &'a mut XmlDe<'de> {
     where
         V: Visitor<'de>,
     {
-        todo!()
+        Err(XmlDeError::NotSupported)
     }
 
     fn deserialize_byte_buf<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: Visitor<'de>,
     {
-        todo!()
+        Err(XmlDeError::NotSupported)
     }
 
     fn deserialize_option<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: Visitor<'de>,
     {
-        todo!()
+        visitor.visit_some(self)
     }
 
     fn deserialize_unit<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: Visitor<'de>,
     {
-        todo!()
+        visitor.visit_unit()
     }
 
     fn deserialize_unit_struct<V>(
@@ -193,7 +157,7 @@ impl<'de, 'a> Deserializer<'de> for &'a mut XmlDe<'de> {
     where
         V: Visitor<'de>,
     {
-        todo!()
+        visitor.visit_unit()
     }
 
     fn deserialize_newtype_struct<V>(
@@ -289,23 +253,29 @@ enum Ctx<'de> {
     Empty,
     Attr(&'de str),
     Ele(&'de Element),
+    Text(&'de Element),
 }
 
 struct AttrChild<'a, 'de: 'a> {
     de: &'a XmlDe<'de>,
     attrs: Attrs<'de>,
     children: Children<'de>,
+    texts: Texts<'de>,
     current_value: Ctx<'de>,
+    text_visited: bool,
 }
 impl<'a, 'de> AttrChild<'a, 'de> {
     fn new(de: &'a XmlDe<'de>) -> Self {
         let attrs = de.input.attrs();
         let children = de.input.children();
+        let texts = de.input.texts();
         Self {
             de,
             attrs,
             children,
+            texts,
             current_value: Ctx::Empty,
+            text_visited: false,
         }
     }
 }
@@ -317,6 +287,16 @@ impl<'a, 'de> MapAccess<'de> for AttrChild<'a, 'de> {
     where
         K: DeserializeSeed<'de>,
     {
+        if !self.text_visited {
+            self.text_visited = true;
+            let text = self.de.input.text();
+
+            self.current_value = Ctx::Text(self.de.input);
+            let mut de = KeyDe::new_text();
+            let result = seed.deserialize(&mut de);
+            return result.map(Some);
+        }
+
         // attrs
         let option = self.attrs.next();
         if let Some((key, value)) = option {
@@ -350,6 +330,10 @@ impl<'a, 'de> MapAccess<'de> for AttrChild<'a, 'de> {
             }
             Ctx::Ele(e) => {
                 let mut de = XmlDe::from_ele(e);
+                seed.deserialize(&mut de)
+            }
+            Ctx::Text(txt) => {
+                let mut de = TextValueDe::new(txt.text());
                 seed.deserialize(&mut de)
             }
         }
@@ -390,7 +374,8 @@ impl<'a, 'de> VariantAccess<'de> for Enum<'a, 'de> {
     where
         T: DeserializeSeed<'de>,
     {
-        todo!()
+        let mut de = XmlDe::from_ele(self.de.input);
+        seed.deserialize(&mut de)
     }
 
     fn tuple_variant<V>(self, len: usize, visitor: V) -> Result<V::Value, Self::Error>
@@ -476,12 +461,37 @@ mod tests {
     #[test]
     fn test_enum() -> Result<()> {
         #[derive(Debug, Deserialize)]
+        struct MyStruct {
+            #[serde(rename = "@attr")]
+            attr: String,
+            #[serde(rename = "$text")]
+            text: String,
+        }
+
+        #[derive(Debug, Deserialize)]
         enum MyEnum {
             Variant1,
+            Variant2(usize),
+            Variant3(MyStruct),
         }
+        // unit variant
         let root = Element::builder("Variant1", "").build();
         let st = from_ele::<MyEnum>(&root)?;
-        print!("{:#?}", st);
+        println!("{:#?}", st);
+
+        // newtype variant with primitive types
+        let root = Element::builder("Variant2", "").append("123456").build();
+        let st = from_ele::<MyEnum>(&root)?;
+        println!("{:#?}", st);
+
+        // newtype variant with struct
+        let root = Element::builder("Variant3", "")
+            .attr("attr", "hello")
+            .append("123456")
+            .build();
+        let st = from_ele::<MyEnum>(&root)?;
+        println!("{:#?}", st);
+
         Ok(())
     }
 }

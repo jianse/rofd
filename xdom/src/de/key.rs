@@ -5,6 +5,7 @@ use serde::Deserializer;
 enum NameType {
     Attr,
     Ele,
+    Text,
 }
 
 pub(super) struct KeyDe<'de> {
@@ -23,6 +24,13 @@ impl<'de> KeyDe<'de> {
         KeyDe {
             name,
             name_type: NameType::Ele,
+        }
+    }
+
+    pub(super) fn new_text() -> KeyDe<'de> {
+        KeyDe {
+            name: "$text",
+            name_type: NameType::Text,
         }
     }
 }
@@ -127,7 +135,7 @@ impl<'de, 'a> Deserializer<'de> for &'a mut KeyDe<'de> {
     {
         match self.name_type {
             NameType::Attr => visitor.visit_str(format!("@{}", &self.name).as_str()),
-            NameType::Ele => visitor.visit_str(self.name),
+            NameType::Ele | NameType::Text => visitor.visit_str(self.name),
         }
     }
 

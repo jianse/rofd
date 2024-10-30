@@ -286,7 +286,7 @@ impl<'a> Serializer for &'a mut XmlSer {
     write_primitive!(serialize_str(&str));
 
     fn serialize_bytes(self, _v: &[u8]) -> Result<Self::Ok, Self::Error> {
-        // HOWTO?
+        // HOW TO?
         Ok(())
     }
 
@@ -737,7 +737,7 @@ mod tests {
 
     #[test]
     fn ser_newtype_var() -> Result<()> {
-        let mut ser = XmlSerBuilder::new()
+        let ser = XmlSerBuilder::new()
             .name("test")
             .ns("https://123.com")
             .prefix(None)
