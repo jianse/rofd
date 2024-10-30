@@ -23,7 +23,7 @@ impl<'a> SerializeSeq for &'a mut AttrValueSer {
     where
         T: ?Sized + Serialize,
     {
-        let msg = "[attr.rs] serialize_element";
+        let msg = "[common] serialize_element";
         dbg!(msg);
         let result = AttrValueSer::convert_to_string(&value)?;
         if let Some(ele_v) = result {
@@ -155,7 +155,7 @@ impl<'a> Serializer for &'a mut AttrValueSer {
         _variant_index: u32,
         variant: &'static str,
     ) -> Result<Self::Ok, Self::Error> {
-        let msg = format!("[attr.rs] serialize_unit_variant {name}::{variant}");
+        let msg = format!("[common] serialize_unit_variant {name}::{variant}");
         dbg!(msg);
         self.serialize_str(variant)
     }
@@ -187,7 +187,7 @@ impl<'a> Serializer for &'a mut AttrValueSer {
     }
 
     fn serialize_seq(self, _len: Option<usize>) -> Result<Self::SerializeSeq, Self::Error> {
-        let msg = "[attr.rs] serialize seq";
+        let msg = "[common] serialize seq";
         dbg!(msg);
         Ok(self)
     }
