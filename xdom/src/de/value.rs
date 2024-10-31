@@ -4,6 +4,18 @@ use serde::Deserializer;
 use std::borrow::Cow;
 use std::ops::Deref;
 
+macro_rules! de_primitives {
+    ($fn_name:ident($ty:ty,$forward_fn:ident)) => {
+        fn $fn_name<V>(self, visitor: V) -> Result<V::Value, Self::Error>
+        where
+            V: Visitor<'de>,
+        {
+            let v = self.value.parse::<$ty>()?;
+            visitor.$forward_fn(v)
+        }
+    };
+}
+
 pub(super) struct AttrValueDe<'de> {
     value: &'de str,
 }
@@ -21,86 +33,23 @@ impl<'de, 'a> Deserializer<'de> for &'a mut AttrValueDe<'de> {
     where
         V: Visitor<'de>,
     {
-        todo!()
+        Err(XmlDeError::NotSupported)
     }
 
-    fn deserialize_bool<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: Visitor<'de>,
-    {
-        todo!()
-    }
+    de_primitives!(deserialize_bool(bool, visit_bool));
 
-    fn deserialize_i8<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: Visitor<'de>,
-    {
-        todo!()
-    }
+    de_primitives!(deserialize_i8(i8, visit_i8));
+    de_primitives!(deserialize_i16(i16, visit_i16));
+    de_primitives!(deserialize_i32(i32, visit_i32));
+    de_primitives!(deserialize_i64(i64, visit_i64));
 
-    fn deserialize_i16<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: Visitor<'de>,
-    {
-        todo!()
-    }
+    de_primitives!(deserialize_u8(u8, visit_u8));
+    de_primitives!(deserialize_u16(u16, visit_u16));
+    de_primitives!(deserialize_u32(u32, visit_u32));
+    de_primitives!(deserialize_u64(u64, visit_u64));
 
-    fn deserialize_i32<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: Visitor<'de>,
-    {
-        todo!()
-    }
-
-    fn deserialize_i64<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: Visitor<'de>,
-    {
-        todo!()
-    }
-
-    fn deserialize_u8<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: Visitor<'de>,
-    {
-        todo!()
-    }
-
-    fn deserialize_u16<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: Visitor<'de>,
-    {
-        todo!()
-    }
-
-    fn deserialize_u32<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: Visitor<'de>,
-    {
-        todo!()
-    }
-
-    fn deserialize_u64<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: Visitor<'de>,
-    {
-        todo!()
-    }
-
-    fn deserialize_f32<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: Visitor<'de>,
-    {
-        let result = self.value.parse::<f32>()?;
-        visitor.visit_f32(result)
-    }
-
-    fn deserialize_f64<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: Visitor<'de>,
-    {
-        todo!()
-    }
+    de_primitives!(deserialize_f32(f32, visit_f32));
+    de_primitives!(deserialize_f64(f64, visit_f64));
 
     fn deserialize_char<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
@@ -113,7 +62,7 @@ impl<'de, 'a> Deserializer<'de> for &'a mut AttrValueDe<'de> {
     where
         V: Visitor<'de>,
     {
-        todo!()
+        visitor.visit_borrowed_str(self.value)
     }
 
     fn deserialize_string<V>(self, visitor: V) -> Result<V::Value, Self::Error>
@@ -148,7 +97,7 @@ impl<'de, 'a> Deserializer<'de> for &'a mut AttrValueDe<'de> {
     where
         V: Visitor<'de>,
     {
-        todo!()
+        visitor.visit_unit()
     }
 
     fn deserialize_unit_struct<V>(
@@ -241,7 +190,7 @@ impl<'de, 'a> Deserializer<'de> for &'a mut AttrValueDe<'de> {
     where
         V: Visitor<'de>,
     {
-        todo!()
+        visitor.visit_none()
     }
 }
 
@@ -263,85 +212,23 @@ impl<'de, 'a> Deserializer<'de> for &'a mut TextValueDe {
     where
         V: Visitor<'de>,
     {
-        todo!()
+        Err(XmlDeError::NotSupported)
     }
 
-    fn deserialize_bool<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: Visitor<'de>,
-    {
-        todo!()
-    }
+    de_primitives!(deserialize_bool(bool, visit_bool));
 
-    fn deserialize_i8<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: Visitor<'de>,
-    {
-        todo!()
-    }
+    de_primitives!(deserialize_i8(i8, visit_i8));
+    de_primitives!(deserialize_i16(i16, visit_i16));
+    de_primitives!(deserialize_i32(i32, visit_i32));
+    de_primitives!(deserialize_i64(i64, visit_i64));
 
-    fn deserialize_i16<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: Visitor<'de>,
-    {
-        todo!()
-    }
+    de_primitives!(deserialize_u8(u8, visit_u8));
+    de_primitives!(deserialize_u16(u16, visit_u16));
+    de_primitives!(deserialize_u32(u32, visit_u32));
+    de_primitives!(deserialize_u64(u64, visit_u64));
 
-    fn deserialize_i32<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: Visitor<'de>,
-    {
-        todo!()
-    }
-
-    fn deserialize_i64<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: Visitor<'de>,
-    {
-        todo!()
-    }
-
-    fn deserialize_u8<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: Visitor<'de>,
-    {
-        todo!()
-    }
-
-    fn deserialize_u16<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: Visitor<'de>,
-    {
-        todo!()
-    }
-
-    fn deserialize_u32<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: Visitor<'de>,
-    {
-        todo!()
-    }
-
-    fn deserialize_u64<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: Visitor<'de>,
-    {
-        todo!()
-    }
-
-    fn deserialize_f32<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: Visitor<'de>,
-    {
-        todo!()
-    }
-
-    fn deserialize_f64<V>(self, visitor: V) -> Result<V::Value, Self::Error>
-    where
-        V: Visitor<'de>,
-    {
-        todo!()
-    }
+    de_primitives!(deserialize_f32(f32, visit_f32));
+    de_primitives!(deserialize_f64(f64, visit_f64));
 
     fn deserialize_char<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
@@ -354,7 +241,7 @@ impl<'de, 'a> Deserializer<'de> for &'a mut TextValueDe {
     where
         V: Visitor<'de>,
     {
-        todo!()
+        visitor.visit_str(&self.value)
     }
 
     fn deserialize_string<V>(self, visitor: V) -> Result<V::Value, Self::Error>
@@ -382,14 +269,14 @@ impl<'de, 'a> Deserializer<'de> for &'a mut TextValueDe {
     where
         V: Visitor<'de>,
     {
-        todo!()
+        visitor.visit_some(self)
     }
 
     fn deserialize_unit<V>(self, visitor: V) -> Result<V::Value, Self::Error>
     where
         V: Visitor<'de>,
     {
-        todo!()
+        visitor.visit_unit()
     }
 
     fn deserialize_unit_struct<V>(

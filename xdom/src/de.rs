@@ -7,9 +7,11 @@ use crate::de::key::KeyDe;
 use crate::de::value::{AttrValueDe, TextValueDe};
 use minidom::element::{Attrs, Texts};
 use minidom::{Children, Element};
-use serde::de::{DeserializeSeed, EnumAccess, MapAccess, VariantAccess, Visitor};
+use serde::de::{DeserializeSeed, EnumAccess, MapAccess, SeqAccess, VariantAccess, Visitor};
 use serde::{Deserialize, Deserializer};
+use std::collections::HashSet;
 use std::fmt::Display;
+use std::slice::Iter;
 use thiserror::Error;
 
 #[derive(Debug, Error)]
@@ -53,12 +55,18 @@ macro_rules! de_primitives {
 }
 
 pub struct XmlDe<'de> {
+    name: Option<String>,
     input: &'de Element,
+    parent: Option<&'de Element>,
 }
 
 impl<'de> XmlDe<'de> {
     pub fn from_ele(ele: &'de Element) -> Self {
-        Self { input: ele }
+        Self {
+            name: None,
+            input: ele,
+            parent: None,
+        }
     }
 }
 
@@ -77,7 +85,7 @@ impl<'de, 'a> Deserializer<'de> for &'a mut XmlDe<'de> {
     where
         V: Visitor<'de>,
     {
-        todo!()
+        Err(XmlDeError::NotSupported)
     }
 
     de_primitives!(deserialize_bool(bool, visit_bool));
@@ -175,7 +183,8 @@ impl<'de, 'a> Deserializer<'de> for &'a mut XmlDe<'de> {
     where
         V: Visitor<'de>,
     {
-        todo!()
+        let seq_access = XmlSeqAccess::new(self);
+        visitor.visit_seq(seq_access)
     }
 
     fn deserialize_tuple<V>(self, len: usize, visitor: V) -> Result<V::Value, Self::Error>
@@ -213,6 +222,8 @@ impl<'de, 'a> Deserializer<'de> for &'a mut XmlDe<'de> {
     where
         V: Visitor<'de>,
     {
+        let msg = format!("deserialize_struct name = {name}");
+        dbg!(msg);
         // The name is struct name.
         // if you want to assert that element name is same as field name, you should pass it in.
 
@@ -245,21 +256,22 @@ impl<'de, 'a> Deserializer<'de> for &'a mut XmlDe<'de> {
     where
         V: Visitor<'de>,
     {
-        todo!()
+        visitor.visit_none()
     }
 }
 
 enum Ctx<'de> {
     Empty,
     Attr(&'de str),
-    Ele(&'de Element),
+    Ele(&'de str, String),
     Text(&'de Element),
 }
 
 struct AttrChild<'a, 'de: 'a> {
     de: &'a XmlDe<'de>,
     attrs: Attrs<'de>,
-    children: Children<'de>,
+    // children: Children<'de>,
+    children_names: std::collections::hash_set::IntoIter<(&'de str, String)>,
     texts: Texts<'de>,
     current_value: Ctx<'de>,
     text_visited: bool,
@@ -267,12 +279,19 @@ struct AttrChild<'a, 'de: 'a> {
 impl<'a, 'de> AttrChild<'a, 'de> {
     fn new(de: &'a XmlDe<'de>) -> Self {
         let attrs = de.input.attrs();
-        let children = de.input.children();
+        let children_names = de
+            .input
+            .children()
+            .map(|c| (c.name(), c.ns()))
+            .collect::<HashSet<_>>()
+            .into_iter();
+        dbg!(&children_names);
+        // let children = de.input.children();
         let texts = de.input.texts();
         Self {
             de,
             attrs,
-            children,
+            children_names,
             texts,
             current_value: Ctx::Empty,
             text_visited: false,
@@ -306,10 +325,10 @@ impl<'a, 'de> MapAccess<'de> for AttrChild<'a, 'de> {
             return result.map(Some);
         }
         // children
-        let child = self.children.next();
-        if let Some(child) = child {
-            self.current_value = Ctx::Ele(child);
-            let mut de = KeyDe::new_ele(child.name());
+        let child = self.children_names.next();
+        if let Some((name, ns)) = child {
+            self.current_value = Ctx::Ele(name, ns);
+            let mut de = KeyDe::new_ele(name);
             let result = seed.deserialize(&mut de);
             return result.map(Some);
         }
@@ -320,7 +339,7 @@ impl<'a, 'de> MapAccess<'de> for AttrChild<'a, 'de> {
     where
         V: DeserializeSeed<'de>,
     {
-        match self.current_value {
+        match &self.current_value {
             Ctx::Empty => Err(XmlDeError::Message(
                 "you must call next_key_seed first!".into(),
             )),
@@ -328,8 +347,13 @@ impl<'a, 'de> MapAccess<'de> for AttrChild<'a, 'de> {
                 let mut de = AttrValueDe::new(s);
                 seed.deserialize(&mut de)
             }
-            Ctx::Ele(e) => {
+            Ctx::Ele(name, ns) => {
+                // this unwrap should be fine
+                let e = self.de.input.get_child(name, ns.as_ref()).unwrap();
+
                 let mut de = XmlDe::from_ele(e);
+                de.parent = Some(self.de.input);
+                de.name = Some(name.to_string());
                 seed.deserialize(&mut de)
             }
             Ctx::Text(txt) => {
@@ -382,7 +406,7 @@ impl<'a, 'de> VariantAccess<'de> for Enum<'a, 'de> {
     where
         V: Visitor<'de>,
     {
-        todo!()
+        Err(XmlDeError::NotSupported)
     }
 
     fn struct_variant<V>(
@@ -393,7 +417,59 @@ impl<'a, 'de> VariantAccess<'de> for Enum<'a, 'de> {
     where
         V: Visitor<'de>,
     {
-        todo!()
+        let mut de = XmlDe::from_ele(self.de.input);
+        de.deserialize_struct("", fields, visitor)
+    }
+}
+
+struct XmlSeqAccess<'a, 'de: 'a> {
+    de: &'a mut XmlDe<'de>,
+    iter: std::vec::IntoIter<&'de Element>,
+}
+impl<'a, 'de> XmlSeqAccess<'a, 'de> {
+    fn new(de: &'a mut XmlDe<'de>) -> Self {
+        let name = de.name.as_ref();
+        let iter = if let Some(parent) = de.parent {
+            parent
+                .children()
+                .filter(|e| {
+                    if let Some(name) = name {
+                        match name.as_str() {
+                            "$value" => true,
+                            s => e.name() == s,
+                        }
+                    } else {
+                        true
+                    }
+                })
+                .collect::<Vec<&'de Element>>()
+                .into_iter()
+        } else {
+            Vec::new().into_iter()
+        };
+
+        Self { de, iter }
+    }
+}
+
+impl<'a, 'de> SeqAccess<'de> for XmlSeqAccess<'a, 'de> {
+    type Error = XmlDeError;
+
+    fn next_element_seed<T>(&mut self, seed: T) -> Result<Option<T::Value>, Self::Error>
+    where
+        T: DeserializeSeed<'de>,
+    {
+        // dbg!(&self.iter);
+        let ele = self.iter.next();
+        if let Some(ele) = ele {
+            dbg!(ele.name());
+            let mut de = XmlDe::from_ele(ele);
+            de.name = Some(ele.name().to_string());
+            de.parent = Some(self.de.input);
+            seed.deserialize(&mut de).map(Some)
+        } else {
+            Ok(None)
+        }
     }
 }
 
@@ -473,6 +549,13 @@ mod tests {
             Variant1,
             Variant2(usize),
             Variant3(MyStruct),
+
+            Variant4 {
+                #[serde(rename = "@attr")]
+                attr1: String,
+                #[serde(rename = "$text")]
+                text: String,
+            },
         }
         // unit variant
         let root = Element::builder("Variant1", "").build();
@@ -492,6 +575,28 @@ mod tests {
         let st = from_ele::<MyEnum>(&root)?;
         println!("{:#?}", st);
 
+        // newtype variant with struct
+        let root = Element::builder("Variant4", "")
+            .attr("attr", "hello")
+            .append("123456")
+            .build();
+        let st = from_ele::<MyEnum>(&root)?;
+        println!("{:#?}", st);
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_seq() -> Result<()> {
+        #[derive(Debug, Deserialize)]
+        struct Cont {
+            any: Vec<u64>,
+        }
+
+        let root: Element =
+            r#"<Cont xmlns=""><any>1</any><any>2</any><any>3</any></Cont>"#.parse()?;
+        let st = from_ele::<Cont>(&root)?;
+        println!("{:#?}", st);
         Ok(())
     }
 }
