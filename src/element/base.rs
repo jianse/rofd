@@ -1,15 +1,16 @@
 use serde::{
     de::{self, Visitor},
-    Deserialize, Serialize, Serializer,
+    Deserialize, Deserializer, Serialize, Serializer,
 };
-use std::fmt::Debug;
+use std::fmt::{Debug, Formatter};
+use std::marker::PhantomData;
 use std::ops::Deref;
 use std::{fmt::Display, path::PathBuf, str::FromStr};
 use thiserror::Error;
 
 pub type StLoc = PathBuf;
 
-#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
+#[derive(Debug, Serialize, PartialEq, Clone)]
 pub struct StArray<T: FromStr + Display>(pub Vec<T>);
 
 impl<T: FromStr + Display> Deref for StArray<T> {
@@ -181,6 +182,41 @@ impl serde::Serialize for StBox {
         S: Serializer,
     {
         serializer.serialize_str(format!("{}", self).as_str())
+    }
+}
+
+impl<'de, T: FromStr + Display> Deserialize<'de> for StArray<T> {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        struct StArrayVisitor<C: FromStr + Display> {
+            marker: PhantomData<fn() -> StArray<C>>,
+        }
+        impl<'de, C: FromStr + Display> Visitor<'de> for StArrayVisitor<C> {
+            type Value = StArray<C>;
+
+            fn expecting(&self, formatter: &mut Formatter) -> std::fmt::Result {
+                formatter.write_str("space separated numbers")
+            }
+
+            fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
+            where
+                E: de::Error,
+            {
+                let parts = v
+                    .split(' ')
+                    .map(|s| s.parse::<C>())
+                    .collect::<Result<_, _>>()
+                    .map_err(|_| {
+                        de::Error::invalid_value(de::Unexpected::Str(v), &"something can parse")
+                    })?;
+                Ok(StArray(parts))
+            }
+        }
+        deserializer.deserialize_string(StArrayVisitor {
+            marker: PhantomData,
+        })
     }
 }
 

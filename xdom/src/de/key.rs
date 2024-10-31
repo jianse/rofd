@@ -6,11 +6,21 @@ enum NameType {
     Attr,
     Ele,
     Text,
+    Value,
 }
 
 pub(super) struct KeyDe<'de> {
     name: &'de str,
     name_type: NameType,
+}
+
+impl<'de> KeyDe<'de> {
+    pub(crate) fn new_value() -> KeyDe<'de> {
+        Self {
+            name: "$value",
+            name_type: NameType::Value,
+        }
+    }
 }
 
 impl<'de> KeyDe<'de> {
@@ -135,7 +145,7 @@ impl<'de, 'a> Deserializer<'de> for &'a mut KeyDe<'de> {
     {
         match self.name_type {
             NameType::Attr => visitor.visit_str(format!("@{}", &self.name).as_str()),
-            NameType::Ele | NameType::Text => visitor.visit_str(self.name),
+            NameType::Ele | NameType::Text | NameType::Value => visitor.visit_str(self.name),
         }
     }
 
