@@ -42,8 +42,3 @@ pub mod version;
 
 // attachment related
 pub mod attachment;
-
-//==============
-
-// the inner parser module
-mod ofd_parser;

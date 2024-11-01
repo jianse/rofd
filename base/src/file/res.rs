@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use strum::EnumString;
 
-use crate::element::{
+use crate::{
     base::{StArray, StId, StLoc, StRefId},
     common::{Cap, CtColor, Join, Palette},
 };
@@ -214,11 +214,11 @@ mod tests {
 
     use eyre::Result;
 
-    use crate::element::file::res::ResourceXmlFile;
+    use crate::file::res::ResourceXmlFile;
 
     #[test]
     fn test_pub_res_de() -> Result<()> {
-        let path = "samples/sample/Doc_0/PublicRes.xml";
+        let path = "../samples/sample/Doc_0/PublicRes.xml";
         let file = File::open(path)?;
         let reader = BufReader::new(file);
         let xml: ResourceXmlFile = quick_xml::de::from_reader(reader)?;
@@ -227,7 +227,7 @@ mod tests {
     }
     #[test]
     fn test_doc_res_de() -> Result<()> {
-        let path = "samples/sample/Doc_0/DocumentRes.xml";
+        let path = "../samples/sample/Doc_0/DocumentRes.xml";
         let file = File::open(path)?;
         let reader = BufReader::new(file);
         let xml: ResourceXmlFile = quick_xml::de::from_reader(reader)?;

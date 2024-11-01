@@ -3,13 +3,13 @@ use crate::dom::{
     parse_optional_vec, parse_required_from_attr, parse_required_from_ele,
     parse_required_from_text, TryFromDom, TryFromDomError,
 };
-use crate::element::base::{StArray, StId, StLoc, StRefId};
-use crate::element::common::{Cap, CellContent, CtColor, CtPattern, Join, Palette};
-use crate::element::file::page::VtGraphicUnit;
-use crate::element::file::res::{
+use base::common::{Cap, CellContent, CtColor, CtPattern, Join, Palette};
+use base::file::page::VtGraphicUnit;
+use base::file::res::{
     ColorSpace, ColorSpaces, CompositeGraphicUnit, CompositeGraphicUnits, CtVectorG, DrawParam,
     DrawParams, Font, Fonts, MultiMedia, MultiMedias, Resource, ResourceXmlFile, Type,
 };
+use base::{StArray, StId, StLoc, StRefId};
 use minidom::Element;
 use std::str::FromStr;
 
@@ -292,7 +292,7 @@ impl TryFromDom<&Element> for MultiMedia {
 #[cfg(test)]
 mod tests {
     use crate::dom::TryFromDom;
-    use crate::element::file::res::ResourceXmlFile;
+    use base::file::res::ResourceXmlFile;
     use eyre::Result;
     use minidom::Element;
     use std::fs::File;

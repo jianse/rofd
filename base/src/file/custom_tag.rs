@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::element::base::StLoc;
+use crate::base::StLoc;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CustomTagsXmlFile {

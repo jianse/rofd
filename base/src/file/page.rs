@@ -1,6 +1,6 @@
 use super::document::CtPageArea;
-use crate::element::base::{StArray, StBox, StId, StLoc, StRefId};
-use crate::element::common::{Actions, Cap, CtColor, Join};
+use crate::base::{StArray, StBox, StId, StLoc, StRefId};
+use crate::common::{Actions, Cap, CtColor, Join};
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 use serde_with::TryFromInto;
@@ -446,7 +446,7 @@ mod tests {
 
     #[test]
     fn test_page_file() -> Result<()> {
-        let path = "samples/sample/Doc_0/Pages/Page_0/Content.xml";
+        let path = "../samples/sample/Doc_0/Pages/Page_0/Content.xml";
         let file = File::open(path)?;
         let reader = BufReader::new(file);
         let xml: PageXmlFile = quick_xml::de::from_reader(reader)?;
@@ -455,7 +455,7 @@ mod tests {
     }
     #[test]
     fn test_tpl_file() -> Result<()> {
-        let path = "samples/sample/Doc_0/Tpls/Tpl_0/Content.xml";
+        let path = "../samples/sample/Doc_0/Tpls/Tpl_0/Content.xml";
         let file = File::open(path)?;
         let reader = BufReader::new(file);
         let xml: PageXmlFile = quick_xml::de::from_reader(reader)?;
@@ -465,7 +465,7 @@ mod tests {
 
     #[test]
     fn test_text_val() -> Result<()> {
-        let path = "samples/ano/Doc_0/Pages/Page_0/Content.xml";
+        let path = "../samples/ano/Doc_0/Pages/Page_0/Content.xml";
         let file = File::open(path)?;
         let reader = BufReader::new(file);
         let xml: PageXmlFile = quick_xml::de::from_reader(reader)?;

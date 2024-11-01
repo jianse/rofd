@@ -1154,7 +1154,7 @@ impl<'m, 'de, 'd> serde::de::Deserializer<'de> for MapValueDeserializer<'m, 'de,
     }
 }
 
-use rofd::element::file::ofd::OfdXmlFile;
+use base::file::ofd::OfdXmlFile;
 
 #[test]
 #[ignore = "not yet implemented"]

@@ -1,7 +1,7 @@
 use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 
-use crate::element::base::StLoc;
+use crate::base::StLoc;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct AttachmentsXmlFile {
@@ -50,7 +50,7 @@ mod tests {
 
     #[test]
     fn test_works() -> Result<()> {
-        let file = File::open("samples/sample/Doc_0/Attachs/Attachments.xml")?;
+        let file = File::open("../samples/sample/Doc_0/Attachs/Attachments.xml")?;
         let reader = std::io::BufReader::new(file);
         let xml = quick_xml::de::from_reader::<_, AttachmentsXmlFile>(reader)?;
         dbg!(xml);

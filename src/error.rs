@@ -23,4 +23,7 @@ pub enum MyError {
     TryFromDomError(#[from] TryFromDomError),
     #[error(transparent)]
     IOError(#[from] std::io::Error),
+
+    #[error(transparent)]
+    XmlDeError(#[from] xdom::de::XmlDeError),
 }

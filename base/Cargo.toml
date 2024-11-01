@@ -1,0 +1,15 @@
+[package]
+name = "base"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+serde = { workspace = true, features = ["derive"] }
+chrono = { workspace = true,features = ["serde"] }
+strum = { workspace = true, features = ["derive"] }
+thiserror = { workspace = true }
+serde_with = { workspace = true }
+eyre ={workspace = true}
+
+[dev-dependencies]
+quick-xml = { workspace = true, features = ["serde", "serialize"] }

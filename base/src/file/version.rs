@@ -1,7 +1,7 @@
 use chrono::NaiveDate;
 use serde::{Deserialize, Serialize};
 
-use crate::element::base::StLoc;
+use crate::base::StLoc;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct VersionXmlFile {
@@ -44,7 +44,7 @@ mod tests {
     /// maybe not correct yet
     #[test]
     fn test_works() -> Result<()> {
-        let file = std::fs::File::open("samples/Version.xml")?;
+        let file = std::fs::File::open("../samples/Version.xml")?;
         let reader = BufReader::new(file);
         let xml = quick_xml::de::from_reader::<_, VersionXmlFile>(reader)?;
         dbg!(xml);

@@ -1,5 +1,5 @@
 use super::base::{StArray, StBox, StLoc, StPos, StRefId};
-use crate::element::file::page::VtGraphicUnit;
+use crate::file::page::VtGraphicUnit;
 use serde::{Deserialize, Serialize};
 use strum::EnumString;
 

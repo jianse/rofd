@@ -1,7 +1,7 @@
 use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 
-use crate::element::base::{StLoc, StRefId};
+use crate::base::{StLoc, StRefId};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct ExtensionXmlFile {

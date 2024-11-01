@@ -1,10 +1,8 @@
 use crate::dom::{
     parse_optional_from_attr, parse_required_from_attr, TryFromDom, TryFromDomError, OFD_NS,
 };
-use crate::element::base::{StBox, StId, StLoc, StRefId};
-use crate::element::file::document::{
-    CommonData, CtPageArea, DocumentXmlFile, Page, Pages, TemplatePage,
-};
+use base::file::document::{CommonData, CtPageArea, DocumentXmlFile, Page, Pages, TemplatePage};
+use base::{StBox, StId, StLoc, StRefId};
 use minidom::Element;
 use std::str::FromStr;
 
@@ -208,7 +206,7 @@ impl TryFromDom<&Element> for TemplatePage {
 #[cfg(test)]
 mod tests {
     use crate::dom::TryFromDom;
-    use crate::element::file::document::DocumentXmlFile;
+    use base::file::document::DocumentXmlFile;
     use eyre::Result;
     use minidom::Element;
     use std::fs::File;

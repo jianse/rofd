@@ -1,6 +1,5 @@
 mod container;
 pub mod dom;
-mod element;
 mod error;
 mod ofd_utils;
 mod render;

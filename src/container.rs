@@ -1,16 +1,13 @@
-use crate::dom::TryFromDom;
-use crate::element::file::res::Resource;
-use crate::{
-    element::{
-        base::StRefId,
-        file::{
-            document::DocumentXmlFile,
-            ofd::OfdXmlFile,
-            page::PageXmlFile,
-            res::{ColorSpace, DrawParam, Font, ResourceXmlFile},
-        },
+use crate::error::MyError;
+use base::file::res::Resource;
+use base::{
+    file::{
+        document::DocumentXmlFile,
+        ofd::OfdXmlFile,
+        page::PageXmlFile,
+        res::{ColorSpace, DrawParam, Font, ResourceXmlFile},
     },
-    error::MyError,
+    StRefId,
 };
 use eyre::{OptionExt, Result};
 use minidom::Element;
@@ -142,10 +139,10 @@ impl<T> InnerFile<T> {
 }
 
 impl Container {
-    #[cfg(not(feature = "qxml"))]
+    #[cfg(not(feature = "xdom"))]
     fn from_reader<T, R>(reader: R) -> Result<T, MyError>
     where
-        T: TryFromDom<Element>,
+        T: crate::dom::TryFromDom<Element>,
         R: BufRead,
     {
         let mut reader = BufReader::new(reader);
@@ -160,12 +157,24 @@ impl Container {
         let root = Element::from_reader(reader)?;
         T::try_from_dom(root).map_err(MyError::from)
     }
-    #[cfg(feature = "qxml")]
-    fn from_reader<T, R>(reader: R) -> T
+    #[cfg(feature = "xdom")]
+    fn from_reader<T, R>(reader: R) -> Result<T, MyError>
     where
-        R: Read,
+        T: serde::de::DeserializeOwned,
+        R: BufRead,
     {
-        todo!()
+        let mut reader = BufReader::new(reader);
+        let buf = reader.fill_buf()?;
+
+        // UTF-8 BOM
+        // handle u+FEFF in utf-8 file
+        // just skip this three bytes
+        if buf.starts_with(&[0xef_u8, 0xbb, 0xbf]) {
+            reader.consume(3);
+        }
+        let root = Element::from_reader(reader)?;
+        let res: T = xdom::de::from_ele(&root)?;
+        Ok(res)
     }
 
     pub fn open(&mut self, path: String) -> Result<ZipFile> {

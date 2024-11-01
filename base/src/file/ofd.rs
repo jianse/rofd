@@ -2,7 +2,7 @@
 //!
 //! [OfdXmlFile] main entry
 
-use crate::element::base::StLoc;
+use crate::base::StLoc;
 use ::serde::{Deserialize, Serialize};
 use chrono::NaiveDate;
 
@@ -131,7 +131,7 @@ mod tests {
 
     #[test]
     fn test_parse_ofd_xml() -> Result<()> {
-        let path = "samples/sample/OFD.xml";
+        let path = "../samples/sample/OFD.xml";
         let file = File::open(path)?;
         let reader = BufReader::new(file);
         let xml: OfdXmlFile = quick_xml::de::from_reader(reader)?;
@@ -141,7 +141,7 @@ mod tests {
 
     #[test]
     fn test_write_ofd_xml() -> Result<()> {
-        let out_path = "output/OFD.xml";
+        let out_path = "../output/OFD.xml";
         let mut file = File::create(out_path)?;
         let value = new_ofd();
         let buffer = quick_xml::se::to_string(&value)?;

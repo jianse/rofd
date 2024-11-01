@@ -70,7 +70,7 @@ impl<'de> XmlDe<'de> {
     }
 }
 
-fn from_ele<'a, T>(ele: &'a Element) -> Result<T, XmlDeError>
+pub fn from_ele<'a, T>(ele: &'a Element) -> Result<T, XmlDeError>
 where
     T: Deserialize<'a>,
 {

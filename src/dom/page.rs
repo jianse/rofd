@@ -3,13 +3,13 @@ use crate::dom::{
     parse_required_from_attr, parse_required_from_text, parse_required_vec, TryFromDom,
     TryFromDomError,
 };
-use crate::element::base::{StArray, StBox, StId, StLoc, StRefId};
-use crate::element::common::{Actions, Cap, CtColor, Join};
-use crate::element::file::document::CtPageArea;
-use crate::element::file::page::{
+use base::common::{Actions, Cap, CtColor, Join};
+use base::file::document::CtPageArea;
+use base::file::page::{
     Border, CGTransform, Content, FillRule, ImageObject, Layer, PageXmlFile, PathObject, Template,
     TextCode, TextObject, TextVal, VtGraphicUnit,
 };
+use base::{StArray, StBox, StId, StLoc, StRefId};
 use minidom::Element;
 use std::str::FromStr;
 
@@ -313,7 +313,7 @@ impl TryFromDom<&Element> for TextCode {
 #[cfg(test)]
 mod tests {
     use crate::dom::TryFromDom;
-    use crate::element::file::page::{PageXmlFile, TextCode};
+    use base::file::page::{PageXmlFile, TextCode};
     use eyre::Result;
     use minidom::Element;
     use std::fs::File;

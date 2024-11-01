@@ -1,5 +1,5 @@
-use crate::element::base::StLoc;
-use crate::element::file::ofd::{CtDocInfo, CustomData, CustomDatas, DocBody, OfdXmlFile};
+use base::file::ofd::{CtDocInfo, CustomData, CustomDatas, DocBody, OfdXmlFile};
+use base::StLoc;
 use chrono::NaiveDate;
 use minidom::Element;
 use std::path::PathBuf;
@@ -142,7 +142,7 @@ mod tests {
     use std::io::{BufReader, Read};
 
     #[test]
-    fn test_try_from_dom_ofd() -> eyre::Result<()> {
+    fn test_try_from_dom_ofd() -> Result<()> {
         let file = File::open("samples/sample/OFD.xml")?;
         let mut reader = BufReader::new(file);
         let mut data = String::new();
