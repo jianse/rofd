@@ -13,8 +13,8 @@ pub fn my_derive(input: TokenStream) -> TokenStream {
     let body = gen_body(input1.data, &name);
     quote!(
         const _: () = {
-        extern crate xdom as _xdom;
-        impl #impl_generics _xdom::ToElement for #name #ty_generics #where_clause {
+        extern crate ofd_misc as _ofd_misc;
+        impl #impl_generics _ofd_misc::ToElement for #name #ty_generics #where_clause {
             fn to_element<N: ::core::convert::AsRef<str>, NS: ::core::convert::Into<String>>(
                 &self,
                 name: N,

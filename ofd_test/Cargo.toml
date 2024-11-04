@@ -1,0 +1,19 @@
+[package]
+name = "ofd_test"
+version = "0.1.0"
+edition = "2021"
+license.workspace = true
+
+[dependencies]
+xdom = { path = "../xdom" }
+ofd_base = { path = "../ofd_base" }
+ofd_rw = { path = "../ofd_rw" }
+ofd_conv = { path = "../ofd_conv" }
+ofd_misc = { path = "../ofd_misc" }
+serde = { workspace = true }
+help-macro = { path = "../help-macro" }
+skia-safe = { workspace = true }
+eyre = { workspace = true }
+quick-xml = { workspace = true, features = ["serde"] }
+minidom = { workspace = true }
+chrono = { workspace = true }

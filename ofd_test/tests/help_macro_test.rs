@@ -1,5 +1,5 @@
 use help_macro::MyDerive;
-use xdom::{ToElement, ToNode};
+use ofd_misc::{ToElement, ToNode};
 
 #[derive(MyDerive, Debug)]
 struct StructA {
@@ -30,4 +30,4 @@ fn test() {
     // Some(?)
 }
 
-use rofd::dom::OFD_NS;
+use ofd_misc::dom::OFD_NS;

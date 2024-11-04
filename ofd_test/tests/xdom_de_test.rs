@@ -21,7 +21,7 @@ where
 
 #[test]
 fn test_de_ofd() -> Result<()> {
-    let s = read_to_string("samples/sample/OFD.xml")?;
+    let s = read_to_string("../samples/sample/OFD.xml")?;
     let root: Element = s.parse()?;
 
     let mut de = XmlDe::from_ele(&root);
@@ -34,7 +34,7 @@ fn test_de_ofd() -> Result<()> {
 
 #[test]
 fn test_de_doc() -> Result<()> {
-    let s = read_to_string("samples/sample/Doc_0/Document.xml")?;
+    let s = read_to_string("../samples/sample/Doc_0/Document.xml")?;
     let root: Element = s.parse()?;
     let mut de = XmlDe::from_ele(&root);
     let st = DocumentXmlFile::deserialize(&mut de)?;
@@ -44,7 +44,7 @@ fn test_de_doc() -> Result<()> {
 
 #[test]
 fn test_de_page() -> Result<()> {
-    let s = read_to_string("samples/sample/Doc_0/Pages/Page_0/Content.xml")?;
+    let s = read_to_string("../samples/sample/Doc_0/Pages/Page_0/Content.xml")?;
 
     let root: Element = s.parse()?;
     let mut de = XmlDe::from_ele(&root);

@@ -7,7 +7,7 @@ members = [
     "ofd_cli",
     "ofd_base",
     "ofd_conv",
-    "ofd_misc",
+    "ofd_misc", "ofd_test",
 ]
 
 

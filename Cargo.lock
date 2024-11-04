@@ -981,6 +981,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "ofd_test"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "eyre",
+ "help-macro",
+ "minidom",
+ "ofd_base",
+ "ofd_conv",
+ "ofd_misc",
+ "ofd_rw",
+ "quick-xml",
+ "serde",
+ "skia-safe",
+ "xdom",
+]
+
+[[package]]
 name = "once_cell"
 version = "1.20.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"

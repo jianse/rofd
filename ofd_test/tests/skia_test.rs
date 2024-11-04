@@ -29,7 +29,7 @@ mod test_skia {
             .encode(None, skia_safe::EncodedImageFormat::PNG, 100)
             .ok_or_eyre("message")?;
         // data.
-        let mut out = File::create("output/res.png")?;
+        let mut out = File::create("../output/res.png")?;
         let _ = out.write(&data)?;
 
         Ok(())
@@ -54,7 +54,7 @@ mod test_skia {
         canvas.draw_path(&path, &paint);
         canvas.restore();
         let img = surface.image_snapshot();
-        save_image(img, "output/res2.png")?;
+        save_image(img, "../output/res2.png")?;
         Ok(())
     }
 
@@ -200,7 +200,7 @@ mod test_skia {
     fn test_load_cff() -> Result<()> {
         let fm = FontMgr::new();
 
-        let path = PathBuf::from("samples/ano/Doc_0/Res/font_84_84.cff");
+        let path = PathBuf::from("../samples/ano/Doc_0/Res/font_84_84.cff");
         let mut file = File::open(path)?;
         let mut data = Vec::new();
         file.read_to_end(&mut data)?;
