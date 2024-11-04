@@ -8,7 +8,6 @@ use std::str::FromStr;
 use eyre::eyre;
 use eyre::OptionExt;
 use eyre::Result;
-use log::{debug, error, warn};
 use skia_safe::path::ArcSize;
 use skia_safe::BlendMode;
 use skia_safe::Color;
@@ -27,6 +26,7 @@ use skia_safe::Point;
 use skia_safe::Rect;
 use skia_safe::TextBlob;
 use skia_safe::{Canvas, ImageInfo, Surface};
+use tracing::{debug, error, warn};
 
 use ofd_base::common::Cap;
 use ofd_base::common::CtColor;

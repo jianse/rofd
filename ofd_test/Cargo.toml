@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 license.workspace = true
 
-[dependencies]
+[dev-dependencies]
 xdom = { path = "../xdom" }
 ofd_base = { path = "../ofd_base" }
 ofd_rw = { path = "../ofd_rw" }
@@ -14,6 +14,6 @@ serde = { workspace = true }
 help-macro = { path = "../help-macro" }
 skia-safe = { workspace = true }
 eyre = { workspace = true }
-quick-xml = { workspace = true, features = ["serde"] }
+quick-xml = { version = "0.37.0", features = ["serde"] }
 minidom = { workspace = true }
 chrono = { workspace = true }

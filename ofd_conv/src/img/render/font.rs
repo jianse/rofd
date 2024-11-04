@@ -7,6 +7,8 @@ use std::{
 use skia_safe::{FontStyle, Typeface};
 use walkdir::WalkDir;
 
+use tracing::{debug, warn};
+
 struct FontMgr {
     system_font_mgr: skia_safe::FontMgr,
     font_cache: HashMap<String, FontStyleSet>,
@@ -24,7 +26,7 @@ impl FontMgr {
     pub fn new_with_font_dir(font_dir: &PathBuf) -> Self {
         let sys_fm = skia_safe::FontMgr::new();
         let mut font_cache = HashMap::new();
-        // log::debug!("init font manager,{}",font_dir.);
+        debug!("init font manager,{}", font_dir.display());
         for entry in WalkDir::new(font_dir)
             .into_iter()
             .filter_map(|e| e.ok())
@@ -36,7 +38,7 @@ impl FontMgr {
                     && e.file_type().is_file()
             })
         {
-            log::debug!("try load font \"{}\"", entry.path().display());
+            debug!("try load font \"{}\"", entry.path().display());
             let path = entry.path();
             let bytes = fs::read(path);
             if let Ok(bytes) = bytes {
@@ -47,7 +49,7 @@ impl FontMgr {
                         .map(|l| l.string)
                         .collect::<HashSet<String>>();
                     for family_name in family_names {
-                        log::debug!(
+                        debug!(
                             "font family name \"{}\", font_style {:?}",
                             family_name,
                             ff.font_style()
@@ -62,10 +64,10 @@ impl FontMgr {
                             });
                     }
                 } else {
-                    log::warn!("warn! load font error. path {}", path.display());
+                    warn!("warn! load font error. path {}", path.display());
                 }
             } else {
-                log::warn!("warn! read file error. path {}", path.display());
+                warn!("warn! read file error. path {}", path.display());
             }
         }
 
@@ -95,7 +97,7 @@ impl FontStyleSet {
     fn add_font(&mut self, font: Typeface) {
         let dup = self.match_style(font.font_style());
         if dup.is_some() {
-            log::warn!(
+            warn!(
                 "warn! font dup. family_name={},style={:?}",
                 font.family_name(),
                 font.font_style()
@@ -132,18 +134,19 @@ mod tests {
     use skia_safe::Typeface;
 
     use super::FontMgr;
+    use tracing::warn;
 
     fn init_logger() {
-        let e = env_logger::builder()
-            // Include all events in tests
-            .filter_level(log::LevelFilter::max())
-            // Ensure events are captured by `cargo test`
-            .is_test(true)
-            // Ignore errors initializing the logger if tests race to configure it
+        use tracing_subscriber::{filter, fmt, layer::SubscriberExt, util::SubscriberInitExt};
+        let fmt = fmt::layer()
+            .with_ansi(true)
+            .with_file(true)
+            .with_line_number(true);
+        let filter = filter::LevelFilter::TRACE;
+        let _ = tracing_subscriber::registry()
+            .with(filter)
+            .with(fmt)
             .try_init();
-        if e.is_err() {
-            println!("warn! init logger error");
-        }
     }
 
     #[test]
@@ -154,12 +157,12 @@ mod tests {
         let sys_kai = font_mgr.match_family_style("楷体", skia_safe::FontStyle::default());
         // assert!(sys_kai.is_some());
         if sys_kai.is_none() {
-            log::warn!("we are running on system that not have some default fonts");
+            warn!("we are running on system that not have some default fonts");
             return;
         }
         let sys_kai = sys_kai.unwrap();
         if !std::fs::exists("simkai.ttf").unwrap() {
-            log::warn!("font [simkai.ttf] not found]");
+            warn!("font [simkai.ttf] not found]");
             return;
         }
         let bytes = std::fs::read("simkai.ttf").unwrap();

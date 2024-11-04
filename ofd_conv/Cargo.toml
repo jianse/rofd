@@ -11,8 +11,8 @@ ofd_rw = { path = "../ofd_rw" }
 eyre = { workspace = true }
 skia-safe = { workspace = true }
 thiserror = { workspace = true }
-log = { workspace = true }
+tracing = { workspace = true }
 walkdir = { workspace = true }
 
 [dev-dependencies]
-env_logger = { workspace = true }
+tracing-subscriber = { workspace = true }

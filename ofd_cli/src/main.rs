@@ -48,14 +48,16 @@ enum Commands {
 }
 
 fn init_logger() {
-    let e = env_logger::builder()
-        // Include info events
-        // .filter_level(log::LevelFilter::Info)
-        // Ignore errors initializing the logger if tests race to configure it
+    use tracing_subscriber::{filter, fmt, layer::SubscriberExt, util::SubscriberInitExt};
+    let fmt = fmt::layer()
+        .with_ansi(true)
+        .with_file(true)
+        .with_line_number(true);
+    let filter = filter::LevelFilter::INFO;
+    let _ = tracing_subscriber::registry()
+        .with(filter)
+        .with(fmt)
         .try_init();
-    if e.is_err() {
-        println!("warn! init logger error");
-    }
 }
 
 fn main() -> Result<()> {
