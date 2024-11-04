@@ -1,9 +1,12 @@
 use crate::de::{XmlDeError, XmlSeqAccess};
 use minidom::Element;
-use serde::de::Visitor;
+use serde::de::{EnumAccess, VariantAccess, Visitor};
 use serde::Deserializer;
 use std::borrow::Cow;
 use std::ops::Deref;
+use tracing::trace;
+
+use super::key::KeyDe;
 
 macro_rules! de_primitives {
     ($fn_name:ident($ty:ty,$forward_fn:ident)) => {
@@ -136,7 +139,7 @@ impl<'de, 'a> Deserializer<'de> for &'a mut AttrValueDe<'de> {
     where
         V: Visitor<'de>,
     {
-        dbg!(name);
+        trace!("deserialize_newtype_struct {}", name);
         visitor.visit_newtype_struct(self)
     }
 
@@ -194,7 +197,15 @@ impl<'de, 'a> Deserializer<'de> for &'a mut AttrValueDe<'de> {
     where
         V: Visitor<'de>,
     {
-        todo!()
+        if let Some(v) = self.value {
+            visitor.visit_enum(EnumDeserializer {
+                name,
+                variants,
+                input: v,
+            })
+        } else {
+            visitor.visit_none()
+        }
     }
 
     fn deserialize_identifier<V>(self, visitor: V) -> Result<V::Value, Self::Error>
@@ -209,6 +220,59 @@ impl<'de, 'a> Deserializer<'de> for &'a mut AttrValueDe<'de> {
         V: Visitor<'de>,
     {
         visitor.visit_none()
+    }
+}
+
+struct EnumDeserializer<'de> {
+    name: &'static str,
+    variants: &'static [&'static str],
+    input: &'de str,
+}
+
+impl<'de> EnumAccess<'de> for EnumDeserializer<'de> {
+    type Error = XmlDeError;
+
+    type Variant = Self;
+
+    fn variant_seed<V>(self, seed: V) -> Result<(V::Value, Self::Variant), Self::Error>
+    where
+        V: serde::de::DeserializeSeed<'de>,
+    {
+        let mut de = KeyDe::new_ele(self.input);
+        seed.deserialize(&mut de).map(|v| (v, self))
+    }
+}
+
+impl<'de> VariantAccess<'de> for EnumDeserializer<'de> {
+    type Error = XmlDeError;
+
+    fn unit_variant(self) -> Result<(), Self::Error> {
+        Ok(())
+    }
+
+    fn newtype_variant_seed<T>(self, seed: T) -> Result<T::Value, Self::Error>
+    where
+        T: serde::de::DeserializeSeed<'de>,
+    {
+        todo!()
+    }
+
+    fn tuple_variant<V>(self, len: usize, visitor: V) -> Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
+    }
+
+    fn struct_variant<V>(
+        self,
+        fields: &'static [&'static str],
+        visitor: V,
+    ) -> Result<V::Value, Self::Error>
+    where
+        V: Visitor<'de>,
+    {
+        todo!()
     }
 }
 
@@ -580,7 +644,7 @@ impl<'de, 'a> Deserializer<'de> for &'a mut ValueDe<'de> {
     where
         V: Visitor<'de>,
     {
-        dbg!(name);
+        trace!("deserialize_newtype_struct {}", name);
         visitor.visit_newtype_struct(self)
     }
 

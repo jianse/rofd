@@ -659,8 +659,8 @@ fn draw_text_object(
         if let Some(font_file) = font.font_file {
             warn!("embedded font file: {}", font_file.display());
         }
-        fm.match_family_style(font.font_name, FontStyle::normal())
-            .ok_or_eyre("no font found!")?
+        fm.match_family_style(&font.font_name, FontStyle::normal())
+            .ok_or_eyre(format!("no font found! {}", &font.font_name))?
     } else {
         warn!("required font id = {font_id} is not defined!");
         // fallback font
@@ -782,6 +782,7 @@ fn decode_dx_dy(
 
 /// flat sparse format (include g command) dx or dy into dense format (only numbers)
 fn flat_g(d: &StArray<String>) -> Result<Vec<f32>> {
+    dbg!(d);
     let mut res = vec![];
     let mut iter = d.0.iter().enumerate();
 

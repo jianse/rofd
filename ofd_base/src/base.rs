@@ -206,6 +206,7 @@ impl<'de, T: FromStr + Display> Deserialize<'de> for StArray<T> {
             {
                 let parts = v
                     .split(' ')
+                    .filter(|s| !s.is_empty())
                     .map(|s| s.parse::<C>())
                     .collect::<Result<_, _>>()
                     .map_err(|_| {
