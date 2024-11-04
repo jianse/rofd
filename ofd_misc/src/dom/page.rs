@@ -3,14 +3,14 @@ use crate::dom::{
     parse_required_from_attr, parse_required_from_text, parse_required_vec, TryFromDom,
     TryFromDomError,
 };
-use base::common::{Actions, Cap, CtColor, Join};
-use base::file::document::CtPageArea;
-use base::file::page::{
+use minidom::Element;
+use ofd_base::common::{Actions, Cap, CtColor, Join};
+use ofd_base::file::document::CtPageArea;
+use ofd_base::file::page::{
     Border, CGTransform, Content, FillRule, ImageObject, Layer, PageXmlFile, PathObject, Template,
     TextCode, TextObject, TextVal, VtGraphicUnit,
 };
-use base::{StArray, StBox, StId, StLoc, StRefId};
-use minidom::Element;
+use ofd_base::{StArray, StBox, StId, StLoc, StRefId};
 use std::str::FromStr;
 
 impl TryFromDom<Element> for PageXmlFile {
@@ -313,15 +313,15 @@ impl TryFromDom<&Element> for TextCode {
 #[cfg(test)]
 mod tests {
     use crate::dom::TryFromDom;
-    use base::file::page::{PageXmlFile, TextCode};
     use eyre::Result;
     use minidom::Element;
+    use ofd_base::file::page::{PageXmlFile, TextCode};
     use std::fs::File;
     use std::io::{BufReader, Read};
 
     #[test]
     fn test_try_from_dom0() -> Result<()> {
-        let file = File::open("samples/sample/Doc_0/Pages/Page_0/Content.xml")?;
+        let file = File::open("../samples/sample/Doc_0/Pages/Page_0/Content.xml")?;
         let mut reader = BufReader::new(file);
         let mut data = String::new();
         let _ = reader.read_to_string(&mut data);
@@ -333,7 +333,7 @@ mod tests {
 
     #[test]
     fn test_try_from_dom1() -> Result<()> {
-        let file = File::open("samples/ano/Doc_0/Pages/Page_0/Content.xml")?;
+        let file = File::open("../samples/ano/Doc_0/Pages/Page_0/Content.xml")?;
         let mut reader = BufReader::new(file);
         let mut data = String::new();
         let _ = reader.read_to_string(&mut data);

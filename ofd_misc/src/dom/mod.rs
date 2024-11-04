@@ -1,5 +1,5 @@
-use base::ParseStBoxError;
 use minidom::Element;
+use ofd_base::ParseStBoxError;
 use std::convert::Infallible;
 use std::num::{ParseFloatError, ParseIntError};
 use std::str::ParseBoolError;
@@ -16,8 +16,6 @@ pub trait TryFromDom<T>: Sized {
 }
 #[derive(Error, Debug)]
 pub enum TryFromDomError {
-    #[error("common error")]
-    Common,
     #[error("no attribute named \"{0}\"")]
     NoSuchAttribute(&'static str),
     #[error("no element named \"{0}\"")]

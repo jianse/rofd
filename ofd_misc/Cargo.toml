@@ -1,0 +1,17 @@
+[package]
+name = "ofd_misc"
+version = "0.1.0"
+edition = "2021"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+ofd_base = { path = "../ofd_base" }
+minidom = { workspace = true }
+strum = { workspace = true }
+thiserror = { workspace = true }
+chrono = { workspace = true }
+
+[dev-dependencies]
+eyre = { workspace = true }
+chrono = { workspace = true }
+minidom = { workspace = true }

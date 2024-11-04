@@ -4,14 +4,12 @@ use std::{
     path::PathBuf,
 };
 
+// use crate::render;
 use cli_table::Table;
 use eyre::{OptionExt, Result};
-
-use crate::{
-    container::{self, Container},
-    render,
-};
-use base::file::{document::DocumentXmlFile, ofd::OfdXmlFile};
+use ofd_base::file::{document::DocumentXmlFile, ofd::OfdXmlFile};
+use ofd_conv::img::render;
+use ofd_rw::{self, Container};
 #[derive(Debug)]
 pub struct OfdInfo {
     /// how many doc this ofd contains
@@ -43,7 +41,7 @@ pub struct DocInfo {
 }
 
 pub fn get_info(path: &PathBuf) -> Result<OfdInfo> {
-    let mut container = container::from_path(path)?;
+    let mut container = ofd_rw::from_path(path)?;
     let xml: OfdXmlFile = container.entry()?.content;
     let doc_count = xml.doc_body.len();
     let doc_info = xml
@@ -93,7 +91,7 @@ pub fn render_page(
     page_index: usize,
     only_template: bool,
 ) -> Result<()> {
-    let mut res = container::from_path(ofd_path)?;
+    let mut res = ofd_rw::from_path(ofd_path)?;
 
     let page_count = get_doc_count(&mut res)?;
     assert!(
@@ -126,7 +124,7 @@ pub fn render_page(
     };
 
     let data = image
-        .encode(None, skia_safe::EncodedImageFormat::PNG, 100)
+        .encode(None, ofd_conv::img::EncodedImageFormat::PNG, 100)
         .ok_or_eyre("message")?;
     let mut op = PathBuf::from(output_path);
     op.push(format!("page_{doc_index}_{page_index}.png"));

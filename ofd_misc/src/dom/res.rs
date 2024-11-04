@@ -3,14 +3,14 @@ use crate::dom::{
     parse_optional_vec, parse_required_from_attr, parse_required_from_ele,
     parse_required_from_text, TryFromDom, TryFromDomError,
 };
-use base::common::{Cap, CellContent, CtColor, CtPattern, Join, Palette};
-use base::file::page::VtGraphicUnit;
-use base::file::res::{
+use minidom::Element;
+use ofd_base::common::{Cap, CellContent, CtColor, CtPattern, Join, Palette};
+use ofd_base::file::page::VtGraphicUnit;
+use ofd_base::file::res::{
     ColorSpace, ColorSpaces, CompositeGraphicUnit, CompositeGraphicUnits, CtVectorG, DrawParam,
     DrawParams, Font, Fonts, MultiMedia, MultiMedias, Resource, ResourceXmlFile, Type,
 };
-use base::{StArray, StId, StLoc, StRefId};
-use minidom::Element;
+use ofd_base::{StArray, StId, StLoc, StRefId};
 use std::str::FromStr;
 
 use super::parse_required_vec;
@@ -292,15 +292,15 @@ impl TryFromDom<&Element> for MultiMedia {
 #[cfg(test)]
 mod tests {
     use crate::dom::TryFromDom;
-    use base::file::res::ResourceXmlFile;
     use eyre::Result;
     use minidom::Element;
+    use ofd_base::file::res::ResourceXmlFile;
     use std::fs::File;
     use std::io::{BufReader, Read};
 
     #[test]
     fn test_try_from_dom_doc_res() -> Result<()> {
-        let file = File::open("samples/sample/Doc_0/DocumentRes.xml")?;
+        let file = File::open("../samples/sample/Doc_0/DocumentRes.xml")?;
         let mut reader = BufReader::new(file);
         let mut data = String::new();
         reader.read_to_string(&mut data)?;
@@ -312,7 +312,7 @@ mod tests {
 
     #[test]
     fn test_try_from_dom_pub_res() -> Result<()> {
-        let file = File::open("samples/sample/Doc_0/PublicRes.xml")?;
+        let file = File::open("../samples/sample/Doc_0/PublicRes.xml")?;
         let mut reader = BufReader::new(file);
         let mut data = String::new();
         reader.read_to_string(&mut data)?;

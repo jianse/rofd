@@ -1,9 +1,11 @@
 use crate::dom::{
     parse_optional_from_attr, parse_required_from_attr, TryFromDom, TryFromDomError, OFD_NS,
 };
-use base::file::document::{CommonData, CtPageArea, DocumentXmlFile, Page, Pages, TemplatePage};
-use base::{StBox, StId, StLoc, StRefId};
 use minidom::Element;
+use ofd_base::file::document::{
+    CommonData, CtPageArea, DocumentXmlFile, Page, Pages, TemplatePage,
+};
+use ofd_base::{StBox, StId, StLoc, StRefId};
 use std::str::FromStr;
 
 impl TryFromDom<Element> for DocumentXmlFile {
@@ -206,15 +208,15 @@ impl TryFromDom<&Element> for TemplatePage {
 #[cfg(test)]
 mod tests {
     use crate::dom::TryFromDom;
-    use base::file::document::DocumentXmlFile;
     use eyre::Result;
     use minidom::Element;
+    use ofd_base::file::document::DocumentXmlFile;
     use std::fs::File;
     use std::io::{BufReader, Read};
 
     #[test]
     fn test_try_from_dom_doc() -> Result<()> {
-        let file = File::open("samples/sample/Doc_0/Document.xml")?;
+        let file = File::open("../samples/sample/Doc_0/Document.xml")?;
         let mut reader = BufReader::new(file);
         let mut data = String::new();
         let _ = reader.read_to_string(&mut data);

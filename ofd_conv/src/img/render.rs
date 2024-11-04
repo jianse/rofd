@@ -28,22 +28,21 @@ use skia_safe::Rect;
 use skia_safe::TextBlob;
 use skia_safe::{Canvas, ImageInfo, Surface};
 
-use crate::container::Container;
-use crate::container::Resources;
-use base::common::Cap;
-use base::common::CtColor;
-use base::common::Join;
-use base::file::document::CtPageArea;
-use base::file::document::DocumentXmlFile;
-use base::file::page::ImageObject;
-use base::file::page::PageXmlFile;
-use base::file::page::PathObject;
-use base::file::page::TextObject;
-use base::file::res::DrawParam;
-use base::file::res::SRGB;
-use base::StArray;
-use base::StBox;
-use base::StRefId;
+use ofd_base::common::Cap;
+use ofd_base::common::CtColor;
+use ofd_base::common::Join;
+use ofd_base::file::document::CtPageArea;
+use ofd_base::file::document::DocumentXmlFile;
+use ofd_base::file::page::ImageObject;
+use ofd_base::file::page::PageXmlFile;
+use ofd_base::file::page::PathObject;
+use ofd_base::file::page::TextObject;
+use ofd_base::file::res::DrawParam;
+use ofd_base::file::res::SRGB;
+use ofd_base::StArray;
+use ofd_base::StBox;
+use ofd_base::StRefId;
+use ofd_rw::{Container, Resources};
 // use base
 use crate::error::MyError;
 
@@ -240,17 +239,17 @@ fn resolve_color(ct_color: &CtColor, resources: &Resources) -> Result<Color4f> {
         let max_val = (1 << bpc) - 1;
         let a = (ct_color.alpha.unwrap_or(255) / 255) as f32;
         let r = match cs.r#type {
-            base::file::res::Type::RGB => {
+            ofd_base::file::res::Type::RGB => {
                 let r = val.0[0] as f32 / max_val as f32;
                 let g = val.0[1] as f32 / max_val as f32;
                 let b = val.0[2] as f32 / max_val as f32;
                 Color4f::new(r, g, b, a)
             }
-            base::file::res::Type::GRAY => {
+            ofd_base::file::res::Type::GRAY => {
                 let y = val.0[0] as f32 / max_val as f32;
                 Color4f::new(y, y, y, a)
             }
-            base::file::res::Type::CMYK => {
+            ofd_base::file::res::Type::CMYK => {
                 // cmyk to rgb
                 let c = val.0[0] as f32 / max_val as f32;
                 let m = val.0[1] as f32 / max_val as f32;
@@ -330,10 +329,10 @@ fn draw_path_object(
         let rule = path_object
             .rule
             .as_ref()
-            .unwrap_or(&base::file::page::FillRule::NoneZero);
+            .unwrap_or(&ofd_base::file::page::FillRule::NoneZero);
         let ft = match rule {
-            base::file::page::FillRule::NoneZero => skia_safe::PathFillType::Winding,
-            base::file::page::FillRule::EvenOdd => skia_safe::PathFillType::EvenOdd,
+            ofd_base::file::page::FillRule::NoneZero => skia_safe::PathFillType::Winding,
+            ofd_base::file::page::FillRule::EvenOdd => skia_safe::PathFillType::EvenOdd,
         };
         path.set_fill_type(ft);
         // paint.set_
@@ -565,7 +564,7 @@ fn get_draw_param_by_id(resources: &Resources, id: Option<StRefId>) -> Option<Dr
 
 fn draw_layer(
     canvas: &Canvas,
-    layer: &base::file::page::Layer,
+    layer: &ofd_base::file::page::Layer,
     resources: &Resources,
     draw_param_stack: &mut DrawParamStack,
 ) {
@@ -573,7 +572,7 @@ fn draw_layer(
         for obj in objects {
             let init_sc = canvas.save_count();
             let r = match obj {
-                base::file::page::VtGraphicUnit::TextObject(text) => {
+                ofd_base::file::page::VtGraphicUnit::TextObject(text) => {
                     let dp_id = text.draw_param;
                     let dp = get_draw_param_by_id(resources, dp_id);
                     draw_param_stack.push(dp.clone());
@@ -581,7 +580,7 @@ fn draw_layer(
                     draw_param_stack.pop(dp);
                     dtr
                 }
-                base::file::page::VtGraphicUnit::PathObject(path) => {
+                ofd_base::file::page::VtGraphicUnit::PathObject(path) => {
                     let dp_id = path.draw_param;
                     let dp = get_draw_param_by_id(resources, dp_id);
                     draw_param_stack.push(dp.clone());
@@ -589,7 +588,7 @@ fn draw_layer(
                     draw_param_stack.pop(dp);
                     dpr
                 }
-                base::file::page::VtGraphicUnit::ImageObject(image) => {
+                ofd_base::file::page::VtGraphicUnit::ImageObject(image) => {
                     let dp_id = image.draw_param;
                     let dp = get_draw_param_by_id(resources, dp_id);
                     draw_param_stack.push(dp.clone());
@@ -598,8 +597,8 @@ fn draw_layer(
                     draw_param_stack.pop(dp);
                     dir
                 }
-                base::file::page::VtGraphicUnit::CompositeObject(_co) => todo!(),
-                base::file::page::VtGraphicUnit::PageBlock(_pb) => todo!(),
+                ofd_base::file::page::VtGraphicUnit::CompositeObject(_co) => todo!(),
+                ofd_base::file::page::VtGraphicUnit::PageBlock(_pb) => todo!(),
             };
             if r.is_err() {
                 error!("draw_text_error: {:?}", r);
@@ -717,7 +716,7 @@ fn draw_text_object(
 /// make TextBlob from TextCode
 fn from_text_code(
     // origin: (f32, f32),
-    text_code: &base::file::page::TextCode,
+    text_code: &ofd_base::file::page::TextCode,
     font: &Font,
 ) -> Result<TextBlob> {
     let origin = (0.0, 0.0);

@@ -1,16 +1,21 @@
 {
     "cSpell.words": [
         "Annot",
+        "argb",
         "chrono",
         "clippy",
+        "conv",
         "Datas",
         "elems",
         "endregion",
+        "gouraud",
         "kaiti",
         "minidom",
+        "newtype",
         "Noto",
         "qname",
         "qxml",
+        "rofd",
         "simkai",
         "skia",
         "SRGB",
@@ -20,6 +25,7 @@
         "Unpremul",
         "vals",
         "walkdir",
+        "xdom",
         "xywh"
     ],
     "crates.indexServerURL": "sparse+https://rsproxy.cn/index/"

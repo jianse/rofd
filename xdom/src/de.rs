@@ -13,6 +13,7 @@ use std::collections::HashSet;
 use std::fmt::Display;
 use std::slice::Iter;
 use thiserror::Error;
+use tracing::trace;
 
 #[derive(Debug, Error)]
 pub enum XmlDeError {
@@ -222,8 +223,7 @@ impl<'de, 'a> Deserializer<'de> for &'a mut XmlDe<'de> {
     where
         V: Visitor<'de>,
     {
-        let msg = format!("deserialize_struct name = {name}");
-        dbg!(msg);
+        trace!("deserialize_struct name = {name}");
         // The name is struct name.
         // if you want to assert that element name is same as field name, you should pass it in.
 
@@ -531,10 +531,8 @@ impl<'de> SeqAccess<'de> for XmlSeqAccess<'de> {
     where
         T: DeserializeSeed<'de>,
     {
-        // dbg!(&self.iter);
         let ele = self.iter.next();
         if let Some(ele) = ele {
-            dbg!(ele.name());
             let mut de = XmlDe::from_ele(ele);
             de.name = Some(ele.name().to_string());
             de.parent = Some(self.parent);
@@ -547,7 +545,7 @@ impl<'de> SeqAccess<'de> for XmlSeqAccess<'de> {
 
 #[cfg(test)]
 mod tests {
-    use crate::de::from_ele;
+    use crate::{de::from_ele, init_tracing_subscriber};
     use eyre::Result;
     use minidom::Element;
     use serde::Deserialize;
@@ -560,6 +558,8 @@ mod tests {
     }
     #[test]
     fn it_works() -> Result<()> {
+        init_tracing_subscriber();
+
         let mut ele = Element::bare("Foo", "");
         ele.set_attr("attr2", "1.23");
         let foo = from_ele::<Foo>(&ele)?;
@@ -569,6 +569,8 @@ mod tests {
 
     #[test]
     fn deserialize_attr_field() -> Result<()> {
+        init_tracing_subscriber();
+
         let mut ele = Element::bare("Foo", "");
         ele.set_attr("attr1", "bar");
         ele.set_attr("attr2", "6.25");
@@ -581,6 +583,8 @@ mod tests {
 
     #[test]
     fn deserialize_ele_child() -> Result<()> {
+        init_tracing_subscriber();
+
         #[derive(Debug, Deserialize)]
         struct FooB {
             ele: Foo,
@@ -608,6 +612,8 @@ mod tests {
 
     #[test]
     fn test_enum() -> Result<()> {
+        init_tracing_subscriber();
+
         #[derive(Debug, Deserialize)]
         struct MyStruct {
             #[serde(rename = "@attr")]
@@ -660,6 +666,8 @@ mod tests {
 
     #[test]
     fn test_seq() -> Result<()> {
+        init_tracing_subscriber();
+
         #[derive(Debug, Deserialize)]
         struct Cont {
             any: Vec<u64>,

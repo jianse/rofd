@@ -1,15 +1,15 @@
-use base::common::ActionType::{Goto, Uri};
-use base::common::{Actions, CtAction, Event, VtTo};
-use base::file::document::{
-    CommonData, CtOutlineElem, CtPageArea, CtPermission, CtVPreferences, DocumentXmlFile, Outlines,
-    Page, Pages, Print, TemplatePage, ValidPeriod,
-};
-use base::file::ofd::{CtDocInfo, CustomData, CustomDatas, DocBody, Keywords, OfdXmlFile};
-use base::file::page::PageXmlFile;
-use base::StBox;
 use chrono::{NaiveDate, NaiveDateTime};
 use eyre::Result;
 use minidom::Element;
+use ofd_base::common::ActionType::{Goto, Uri};
+use ofd_base::common::{Actions, CtAction, Event, VtTo};
+use ofd_base::file::document::{
+    CommonData, CtOutlineElem, CtPageArea, CtPermission, CtVPreferences, DocumentXmlFile, Outlines,
+    Page, Pages, Print, TemplatePage, ValidPeriod,
+};
+use ofd_base::file::ofd::{CtDocInfo, CustomData, CustomDatas, DocBody, Keywords, OfdXmlFile};
+use ofd_base::file::page::PageXmlFile;
+use ofd_base::StBox;
 use rofd::dom::{TryFromDom, OFD_NS};
 use std::fs::File;
 use std::io::{BufReader, Read};

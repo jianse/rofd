@@ -1,8 +1,8 @@
-use base::file::document::DocumentXmlFile;
-use base::file::ofd::OfdXmlFile;
-use base::file::page::PageXmlFile;
 use eyre::Result;
 use minidom::Element;
+use ofd_base::file::document::DocumentXmlFile;
+use ofd_base::file::ofd::OfdXmlFile;
+use ofd_base::file::page::PageXmlFile;
 use serde::Deserialize;
 use std::fs::File;
 use std::io::Read;

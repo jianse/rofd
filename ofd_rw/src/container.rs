@@ -1,6 +1,8 @@
 use crate::error::MyError;
-use base::file::res::Resource;
-use base::{
+use eyre::{OptionExt, Result};
+use minidom::Element;
+use ofd_base::file::res::Resource;
+use ofd_base::{
     file::{
         document::DocumentXmlFile,
         ofd::OfdXmlFile,
@@ -9,8 +11,6 @@ use base::{
     },
     StRefId,
 };
-use eyre::{OptionExt, Result};
-use minidom::Element;
 use relative_path::RelativePathBuf;
 use std::io::BufRead;
 use std::{fs::File, io::BufReader, path::PathBuf};
@@ -139,25 +139,6 @@ impl<T> InnerFile<T> {
 }
 
 impl Container {
-    #[cfg(not(feature = "xdom"))]
-    fn from_reader<T, R>(reader: R) -> Result<T, MyError>
-    where
-        T: crate::dom::TryFromDom<Element>,
-        R: BufRead,
-    {
-        let mut reader = BufReader::new(reader);
-        let buf = reader.fill_buf()?;
-
-        // UTF-8 BOM
-        // handle u+FEFF in utf-8 file
-        // just skip this three bytes
-        if buf.starts_with(&[0xef_u8, 0xbb, 0xbf]) {
-            reader.consume(3);
-        }
-        let root = Element::from_reader(reader)?;
-        T::try_from_dom(root).map_err(MyError::from)
-    }
-    #[cfg(feature = "xdom")]
     fn from_reader<T, R>(reader: R) -> Result<T, MyError>
     where
         T: serde::de::DeserializeOwned,

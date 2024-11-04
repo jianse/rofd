@@ -1,45 +1,21 @@
-[package]
-name = "rofd"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-chrono = { workspace = true, features = ["serde"] }
-clap = { workspace = true, features = ["derive", "string"] }
-cli-table = { workspace = true }
-env_logger = { workspace = true }
-eyre = { workspace = true }
-log = { workspace = true }
-pdf = { workspace = true }
-relative-path = { workspace = true }
-serde = { workspace = true, features = ["derive"] }
-serde_with = { workspace = true }
-skia-safe = { workspace = true }
-thiserror = { workspace = true }
-walkdir = { workspace = true }
-zip = { workspace = true }
-minidom = { workspace = true }
-strum = { workspace = true, features = ["derive"] }
-xdom = { path = "xdom" }
-base = {path = "base"}
-
 [workspace]
-members = ["ofd_base_rw", "help-macro", "xdom", "cli", "base"]
+resolver = "2"
+members = [
+    "ofd_rw",
+    "help-macro",
+    "xdom",
+    "ofd_cli",
+    "ofd_base",
+    "ofd_conv",
+    "ofd_misc",
+]
 
-
-[dev-dependencies]
-xml_dom = "0.2.8"
-quick-xml = { workspace = true, features = ["serde", "serialize"] }
-minidom = { workspace = true }
-help-macro = { path = "help-macro" }
-
-
-[features]
-default = []
-xdom = []
 
 [profile.cov]
 inherits = "test"
+
+[workspace.package]
+license = "MIT OR Apache-2.0"
 
 [workspace.dependencies]
 chrono = "0.4.38"
@@ -55,11 +31,14 @@ relative-path = "1.9.3"
 serde = "1.0.214"
 serde_with = "3.11.0"
 skia-safe = "0.78.2"
-thiserror = "1.0.66"
+thiserror = "1.0.67"
 walkdir = "2.5.0"
 zip = "2.2.0"
 minidom = "0.16.0"
 strum = "0.26.3"
 proc-macro2 = "1.0.89"
 quote = "1.0.37"
-syn = "2.0.86"
+syn = "2.0.87"
+tracing = "0.1.40"
+tracing-subscriber = "0.3.18"
+test-log = "0.2.16"
