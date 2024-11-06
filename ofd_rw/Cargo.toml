@@ -6,10 +6,12 @@ license = "MIT OR Apache-2.0"
 
 [dependencies]
 ofd_base = { path = "../ofd_base" }
-eyre = { workspace = true }
 thiserror = { workspace = true }
 minidom = { workspace = true }
 relative-path = { workspace = true }
 zip = { workspace = true }
 serde = { workspace = true }
 xdom = { path = "../xdom" }
+
+[dev-dependencies]
+eyre = { workspace = true }

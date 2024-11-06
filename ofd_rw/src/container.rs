@@ -1,5 +1,4 @@
-use crate::error::MyError;
-use eyre::{OptionExt, Result};
+use crate::error::{Error, Result};
 use minidom::Element;
 use ofd_base::file::res::Resource;
 use ofd_base::{
@@ -12,30 +11,321 @@ use ofd_base::{
     StRefId,
 };
 use relative_path::RelativePathBuf;
-use std::io::BufRead;
+use std::any::{Any, TypeId};
+use std::collections::HashMap;
+use std::io::{BufRead, Read};
+use std::ops::Deref;
 use std::{fs::File, io::BufReader, path::PathBuf};
 use zip::{read::ZipFile, ZipArchive};
+
+#[derive(Eq, Hash, PartialEq)]
+struct CacheKey {
+    path: String,
+    tid: TypeId,
+}
 
 pub struct Container {
     // container:
     // path:
     zip_archive: ZipArchive<BufReader<File>>,
+    cache: HashMap<CacheKey, Box<dyn Any>>,
 }
-pub struct InnerFile<T> {
+
+impl Container {
+    const OFD_ENTRY: &'static str = "OFD.xml";
+
+    fn read_item<T, R>(reader: R) -> Result<T>
+    where
+        T: serde::de::DeserializeOwned,
+        R: BufRead,
+    {
+        let mut reader = BufReader::new(reader);
+        let buf = reader.fill_buf()?;
+
+        // UTF-8 BOM
+        // handle u+FEFF in utf-8 file
+        // just skip this three bytes
+        if buf.starts_with(&[0xef_u8, 0xbb, 0xbf]) {
+            reader.consume(3);
+        }
+        let root = Element::from_reader(reader)?;
+        let res: T = xdom::de::from_ele(&root)?;
+        Ok(res)
+    }
+
+    fn open<P>(&mut self, path: P) -> Result<ZipFile>
+    where
+        P: AsRef<str> + Into<String>,
+    {
+        let file = self
+            .zip_archive
+            .by_name(path.as_ref())
+            .map_err(|e| Error::OpenZipError(e, path.into()))?;
+        Ok(file)
+    }
+
+    /// get an item from cache
+    fn get_cache<T: 'static, S>(&mut self, path: S) -> Option<&T>
+    where
+        S: Into<String>,
+    {
+        let tid = TypeId::of::<T>();
+        let p = path.into();
+        let key = CacheKey { path: p, tid };
+        self.cache.get(&key).and_then(|x| x.downcast_ref::<T>())
+    }
+
+    /// set an item into cache
+    fn set_cache<T: 'static, S>(&mut self, path: S, value: T)
+    where
+        S: Into<String>,
+    {
+        let tid = TypeId::of::<T>();
+        let p = path.into();
+        let key = CacheKey { path: p, tid };
+        self.cache.insert(key, Box::new(value));
+    }
+
+    pub fn entry(&mut self) -> Result<OfdItem<OfdXmlFile>> {
+        let xml = if let Some(v) = self.get_cache::<OfdXmlFile, _>(Container::OFD_ENTRY) {
+            v.clone()
+        } else {
+            let file = self.open(Container::OFD_ENTRY)?;
+            let reader = BufReader::new(file);
+            let xml = Container::read_item::<OfdXmlFile, _>(reader)?;
+            self.set_cache(Container::OFD_ENTRY, xml.clone());
+            xml
+        };
+
+        Ok(OfdItem {
+            path: Container::OFD_ENTRY.into(),
+            content: xml,
+        })
+    }
+
+    /// get a reader
+    pub fn reader<P>(&mut self, path: P) -> Result<BufReader<ZipFile>>
+    where
+        P: AsRef<str> + Into<String>,
+    {
+        let file = self.zip_archive.by_name(path.as_ref())?;
+        Ok(BufReader::new(file))
+    }
+
+    /// get as bytes
+    pub fn bytes<P>(&mut self, path: P) -> Result<Vec<u8>>
+    where
+        P: AsRef<str> + Into<String>,
+    {
+        let mut file = self.zip_archive.by_name(path.as_ref())?;
+        let mut buf = Vec::new();
+        file.read_to_end(&mut buf)?;
+        Ok(buf)
+    }
+
+    pub fn document_by_index(&mut self, doc_index: usize) -> Result<OfdItem<DocumentXmlFile>> {
+        // get path
+        let entry = self.entry()?;
+        let doc_body = entry
+            .content
+            .doc_body
+            .get(doc_index)
+            .ok_or(Error::NoSuchDocument)?;
+        let path = doc_body.doc_root.as_ref().ok_or(Error::NoSuchDocument)?;
+        let path = entry.resolve(path);
+
+        // cache or read
+        let xml = if let Some(xml) = self.get_cache::<DocumentXmlFile, _>(path.to_string()) {
+            xml.clone()
+        } else {
+            let inner = self.open(path.to_string())?;
+
+            let reader = BufReader::new(inner);
+            let xml: DocumentXmlFile = Container::read_item(reader)?;
+            self.set_cache(path.to_string(), xml.clone());
+
+            xml
+        };
+
+        Ok(OfdItem { path, content: xml })
+    }
+    fn _template_by_index(
+        &mut self,
+        doc_index: usize,
+        template_index: usize,
+    ) -> Result<OfdItem<PageXmlFile>> {
+        let doc = self.document_by_index(doc_index)?;
+        let tpls = doc
+            .content
+            .common_data
+            .template_page
+            .as_ref()
+            .ok_or(Error::NoSuchTemplate)?;
+        let tpl_el = tpls.get(template_index).ok_or(Error::NoSuchTemplate)?;
+        let tpl_path = &tpl_el.base_loc;
+        let tpl_path = doc.resolve(tpl_path);
+        let inner = self.open(tpl_path.to_string())?;
+        let reader = BufReader::new(inner);
+        let xml: PageXmlFile = Container::read_item(reader)?;
+        // let cont = &*self;
+        Ok(OfdItem {
+            // container: self,
+            path: tpl_path,
+            content: xml,
+        })
+    }
+    pub fn template_by_id(
+        &mut self,
+        doc_index: usize,
+        template_id: StRefId,
+    ) -> Result<OfdItem<PageXmlFile>> {
+        let doc = self.document_by_index(doc_index)?;
+        let tpls = doc
+            .content
+            .common_data
+            .template_page
+            .as_ref()
+            .ok_or(Error::NoSuchTemplate)?;
+        let tpl_el = tpls
+            .iter()
+            .find(|i| i.id == template_id)
+            .ok_or(Error::NoSuchTemplate)?;
+        let tpl_path = &tpl_el.base_loc;
+        let tpl_path = doc.resolve(tpl_path);
+        let inner = self.open(tpl_path.to_string())?;
+        let reader = BufReader::new(inner);
+        let xml: PageXmlFile = Container::read_item(reader)?;
+        // let cont = &*self;
+        Ok(OfdItem {
+            // container: self,
+            path: tpl_path,
+            content: xml,
+        })
+    }
+    pub fn page_by_index(
+        &mut self,
+        doc_index: usize,
+        page_index: usize,
+    ) -> Result<OfdItem<PageXmlFile>> {
+        let doc = self.document_by_index(doc_index)?;
+        // get path
+        let pages = &doc.content.pages.page;
+        let tpl_el = pages.get(page_index).ok_or(Error::NoSuchTemplate)?;
+        let tpl_path = &tpl_el.base_loc;
+        let path = doc.resolve(tpl_path);
+
+        // cache or read
+        let xml = if let Some(p) = self.get_cache::<PageXmlFile, _>(path.to_string()) {
+            p.clone()
+        } else {
+            let inner = self.open(path.to_string())?;
+            let reader = BufReader::new(inner);
+            let xml: PageXmlFile = Container::read_item(reader)?;
+            self.set_cache(path.to_string(), xml.clone());
+            xml
+        };
+
+        Ok(OfdItem {
+            // container: self,
+            path,
+            content: xml,
+        })
+    }
+    pub fn templates_for_page(
+        &mut self,
+        doc_index: usize,
+        page_index: usize,
+    ) -> Result<Vec<OfdItem<PageXmlFile>>> {
+        let page = self.page_by_index(doc_index, page_index)?;
+        let xml = &page.content;
+        if let Some(tpls) = xml.template.as_ref() {
+            let mut res = vec![];
+            for tpl in tpls {
+                let template_id = tpl.template_id;
+                let t = self.template_by_id(doc_index, template_id)?;
+                res.push(t);
+            }
+            Ok(res)
+        } else {
+            Ok(vec![])
+        }
+    }
+    pub fn resources_for_page(&mut self, doc_index: usize, page_index: usize) -> Result<Resources> {
+        let doc = self.document_by_index(doc_index)?;
+        let pub_res_locs = &doc.content.common_data.public_res;
+        let pub_res = self._load_res(&doc, pub_res_locs)?;
+        let doc_res_locs = &doc.content.common_data.document_res;
+        let doc_res = self._load_res(&doc, doc_res_locs)?;
+        let page = self.page_by_index(doc_index, page_index)?;
+        let page_res_locs = &page.content.page_res;
+        let page_res = self._load_res(&page, page_res_locs)?;
+        Ok(Resources {
+            default_cs: doc.content.common_data.default_cs,
+            public_resource: pub_res,
+            document_resource: doc_res,
+            page_resource: page_res,
+        })
+    }
+
+    fn _load_res<T>(
+        &mut self,
+        parent: &OfdItem<T>,
+        res_list: &Option<Vec<PathBuf>>,
+    ) -> Result<Option<Vec<OfdItem<ResourceXmlFile>>>> {
+        let res = if let Some(paths) = res_list.as_ref() {
+            if paths.is_empty() {
+                None
+            } else {
+                let r = paths
+                    .iter()
+                    .map(|p| -> Result<OfdItem<ResourceXmlFile>> {
+                        let rp = parent.resolve(p);
+                        let file = self.open(rp.to_string())?;
+                        let reader = BufReader::new(file);
+
+                        let xml: ResourceXmlFile = Container::read_item(reader)?;
+
+                        Ok(OfdItem {
+                            path: rp,
+                            content: xml,
+                        })
+                    })
+                    .collect::<Result<Vec<OfdItem<ResourceXmlFile>>>>()?;
+                Some(r)
+            }
+        } else {
+            None
+        };
+        Ok(res)
+    }
+
+    pub fn item_names(&self) -> impl Iterator<Item = &str> {
+        self.zip_archive.file_names()
+    }
+}
+
+pub struct OfdItem<T> {
     // container: &'a mut Container,
     path: RelativePathBuf,
     pub content: T,
 }
+impl<T> Deref for OfdItem<T> {
+    type Target = T;
+
+    fn deref(&self) -> &Self::Target {
+        &self.content
+    }
+}
 /// this holds some resource for render
 pub struct Resources {
     pub default_cs: Option<StRefId>,
-    public_resource: Option<Vec<InnerFile<ResourceXmlFile>>>,
-    document_resource: Option<Vec<InnerFile<ResourceXmlFile>>>,
-    page_resource: Option<Vec<InnerFile<ResourceXmlFile>>>,
+    public_resource: Option<Vec<OfdItem<ResourceXmlFile>>>,
+    document_resource: Option<Vec<OfdItem<ResourceXmlFile>>>,
+    page_resource: Option<Vec<OfdItem<ResourceXmlFile>>>,
 }
 
 struct ResourceIter<'a> {
-    res_flat: Vec<&'a InnerFile<ResourceXmlFile>>,
+    res_flat: Vec<&'a OfdItem<ResourceXmlFile>>,
     // res: &'a Resources,
     idx: usize,
 }
@@ -49,7 +339,7 @@ impl<'a> ResourceIter<'a> {
         .iter()
         .filter_map(|e| e.as_ref())
         .flat_map(|e| e.iter())
-        .collect::<Vec<&InnerFile<ResourceXmlFile>>>();
+        .collect::<Vec<&OfdItem<ResourceXmlFile>>>();
         Self {
             res_flat,
             // res,
@@ -58,7 +348,7 @@ impl<'a> ResourceIter<'a> {
     }
 }
 impl<'a> Iterator for ResourceIter<'a> {
-    type Item = &'a InnerFile<ResourceXmlFile>;
+    type Item = &'a OfdItem<ResourceXmlFile>;
 
     fn next(&mut self) -> Option<Self::Item> {
         let res = if self.idx < self.res_flat.len() {
@@ -120,7 +410,7 @@ impl Resources {
     }
 }
 
-impl<T> InnerFile<T> {
+impl<T> OfdItem<T> {
     fn resolve(&self, other: &PathBuf) -> RelativePathBuf {
         let this = self.path.clone();
         let that = RelativePathBuf::from_path(other).unwrap();
@@ -138,212 +428,18 @@ impl<T> InnerFile<T> {
     }
 }
 
-impl Container {
-    fn from_reader<T, R>(reader: R) -> Result<T, MyError>
-    where
-        T: serde::de::DeserializeOwned,
-        R: BufRead,
-    {
-        let mut reader = BufReader::new(reader);
-        let buf = reader.fill_buf()?;
-
-        // UTF-8 BOM
-        // handle u+FEFF in utf-8 file
-        // just skip this three bytes
-        if buf.starts_with(&[0xef_u8, 0xbb, 0xbf]) {
-            reader.consume(3);
-        }
-        let root = Element::from_reader(reader)?;
-        let res: T = xdom::de::from_ele(&root)?;
-        Ok(res)
-    }
-
-    pub fn open(&mut self, path: String) -> Result<ZipFile> {
-        let file = self
-            .zip_archive
-            .by_name(path.as_ref())
-            .map_err(|e| MyError::OpenZipError(e, path))?;
-        Ok(file)
-    }
-    pub fn entry(&mut self) -> Result<InnerFile<OfdXmlFile>> {
-        let file = self.zip_archive.by_name("OFD.xml")?;
-        let reader = BufReader::new(file);
-        let xml = Container::from_reader::<OfdXmlFile, _>(reader)?;
-        Ok(InnerFile {
-            // container: self,
-            path: "OFD.xml".into(),
-            content: xml,
-        })
-    }
-    pub fn document_by_index(&mut self, doc_index: usize) -> Result<InnerFile<DocumentXmlFile>> {
-        let entry = self.entry()?;
-        let doc_body = entry
-            .content
-            .doc_body
-            .get(doc_index)
-            .ok_or_eyre("no such document!")?;
-        let path = doc_body.doc_root.as_ref().ok_or_eyre("no such document!")?;
-        let path = entry.resolve(path);
-        let inner = self.open(path.to_string())?;
-
-        let reader = BufReader::new(inner);
-        let xml: DocumentXmlFile = Container::from_reader(reader)?;
-        Ok(InnerFile {
-            // container: self,
-            path,
-            content: xml,
-        })
-    }
-    fn _template_by_index(
-        &mut self,
-        doc_index: usize,
-        template_index: usize,
-    ) -> Result<InnerFile<PageXmlFile>> {
-        let doc = self.document_by_index(doc_index)?;
-        let tpls = doc
-            .content
-            .common_data
-            .template_page
-            .as_ref()
-            .ok_or_eyre("no such template")?;
-        let tpl_el = tpls.get(template_index).ok_or_eyre("no such template")?;
-        let tpl_path = &tpl_el.base_loc;
-        let tpl_path = doc.resolve(tpl_path);
-        let inner = self.open(tpl_path.to_string())?;
-        let reader = BufReader::new(inner);
-        let xml: PageXmlFile = Container::from_reader(reader)?;
-        // let cont = &*self;
-        Ok(InnerFile {
-            // container: self,
-            path: tpl_path,
-            content: xml,
-        })
-    }
-    pub fn template_by_id(
-        &mut self,
-        doc_index: usize,
-        template_id: StRefId,
-    ) -> Result<InnerFile<PageXmlFile>> {
-        let doc = self.document_by_index(doc_index)?;
-        let tpls = doc
-            .content
-            .common_data
-            .template_page
-            .as_ref()
-            .ok_or_eyre("no such template")?;
-        let tpl_el = tpls
-            .iter()
-            .find(|i| i.id == template_id)
-            .ok_or_eyre("no such template")?;
-        let tpl_path = &tpl_el.base_loc;
-        let tpl_path = doc.resolve(tpl_path);
-        let inner = self.open(tpl_path.to_string())?;
-        let reader = BufReader::new(inner);
-        let xml: PageXmlFile = Container::from_reader(reader)?;
-        // let cont = &*self;
-        Ok(InnerFile {
-            // container: self,
-            path: tpl_path,
-            content: xml,
-        })
-    }
-    pub fn page_by_index(
-        &mut self,
-        doc_index: usize,
-        page_index: usize,
-    ) -> Result<InnerFile<PageXmlFile>> {
-        let doc = self.document_by_index(doc_index)?;
-        let tpls = &doc.content.pages.page;
-        let tpl_el = tpls.get(page_index).ok_or_eyre("no such template")?;
-        let tpl_path = &tpl_el.base_loc;
-        let tpl_path = doc.resolve(tpl_path);
-        let inner = self.open(tpl_path.to_string())?;
-        let reader = BufReader::new(inner);
-        let xml: PageXmlFile = Container::from_reader(reader)?;
-        // let cont = &*self;
-        Ok(InnerFile {
-            // container: self,
-            path: tpl_path,
-            content: xml,
-        })
-    }
-    pub fn templates_for_page(
-        &mut self,
-        doc_index: usize,
-        page_index: usize,
-    ) -> Result<Vec<InnerFile<PageXmlFile>>> {
-        let page = self.page_by_index(doc_index, page_index)?;
-        let xml = &page.content;
-        if let Some(tpls) = xml.template.as_ref() {
-            let mut res = vec![];
-            for tpl in tpls {
-                let template_id = tpl.template_id;
-                let t = self.template_by_id(doc_index, template_id)?;
-                res.push(t);
-            }
-            Ok(res)
-        } else {
-            Ok(vec![])
-        }
-    }
-    pub fn resources_for_page(&mut self, doc_index: usize, page_index: usize) -> Result<Resources> {
-        let doc = self.document_by_index(doc_index)?;
-        let pub_res_locs = &doc.content.common_data.public_res;
-        let pub_res = self._load_res(&doc, pub_res_locs)?;
-        let doc_res_locs = &doc.content.common_data.document_res;
-        let doc_res = self._load_res(&doc, doc_res_locs)?;
-        let page = self.page_by_index(doc_index, page_index)?;
-        let page_res_locs = &page.content.page_res;
-        let page_res = self._load_res(&page, page_res_locs)?;
-        Ok(Resources {
-            default_cs: doc.content.common_data.default_cs,
-            public_resource: pub_res,
-            document_resource: doc_res,
-            page_resource: page_res,
-        })
-    }
-
-    fn _load_res<T>(
-        &mut self,
-        parent: &InnerFile<T>,
-        res_list: &Option<Vec<PathBuf>>,
-    ) -> Result<Option<Vec<InnerFile<ResourceXmlFile>>>> {
-        let res = if let Some(paths) = res_list.as_ref() {
-            if paths.is_empty() {
-                None
-            } else {
-                let r = paths
-                    .iter()
-                    .map(|p| -> Result<InnerFile<ResourceXmlFile>> {
-                        let rp = parent.resolve(p);
-                        let file = self.open(rp.to_string())?;
-                        let reader = BufReader::new(file);
-
-                        let xml: ResourceXmlFile = Container::from_reader(reader)?;
-
-                        Ok(InnerFile {
-                            path: rp,
-                            content: xml,
-                        })
-                    })
-                    .collect::<Result<Vec<InnerFile<ResourceXmlFile>>>>()?;
-                Some(r)
-            }
-        } else {
-            None
-        };
-        Ok(res)
-    }
-}
-
 pub fn from_path(path: &PathBuf) -> Result<Container> {
     let f = File::open(path)?;
     let reader = BufReader::new(f);
     let zip = ZipArchive::new(reader)?;
 
-    zip.index_for_name("OFD.xml")
-        .ok_or_eyre("OFD entry point not found!!")?;
-    Ok(Container { zip_archive: zip })
+    let _ = zip
+        .index_for_name("OFD.xml")
+        .ok_or(Error::OfdEntryNotFound)?;
+    Ok(Container {
+        zip_archive: zip,
+        cache: HashMap::new(),
+    })
 }
 
 #[cfg(test)]
@@ -352,7 +448,7 @@ mod tests {
 
     use relative_path::RelativePathBuf;
 
-    use super::InnerFile;
+    use super::OfdItem;
 
     #[test]
     fn test_relative_path() {
@@ -365,7 +461,7 @@ mod tests {
     }
     #[test]
     fn test_resolve() {
-        let l = InnerFile {
+        let l = OfdItem {
             path: RelativePathBuf::from("a/b"),
             content: String::new(),
         };

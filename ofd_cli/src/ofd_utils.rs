@@ -17,6 +17,8 @@ pub struct OfdInfo {
 
     /// infos for each doc
     pub doc_info: Vec<DocInfo>,
+
+    pub item_names: Vec<String>,
 }
 
 fn fmt_doc_id(doc_id: &Option<String>) -> String {
@@ -39,7 +41,7 @@ pub struct DocInfo {
     #[table(title = "template_count")]
     pub template_count: usize,
 }
-
+// pub fn get_name_iter
 pub fn get_info(path: &PathBuf) -> Result<OfdInfo> {
     let mut container = ofd_rw::from_path(path)?;
     let xml: OfdXmlFile = container.entry()?.content;
@@ -69,6 +71,10 @@ pub fn get_info(path: &PathBuf) -> Result<OfdInfo> {
     Ok(OfdInfo {
         doc_count,
         doc_info,
+        item_names: container
+            .item_names()
+            .map(str::to_owned)
+            .collect::<Vec<String>>(),
     })
 }
 

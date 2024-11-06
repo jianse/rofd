@@ -1,6 +1,8 @@
 #[allow(dead_code)]
 #[allow(unused_variables)]
 mod font;
+
+use std::cell::RefCell;
 use std::iter::Enumerate;
 use std::slice::Iter;
 use std::str::FromStr;
@@ -47,6 +49,77 @@ use ofd_rw::{Container, Resources};
 use crate::error::MyError;
 
 // fn render_template()
+
+#[allow(unused)]
+pub struct Render {
+    dpi: i32,
+    font_mgr: RefCell<font::FontMgr>,
+    draw_param_stack: RefCell<DrawParamStack>,
+    surface: Option<Surface>,
+}
+
+impl Default for Render {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl Render {
+    pub fn new() -> Self {
+        Render {
+            dpi: 300,
+            font_mgr: RefCell::new(font::FontMgr::new()),
+            draw_param_stack: RefCell::new(DrawParamStack::new()),
+            surface: None,
+        }
+    }
+
+    #[allow(dead_code, unused)]
+    pub fn render_page(
+        &mut self,
+        container: &mut Container,
+        doc_index: usize,
+        page_index: usize,
+    ) -> Result<()> {
+        let dpi = 300;
+
+        let doc = container.document_by_index(doc_index)?;
+        let doc_xml = &doc.content;
+
+        let page = container.page_by_index(doc_index, page_index)?;
+        let page_xml = &page.content;
+
+        let templates = container.templates_for_page(doc_index, page_index)?;
+        let template_pages = &templates
+            .iter()
+            .map(|i| &i.content)
+            .collect::<Vec<&PageXmlFile>>();
+        let pa = decide_size(page_xml, template_pages, doc_xml);
+        let size = (
+            mm2px_i32(pa.physical_box.w, dpi),
+            mm2px_i32(pa.physical_box.h, dpi),
+        );
+        let resources = container.resources_for_page(doc_index, page_index)?;
+        let mut sur = create_surface(size)?;
+        let can = sur.canvas();
+
+        // bgc
+        can.draw_color(Color::WHITE, BlendMode::Color);
+        let scale = calc_scale(dpi);
+        can.scale((scale, scale));
+        debug!("drawing templates");
+        for tpl in template_pages {
+            draw_page(can, tpl, &resources)?;
+        }
+        debug!("drawing page");
+        draw_page(can, &page.content, &resources)?;
+        can.restore();
+        let snap = sur.image_snapshot();
+        // Ok(snap);
+
+        todo!()
+    }
+}
 
 struct DrawParamStack {
     draw_params: Vec<DrawParam>,
@@ -601,7 +674,7 @@ fn draw_layer(
                 ofd_base::file::page::VtGraphicUnit::PageBlock(_pb) => todo!(),
             };
             if r.is_err() {
-                error!("draw_text_error: {:?}", r);
+                error!("draw_layer_error: {:?}", r);
             }
             let after_sc = canvas.save_count();
             assert_eq!(

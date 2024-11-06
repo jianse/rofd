@@ -9,7 +9,7 @@ use walkdir::WalkDir;
 
 use tracing::{debug, warn};
 
-struct FontMgr {
+pub(super) struct FontMgr {
     system_font_mgr: skia_safe::FontMgr,
     font_cache: HashMap<String, FontStyleSet>,
 }

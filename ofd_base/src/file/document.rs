@@ -9,7 +9,7 @@ use serde_with::serde_as;
 use serde_with::DisplayFromStr;
 
 /// Document.xml 文件
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct DocumentXmlFile {
     #[serde(rename = "CommonData")]
     pub common_data: CommonData,
@@ -45,13 +45,13 @@ pub struct DocumentXmlFile {
     pub extensions: Option<StLoc>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Bookmarks {
     #[serde(rename = "Bookmark")]
     pub bookmarks: Vec<CtBookmark>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct CtBookmark {
     #[serde(rename = "@Name")]
     pub name: String,
@@ -59,7 +59,7 @@ pub struct CtBookmark {
     pub dest: CtDest,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct CtVPreferences {
     /// default None
     #[serde(rename = "PageMode")]
@@ -94,7 +94,7 @@ pub struct CtVPreferences {
     pub zoom: Option<f32>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct CtPermission {
     #[serde(rename = "Edit")]
     pub edit: Option<bool>,
@@ -115,14 +115,14 @@ pub struct CtPermission {
     pub valid_period: Option<ValidPeriod>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ValidPeriod {
     #[serde(rename = "@StartDate")]
     pub start_date: Option<NaiveDateTime>,
     #[serde(rename = "@EndDate")]
     pub end_date: Option<NaiveDateTime>,
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Print {
     #[serde(rename = "@Printable")]
     pub printable: bool,
@@ -131,12 +131,12 @@ pub struct Print {
     pub copies: Option<i32>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Outlines {
     #[serde(rename = "OutlineElem")]
     pub outline_elems: Vec<CtOutlineElem>,
 }
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct CtOutlineElem {
     #[serde(rename = "@Title")]
     pub title: String,
@@ -150,7 +150,7 @@ pub struct CtOutlineElem {
     pub outline_elems: Option<Vec<CtOutlineElem>>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct CommonData {
     #[serde(rename = "MaxUnitID")]
     pub max_unit_id: StId,
@@ -172,7 +172,7 @@ pub struct CommonData {
     pub default_cs: Option<StRefId>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct TemplatePage {
     #[serde(rename = "@ID")]
     pub id: StId,
@@ -187,13 +187,13 @@ pub struct TemplatePage {
     pub base_loc: StLoc,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Pages {
     #[serde(rename = "Page")]
     pub page: Vec<Page>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Page {
     #[serde(rename = "@ID")]
     pub id: StId,
@@ -202,7 +202,7 @@ pub struct Page {
 }
 
 #[serde_as]
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct CtPageArea {
     #[serde_as(as = "DisplayFromStr")]
     #[serde(rename = "PhysicalBox")]

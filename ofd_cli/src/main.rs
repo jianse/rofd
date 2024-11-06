@@ -66,9 +66,18 @@ fn main() -> Result<()> {
     match ops.command {
         Commands::Info { ofd_file } => {
             let info = ofd_utils::get_info(&ofd_file)?;
-            // dbg!(info);
+            // docs
             println!("This ofd has {} document(s).", info.doc_count);
             print_stdout(info.doc_info.with_title())?;
+
+            // items in package
+            println!(
+                "This ofd has {} item(s) in it's package.",
+                info.item_names.len()
+            );
+            for item in info.item_names.iter() {
+                println!("{}", item);
+            }
         }
         Commands::Render {
             ofd_file,

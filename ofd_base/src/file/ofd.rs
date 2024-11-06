@@ -7,7 +7,7 @@ use ::serde::{Deserialize, Serialize};
 use chrono::NaiveDate;
 
 /// main entry for an ofd file
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(rename = "OFD")]
 pub struct OfdXmlFile {
     #[serde(rename = "@Version")]

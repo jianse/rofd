@@ -7,7 +7,7 @@ use serde_with::TryFromInto;
 use strum::EnumString;
 use thiserror::Error;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct PageXmlFile {
     /// size
     #[serde(rename = "Area")]
@@ -24,7 +24,7 @@ pub struct PageXmlFile {
 }
 
 /// extends `CT_PageBlock`
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Layer {
     #[serde(rename = "@Type")]
     pub r#type: Option<String>,
@@ -39,7 +39,7 @@ pub struct Layer {
     pub objects: Option<Vec<VtGraphicUnit>>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Content {
     #[serde(rename = "Layer")]
     pub layer: Vec<Layer>,
@@ -426,7 +426,7 @@ fn empty_string() -> String {
     "".to_string()
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Template {
     #[serde(rename = "@TemplateID")]
     pub template_id: StRefId,
