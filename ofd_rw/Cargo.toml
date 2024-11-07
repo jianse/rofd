@@ -12,6 +12,7 @@ relative-path = { workspace = true }
 zip = { workspace = true }
 serde = { workspace = true }
 xdom = { path = "../xdom" }
+#cached = "0.53.1"
 
 [dev-dependencies]
 eyre = { workspace = true }

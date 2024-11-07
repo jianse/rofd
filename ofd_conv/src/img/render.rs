@@ -30,6 +30,7 @@ use skia_safe::TextBlob;
 use skia_safe::{Canvas, ImageInfo, Surface};
 use tracing::{debug, error, warn};
 
+use crate::error::MyError;
 use ofd_base::common::Cap;
 use ofd_base::common::CtColor;
 use ofd_base::common::Join;
@@ -44,9 +45,7 @@ use ofd_base::file::res::SRGB;
 use ofd_base::StArray;
 use ofd_base::StBox;
 use ofd_base::StRefId;
-use ofd_rw::{Container, Resources};
-// use base
-use crate::error::MyError;
+use ofd_rw::{Ofd, Resources};
 
 // fn render_template()
 
@@ -77,7 +76,7 @@ impl Render {
     #[allow(dead_code, unused)]
     pub fn render_page(
         &mut self,
-        container: &mut Container,
+        container: &mut Ofd,
         doc_index: usize,
         page_index: usize,
     ) -> Result<()> {
@@ -514,11 +513,7 @@ fn decide_size(
     let size = pa.unwrap();
     CtPageArea { ..*size }
 }
-pub fn render_template(
-    container: &mut Container,
-    doc_index: usize,
-    page_index: usize,
-) -> Result<Image> {
+pub fn render_template(container: &mut Ofd, doc_index: usize, page_index: usize) -> Result<Image> {
     let dpi = 300;
 
     let doc = container.document_by_index(doc_index)?;
@@ -557,11 +552,7 @@ pub fn render_template(
     Ok(snap)
 }
 
-pub fn render_page(
-    container: &mut Container,
-    doc_index: usize,
-    page_index: usize,
-) -> Result<Image> {
+pub fn render_page(container: &mut Ofd, doc_index: usize, page_index: usize) -> Result<Image> {
     let dpi = 300;
 
     let doc = container.document_by_index(doc_index)?;

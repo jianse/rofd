@@ -3,6 +3,9 @@ pub mod error;
 
 pub use container::*;
 
+#[allow(unused)]
+const OFD_NS: &str = "http://www.ofdspec.org/2016";
+
 #[cfg(test)]
 mod tests {
     use std::{fs::File, io::BufReader};
