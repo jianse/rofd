@@ -7,7 +7,7 @@ use std::{
 // use crate::render;
 use cli_table::Table;
 use eyre::{OptionExt, Result};
-use ofd_base::file::{document::DocumentXmlFile, ofd::OfdXmlFile};
+use ofd_base::file::document::DocumentXmlFile;
 use ofd_conv::img::render;
 use ofd_rw::{self, Ofd};
 #[derive(Debug)]
@@ -43,15 +43,16 @@ pub struct DocInfo {
 }
 // pub fn get_name_iter
 pub fn get_info(path: &PathBuf) -> Result<OfdInfo> {
-    let mut container = ofd_rw::from_path(path)?;
-    let xml: OfdXmlFile = container.entry()?.content;
+    let container = ofd_rw::from_path(path)?;
+    let xml = container.entry()?.content;
     let doc_count = xml.doc_body.len();
     let doc_info = xml
         .doc_body
+        .to_owned()
         .iter()
         .enumerate()
         .map(|(idx, ele)| {
-            let doc_id = ele.doc_info.doc_id.clone();
+            let doc_id = ele.doc_info.doc_id.to_owned();
 
             let xml: DocumentXmlFile = container.document_by_index(idx)?.content;
             let page_count = xml.pages.page.len();
@@ -71,20 +72,19 @@ pub fn get_info(path: &PathBuf) -> Result<OfdInfo> {
     Ok(OfdInfo {
         doc_count,
         doc_info,
-        item_names: container
-            .item_names()
-            .map(str::to_owned)
-            .collect::<Vec<String>>(),
+        item_names: container.item_names(),
     })
 }
 
-fn get_doc_count(container: &mut Ofd) -> Result<usize> {
-    let xml: OfdXmlFile = container.entry()?.content;
+fn get_doc_count(container: &Ofd) -> Result<usize> {
+    let item = container.entry()?;
+
+    let xml = item.content;
     let doc_count = xml.doc_body.len();
     Ok(doc_count)
 }
 
-fn get_page_count(container: &mut Ofd, doc_index: usize) -> Result<usize> {
+fn get_page_count(container: &Ofd, doc_index: usize) -> Result<usize> {
     let xml: DocumentXmlFile = container.document_by_index(doc_index)?.content;
     let page_count = xml.pages.page.len();
     Ok(page_count)
@@ -97,16 +97,16 @@ pub fn render_page(
     page_index: usize,
     only_template: bool,
 ) -> Result<()> {
-    let mut res = ofd_rw::from_path(ofd_path)?;
+    let res = ofd_rw::from_path(ofd_path)?;
 
-    let page_count = get_doc_count(&mut res)?;
+    let page_count = get_doc_count(&res)?;
     assert!(
         doc_index < page_count,
         "doc index out of range. could be 0 to {}",
         page_count - 1
     );
 
-    let page_count = get_page_count(&mut res, doc_index)?;
+    let page_count = get_page_count(&res, doc_index)?;
     assert!(
         page_index < page_count,
         "page index out of range. could be 0 to {}",
@@ -124,9 +124,9 @@ pub fn render_page(
     }
 
     let image = if only_template {
-        render::render_template(&mut res, doc_index, page_index)?
+        render::render_template(&res, doc_index, page_index)?
     } else {
-        render::render_page(&mut res, doc_index, page_index)?
+        render::render_page(&res, doc_index, page_index)?
     };
 
     let data = image

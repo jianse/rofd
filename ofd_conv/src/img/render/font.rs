@@ -1,33 +1,32 @@
+use skia_safe::{FontMgr, FontStyle, Typeface};
+use std::path::Path;
 use std::{
     collections::{HashMap, HashSet},
     fs,
     path::PathBuf,
 };
-
-use skia_safe::{FontStyle, Typeface};
 use walkdir::WalkDir;
 
+use crate::error::MyError;
+use eyre::{eyre, Result};
+use ofd_base::{StId, StRefId};
+use ofd_rw::Ofd;
 use tracing::{debug, warn};
 
-pub(super) struct FontMgr {
-    system_font_mgr: skia_safe::FontMgr,
+pub(super) struct LocalDirFontMgr {
+    dir: PathBuf,
+    system_font_mgr: FontMgr,
     font_cache: HashMap<String, FontStyleSet>,
 }
 
-impl FontMgr {
-    /// create a new font manager
-    /// only contains system fonts
-    pub fn new() -> Self {
-        Self {
-            system_font_mgr: skia_safe::FontMgr::new(),
-            font_cache: HashMap::new(),
-        }
-    }
-    pub fn new_with_font_dir(font_dir: &PathBuf) -> Self {
-        let sys_fm = skia_safe::FontMgr::new();
+impl LocalDirFontMgr {
+    pub fn form_path(font_dir: impl AsRef<Path>) -> Self {
+        // let dir = font_dir.as_ref();
+        let font_dir = font_dir.as_ref().to_path_buf();
+        let sys_fm = FontMgr::new();
         let mut font_cache = HashMap::new();
         debug!("init font manager,{}", font_dir.display());
-        for entry in WalkDir::new(font_dir)
+        for entry in WalkDir::new(&font_dir)
             .into_iter()
             .filter_map(|e| e.ok())
             .filter(|e| {
@@ -56,12 +55,8 @@ impl FontMgr {
                         );
                         font_cache
                             .entry(family_name.clone())
-                            .or_insert(FontStyleSet::new());
-                        font_cache
-                            .entry(family_name)
-                            .and_modify(|e: &mut FontStyleSet| {
-                                e.add_font(ff.clone());
-                            });
+                            .or_insert(FontStyleSet::new())
+                            .add_font(ff.clone());
                     }
                 } else {
                     warn!("warn! load font error. path {}", path.display());
@@ -72,6 +67,7 @@ impl FontMgr {
         }
 
         Self {
+            dir: font_dir,
             system_font_mgr: sys_fm,
             font_cache,
         }
@@ -81,7 +77,9 @@ impl FontMgr {
         family_name: impl AsRef<str>,
         style: FontStyle,
     ) -> Option<Typeface> {
-        todo!()
+        self.font_cache
+            .get(family_name.as_ref())
+            .map(|font_style_set| font_style_set.match_style(style))?
     }
 }
 
@@ -120,20 +118,150 @@ impl FontStyleSet {
         self.fonts.get(index).cloned()
     }
 
-    pub fn match_style(&mut self, pattern: FontStyle) -> Option<Typeface> {
+    pub fn match_style(&self, pattern: FontStyle) -> Option<Typeface> {
         self.fonts
             .iter()
             .find(|i| i.font_style().eq(&pattern))
             .cloned()
     }
 }
+
+/// struct handle ofd embedded fonts
+struct EmbeddedFontMgr {
+    ofd: Ofd,
+    system_font_mgr: FontMgr,
+    font_cache: HashMap<String, FontStyleSet>,
+}
+
+impl EmbeddedFontMgr {
+    pub fn from_ofd(ofd: Ofd) -> Self {
+        let system_font_mgr = FontMgr::new();
+        let font_cache = HashMap::new();
+
+        // ofd.res
+
+        Self {
+            ofd,
+            system_font_mgr,
+            font_cache,
+        }
+    }
+
+    /// load embed font from document.xml
+    /// including public_res and document_res
+    pub(super) fn load_doc(&mut self, doc_index: usize) {
+        todo!()
+    }
+
+    pub(super) fn load_page(&mut self, doc_index: usize, page_index: usize) {
+        todo!()
+    }
+
+    pub fn match_resource_id(&self, resource_id: StId) -> Option<Typeface> {
+        todo!()
+    }
+
+    // pub fn
+}
+
+pub struct AggFontMgr {
+    ofd: Ofd,
+    embedded_font_mgr: Option<EmbeddedFontMgr>,
+    local_dir_font_mgr: Option<LocalDirFontMgr>,
+    system_font_mgr: FontMgr,
+    fallback_font_name: String,
+    fallback: Typeface,
+}
+
+impl AggFontMgr {
+    pub(crate) fn match_family_style(&self, p0: &String, p1: FontStyle) -> Option<Typeface> {
+        self.local_dir_font_mgr
+            .as_ref()
+            .and_then(|lfm| lfm.match_family_style(p0, p1))
+            .or_else(|| self.system_font_mgr.match_family_style(p0, p1))
+    }
+}
+
+impl AggFontMgr {
+    pub(crate) fn fallback_typeface(&self) -> Typeface {
+        self.fallback.clone()
+    }
+
+    pub(super) fn load_embed_font(&self, path: impl AsRef<str> + Into<String>) -> Result<Typeface> {
+        let bytes = self.ofd.bytes(path)?;
+        let tf = self.system_font_mgr.new_from_data(&bytes, 0);
+        tf.ok_or_else(|| eyre!("failed to load embedded font"))
+    }
+    pub(crate) fn typeface_by_resource_id(&self, resource_id: StRefId) -> Typeface {
+        // self.ofd.resources_for_page()
+        todo!()
+    }
+    pub(super) fn load_page(&self, doc_index: usize, page_index: usize) {
+        // let resources = self.ofd.resources_for_page(doc_index, page_index)?;
+        // resources.iter().find()
+        // resources.
+        // todo!()
+    }
+}
+
+impl AggFontMgr {
+    pub(super) fn builder(ofd: Ofd, fallback_font_name: impl AsRef<str>) -> AggFontMgrBuilder {
+        AggFontMgrBuilder::new(ofd, fallback_font_name)
+    }
+}
+
+pub(super) struct AggFontMgrBuilder {
+    ofd: Ofd,
+    font_dir: Option<PathBuf>,
+    fallback_font_name: String,
+}
+
+impl AggFontMgrBuilder {
+    pub fn new(ofd: Ofd, fallback_font_name: impl AsRef<str>) -> Self {
+        Self {
+            ofd,
+            fallback_font_name: fallback_font_name.as_ref().to_owned(),
+            font_dir: None,
+        }
+    }
+
+    pub fn font_dir(mut self, font_dir: impl AsRef<Path>) -> Self {
+        let font_dir = font_dir.as_ref().to_path_buf();
+        self.font_dir = Some(font_dir);
+        self
+    }
+
+    pub fn build(mut self) -> Result<AggFontMgr> {
+        let system_fm = FontMgr::new();
+        let local_dir_fm = self.font_dir.take().map(LocalDirFontMgr::form_path);
+
+        // fallback font
+        let tf = if let Some(lfm) = &local_dir_fm {
+            lfm.match_family_style(&self.fallback_font_name, FontStyle::normal())
+        } else {
+            None
+        }
+        .or_else(|| system_fm.match_family_style(&self.fallback_font_name, FontStyle::normal()))
+        .ok_or(MyError::NoFallbackFontSet)?;
+
+        Ok(AggFontMgr {
+            ofd: self.ofd.clone(),
+            embedded_font_mgr: Some(EmbeddedFontMgr::from_ofd(self.ofd)),
+            local_dir_font_mgr: local_dir_fm,
+            system_font_mgr: system_fm,
+            fallback_font_name: self.fallback_font_name,
+            fallback: tf,
+        })
+    }
+}
+
+impl AggFontMgr {}
+
 #[cfg(test)]
 mod tests {
-    use std::env;
-
     use skia_safe::Typeface;
 
-    use super::FontMgr;
+    use super::LocalDirFontMgr;
     use tracing::warn;
 
     fn init_logger() {
@@ -177,10 +305,7 @@ mod tests {
     #[test]
     fn test_new_with_font_dir() {
         init_logger();
-        let mut cur_dir = env::current_dir().unwrap();
-        cur_dir.push("fonts");
-        println!("--{}--", cur_dir.display());
-        let fm = FontMgr::new_with_font_dir(&cur_dir);
+        let fm = LocalDirFontMgr::form_path("../fonts");
         let font_family_count = fm.font_cache.len();
         dbg!(font_family_count);
     }

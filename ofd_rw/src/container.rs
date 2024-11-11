@@ -13,9 +13,12 @@ use ofd_base::{
 use relative_path::RelativePathBuf;
 use serde::de::DeserializeOwned;
 use std::any::{Any, TypeId};
+use std::cell::RefCell;
 use std::collections::HashMap;
 use std::io::{BufRead, Read};
 use std::ops::Deref;
+use std::path::Path;
+use std::rc::Rc;
 use std::{fs::File, io::BufReader, path::PathBuf};
 use zip::{read::ZipFile, ZipArchive};
 
@@ -25,12 +28,67 @@ struct CacheKey {
     tid: TypeId,
 }
 
-pub struct Ofd {
+// pub type  Ofd =  Rc<RefCell<RawOfd>>;
+
+struct RawOfd {
     zip_archive: ZipArchive<BufReader<File>>,
     cache: HashMap<CacheKey, Box<dyn Any>>,
 }
 
+#[derive(Clone)]
+pub struct Ofd(Rc<RefCell<RawOfd>>);
+
 impl Ofd {
+    fn from_raw(raw_ofd: RawOfd) -> Self {
+        Self(Rc::new(RefCell::new(raw_ofd)))
+    }
+
+    pub fn entry(&self) -> Result<OfdItem<OfdXmlFile>> {
+        self.0.borrow_mut().entry()
+    }
+
+    pub fn document_by_index(&self, doc_index: usize) -> Result<OfdItem<DocumentXmlFile>> {
+        self.0.borrow_mut().document_by_index(doc_index)
+    }
+
+    pub fn page_by_index(
+        &self,
+        doc_index: usize,
+        page_index: usize,
+    ) -> Result<OfdItem<PageXmlFile>> {
+        self.0.borrow_mut().page_by_index(doc_index, page_index)
+    }
+
+    pub fn templates_for_page(
+        &self,
+        doc_index: usize,
+        page_index: usize,
+    ) -> Result<Vec<OfdItem<PageXmlFile>>> {
+        self.0
+            .borrow_mut()
+            .templates_for_page(doc_index, page_index)
+    }
+
+    pub fn resources_for_page(&self, doc_index: usize, page_index: usize) -> Result<Resources> {
+        self.0
+            .borrow_mut()
+            .resources_for_page(doc_index, page_index)
+    }
+
+    pub fn item_names(&self) -> Vec<String> {
+        self.0
+            .borrow_mut()
+            .item_names()
+            .map(str::to_owned)
+            .collect::<Vec<_>>()
+    }
+
+    pub fn bytes(&self, path: impl AsRef<str> + Into<String>) -> Result<Vec<u8>> {
+        self.0.borrow_mut().bytes(path)
+    }
+}
+
+impl RawOfd {
     const OFD_ENTRY: &'static str = "OFD.xml";
 
     fn read_item<T, R>(reader: R) -> Result<T>
@@ -86,7 +144,7 @@ impl Ofd {
         } else {
             let inner = self.open(&p)?;
             let reader = BufReader::new(inner);
-            let xml: R = Ofd::read_item(reader)?;
+            let xml: R = RawOfd::read_item(reader)?;
             self.set_cache(p, xml.clone());
             Ok(xml)
         }
@@ -105,16 +163,16 @@ impl Ofd {
 
     /// get entry file of ofd
     pub fn entry(&mut self) -> Result<OfdItem<OfdXmlFile>> {
-        let xml = self.cache_or(Ofd::OFD_ENTRY)?;
+        let xml = self.cache_or(RawOfd::OFD_ENTRY)?;
 
         Ok(OfdItem {
-            path: Ofd::OFD_ENTRY.into(),
+            path: RawOfd::OFD_ENTRY.into(),
             content: xml,
         })
     }
 
     /// get a reader
-    pub fn reader<P>(&mut self, path: P) -> Result<BufReader<ZipFile>>
+    pub fn _reader<P>(&mut self, path: P) -> Result<BufReader<ZipFile>>
     where
         P: AsRef<str> + Into<String>,
     {
@@ -168,7 +226,7 @@ impl Ofd {
         let tpl_path = doc.resolve(tpl_path);
         let inner = self.open(tpl_path.to_string())?;
         let reader = BufReader::new(inner);
-        let xml: PageXmlFile = Ofd::read_item(reader)?;
+        let xml: PageXmlFile = RawOfd::read_item(reader)?;
         // let cont = &*self;
         Ok(OfdItem {
             // container: self,
@@ -277,7 +335,7 @@ impl Ofd {
                         let file = self.open(rp.to_string())?;
                         let reader = BufReader::new(file);
 
-                        let xml: ResourceXmlFile = Ofd::read_item(reader)?;
+                        let xml: ResourceXmlFile = RawOfd::read_item(reader)?;
 
                         Ok(OfdItem {
                             path: rp,
@@ -296,8 +354,17 @@ impl Ofd {
     pub fn item_names(&self) -> impl Iterator<Item = &str> {
         self.zip_archive.file_names()
     }
+
+    /// load resources for doc
+    pub fn _resources_for_doc(&mut self) -> Result<OfdItem<ResourceXmlFile>> {
+        let entry = self.entry()?;
+        let _xml = entry.content;
+        // xml.doc_body
+        todo!()
+    }
 }
 
+#[derive(Debug)]
 pub struct OfdItem<T> {
     // container: &'a mut Container,
     path: RelativePathBuf,
@@ -318,7 +385,7 @@ pub struct Resources {
     page_resource: Option<Vec<OfdItem<ResourceXmlFile>>>,
 }
 
-struct ResourceIter<'a> {
+pub struct ResourceIter<'a> {
     res_flat: Vec<&'a OfdItem<ResourceXmlFile>>,
     // res: &'a Resources,
     idx: usize,
@@ -356,7 +423,7 @@ impl<'a> Iterator for ResourceIter<'a> {
 }
 
 impl Resources {
-    fn iter(&self) -> ResourceIter {
+    pub fn iter(&self) -> ResourceIter {
         ResourceIter::new(self)
     }
     pub fn get_color_space_by_id(&self, color_space_id: StRefId) -> Option<&ColorSpace> {
@@ -386,18 +453,18 @@ impl Resources {
             .find(|dp| dp.id == draw_param_id);
         dp.cloned()
     }
-    pub fn get_font_by_id(&self, font_id: StRefId) -> Option<Font> {
+    pub fn get_font_by_id(&self, font_id: StRefId) -> Option<(&OfdItem<ResourceXmlFile>, &Font)> {
         let font = self
             .iter()
-            .filter_map(|f| f.content.resources.as_ref())
-            .flat_map(|v| v.iter())
-            .filter_map(|r| match r {
-                Resource::Fonts(fts) => Some(fts),
+            .filter_map(|f| f.content.resources.as_ref().map(|r| (f, r)))
+            .flat_map(|(f, v)| v.iter().map(move |v| (f, v)))
+            .filter_map(|(f, r)| match r {
+                Resource::Fonts(fts) => Some((f, fts)),
                 _ => None,
             })
-            .flat_map(|f| f.fonts.iter())
-            .find(|f| f.id == font_id);
-        font.cloned()
+            .flat_map(|(fi, f)| f.fonts.iter().map(move |f| (fi, f)))
+            .find(|(_, f)| f.id == font_id);
+        font
     }
     pub fn _get_image_by_id(&self, _image_id: StRefId) -> Option<String> {
         todo!()
@@ -405,7 +472,7 @@ impl Resources {
 }
 
 impl<T> OfdItem<T> {
-    fn resolve(&self, other: &PathBuf) -> RelativePathBuf {
+    pub fn resolve(&self, other: &PathBuf) -> RelativePathBuf {
         let this = self.path.clone();
         let that = RelativePathBuf::from_path(other).unwrap();
         let res = if that.to_string().starts_with('/') {
@@ -422,7 +489,7 @@ impl<T> OfdItem<T> {
     }
 }
 
-pub fn from_path(path: &PathBuf) -> Result<Ofd> {
+pub fn from_path(path: impl AsRef<Path>) -> Result<Ofd> {
     let f = File::open(path)?;
     let reader = BufReader::new(f);
     let zip = ZipArchive::new(reader)?;
@@ -430,10 +497,10 @@ pub fn from_path(path: &PathBuf) -> Result<Ofd> {
     let _ = zip
         .index_for_name("OFD.xml")
         .ok_or(Error::OfdEntryNotFound)?;
-    Ok(Ofd {
+    Ok(Ofd::from_raw(RawOfd {
         zip_archive: zip,
         cache: HashMap::new(),
-    })
+    }))
 }
 
 #[cfg(test)]

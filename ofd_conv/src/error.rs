@@ -10,4 +10,7 @@ pub enum MyError {
 
     #[error("invalid")]
     Invalid,
+
+    #[error("no fallback font set")]
+    NoFallbackFontSet,
 }
