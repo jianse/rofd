@@ -5,6 +5,7 @@ use clap::{command, Parser, Subcommand};
 use cli_table::{print_stdout, WithTitle};
 use eyre::Result;
 use std::path::PathBuf;
+use tracing::info;
 
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
@@ -29,17 +30,22 @@ enum Commands {
         /// file path
         // #[arg()]
         ofd_file: PathBuf,
+
         /// out put path
         #[arg(short, long, default_value_os_t = PathBuf::from("output"))]
         out_path: PathBuf,
 
+        /// output path template
+        #[arg(short,long,default_value_t = String::from("{out_path}/{ofd_file_name}/Doc{doc_index}/Page{page_index}.{ext}"))]
+        path_template: String,
+
         /// doc index
-        #[arg(default_value_t = 0)]
-        doc_index: usize,
+        #[arg()]
+        doc_index: Option<usize>,
 
         /// page index
-        #[arg(default_value_t = 0)]
-        page_index: usize,
+        #[arg()]
+        page_index: Option<usize>,
 
         /// only render template page
         #[arg(short, long, default_value_t = false)]
@@ -85,8 +91,25 @@ fn main() -> Result<()> {
             doc_index,
             page_index,
             template,
+            path_template,
         } => {
-            ofd_utils::render_page(&ofd_file, &out_path, doc_index, page_index, template)?;
+            info!("{}", path_template);
+            if let Some(doc) = doc_index {
+                if let Some(page) = page_index {
+                    ofd_utils::render_page(
+                        &ofd_file,
+                        &out_path,
+                        doc,
+                        page,
+                        template,
+                        &path_template,
+                    )?;
+                } else {
+                    ofd_utils::render_doc(&ofd_file, &out_path, doc, &path_template)?;
+                }
+            } else {
+                ofd_utils::render_ofd(&ofd_file, &out_path, &path_template)?;
+            }
         }
     }
 

@@ -264,7 +264,7 @@ mod tests {
     use super::LocalDirFontMgr;
     use tracing::warn;
 
-    fn init_logger() {
+    fn init_test_logger() {
         use tracing_subscriber::{filter, fmt, layer::SubscriberExt, util::SubscriberInitExt};
         let fmt = fmt::layer()
             .with_ansi(true)
@@ -279,7 +279,7 @@ mod tests {
 
     #[test]
     fn test_typeface_eq() {
-        init_logger();
+        init_test_logger();
 
         let font_mgr = skia_safe::FontMgr::new();
         let sys_kai = font_mgr.match_family_style("楷体", skia_safe::FontStyle::default());
@@ -304,7 +304,7 @@ mod tests {
 
     #[test]
     fn test_new_with_font_dir() {
-        init_logger();
+        init_test_logger();
         let fm = LocalDirFontMgr::form_path("../fonts");
         let font_family_count = fm.font_cache.len();
         dbg!(font_family_count);

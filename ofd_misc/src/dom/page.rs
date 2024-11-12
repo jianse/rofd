@@ -109,19 +109,17 @@ impl TryFromDom<&Element> for VtGraphicUnit {
                         .filter(|e| e.name() == "TextCode" || e.name() == "CGTransform")
                         .collect::<Vec<_>>();
                     let mut res = vec![];
-                    let mut temp_cg = None;
+                    let mut temp_cg: Option<Vec<CGTransform>> = None;
                     for ele in elements {
                         let name = ele.name();
                         match name {
                             "CGTransform" => {
-                                if temp_cg.is_some() {
-                                    return Err(TryFromDomError::ElementNameNotExpected(
-                                        "TextCode",
-                                        "CGTransform".into(),
-                                    ));
+                                let cgt = CGTransform::try_from_dom(ele)?;
+
+                                if let Some(v) = temp_cg.as_mut() {
+                                    v.push(cgt);
                                 } else {
-                                    let cgt = CGTransform::try_from_dom(ele)?;
-                                    temp_cg = Some(cgt);
+                                    temp_cg = Some(vec![cgt]);
                                 }
                             }
                             "TextCode" => {

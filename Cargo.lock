@@ -714,6 +714,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "interpolator"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "71dd52191aae121e8611f1e8dc3e324dd0dd1dee1e6dd91d10ee07a3cfb4d9d8"
+
+[[package]]
 name = "is_terminal_polyfill"
 version = "1.70.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -904,10 +910,12 @@ dependencies = [
  "clap",
  "cli-table",
  "eyre",
+ "interpolator",
  "ofd_base",
  "ofd_conv",
  "ofd_rw",
  "thiserror",
+ "tracing",
  "tracing-subscriber",
 ]
 

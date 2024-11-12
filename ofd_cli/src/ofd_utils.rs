@@ -1,15 +1,17 @@
+use cli_table::Table;
+use eyre::{OptionExt, Result};
+use interpolator::{format, Formattable};
+use ofd_base::file::document::DocumentXmlFile;
+use ofd_conv::img::render;
+use ofd_rw::{self, Ofd};
+use std::collections::HashMap;
+use std::path::Path;
 use std::{
     fs::{create_dir_all, File},
     io::Write,
     path::PathBuf,
 };
-
-// use crate::render;
-use cli_table::Table;
-use eyre::{OptionExt, Result};
-use ofd_base::file::document::DocumentXmlFile;
-use ofd_conv::img::render;
-use ofd_rw::{self, Ofd};
+use tracing::info;
 #[derive(Debug)]
 pub struct OfdInfo {
     /// how many doc this ofd contains
@@ -96,14 +98,15 @@ pub fn render_page(
     doc_index: usize,
     page_index: usize,
     only_template: bool,
+    path_template: &str,
 ) -> Result<()> {
     let res = ofd_rw::from_path(ofd_path)?;
 
-    let page_count = get_doc_count(&res)?;
+    let doc_count = get_doc_count(&res)?;
     assert!(
-        doc_index < page_count,
+        doc_index < doc_count,
         "doc index out of range. could be 0 to {}",
-        page_count - 1
+        doc_count - 1
     );
 
     let page_count = get_page_count(&res, doc_index)?;
@@ -132,10 +135,111 @@ pub fn render_page(
     let data = image
         .encode(None, ofd_conv::img::EncodedImageFormat::PNG, 100)
         .ok_or_eyre("message")?;
-    let mut op = PathBuf::from(output_path);
-    op.push(format!("page_{doc_index}_{page_index}.png"));
-    let mut out = File::create(op)?;
-    let _om = out.write(&data)?;
+    write_image(
+        &data,
+        path_template,
+        ofd_path,
+        output_path,
+        doc_index,
+        page_index,
+        "png",
+    )?;
     Ok(())
 }
 // fn create_dir()
+
+// render all pages for doc_index
+pub(crate) fn render_doc(
+    ofd_path: &PathBuf,
+    out_dir_path: &Path,
+    doc_index: usize,
+    path_template: &str,
+) -> Result<()> {
+    let res = ofd_rw::from_path(ofd_path)?;
+
+    let doc_count = get_doc_count(&res)?;
+
+    assert!(
+        doc_index < doc_count,
+        "doc index out of range. could be 0 to {}",
+        doc_count - 1
+    );
+    let page_count = get_page_count(&res, doc_index)?;
+
+    let mut render = render::Render::new(res, "楷体")?;
+    for pid in 0..page_count {
+        info!("rendering doc {} page {}", doc_index, pid);
+        let mut i = render.render_page(doc_index, pid)?;
+        let img = i.image_snapshot();
+        let data = img
+            .encode(None, ofd_conv::img::EncodedImageFormat::PNG, 100)
+            .ok_or_eyre("can not encode image to png!")?;
+
+        write_image(
+            &data,
+            path_template,
+            ofd_path,
+            out_dir_path,
+            doc_index,
+            pid,
+            "png",
+        )?;
+    }
+    Ok(())
+}
+
+pub(crate) fn render_ofd(p0: &PathBuf, p1: &Path, path_template: &str) -> Result<()> {
+    let res = ofd_rw::from_path(p0)?;
+
+    let doc_count = get_doc_count(&res)?;
+    let mut render = render::Render::new(res.clone(), "楷体")?;
+
+    for doc_index in 0..doc_count {
+        let page_count = get_page_count(&res, doc_index)?;
+        for page_index in 0..page_count {
+            let mut sur = render.render_page(doc_index, page_index)?;
+            let img = sur.image_snapshot();
+            let data = img
+                .encode(None, ofd_conv::img::EncodedImageFormat::PNG, 100)
+                .ok_or_eyre("can not encode image to png!")?;
+
+            write_image(&data, path_template, p0, p1, doc_index, page_index, "png")?;
+        }
+    }
+
+    Ok(())
+}
+
+fn write_image(
+    buf: &[u8],
+    path_template: &str,
+    in_path: &Path,
+    out_path: &Path,
+    doc_index: usize,
+    page_index: usize,
+    ext: &str,
+) -> Result<()> {
+    let op = {
+        let ofd_file_name = in_path.file_name().unwrap().to_str().unwrap();
+        let ext = ext.to_lowercase();
+        format(
+            path_template,
+            &[
+                ("out_path", Formattable::display(&out_path.display())),
+                ("ofd_file_name", Formattable::display(&ofd_file_name)),
+                ("doc_index", Formattable::display(&doc_index)),
+                ("page_index", Formattable::display(&page_index)),
+                ("ext", Formattable::display(&ext)),
+            ]
+            .into_iter()
+            .collect::<HashMap<_, _>>(),
+        )?
+    };
+    let p = PathBuf::from(op);
+    if let Some(parent) = p.parent() {
+        create_dir_all(parent)?;
+    }
+    let mut out = File::create(p)?;
+    let _om = out.write(buf)?;
+    Ok(())
+}

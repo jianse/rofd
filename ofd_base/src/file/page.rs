@@ -267,19 +267,19 @@ impl TryInto<Vec<TextVal>> for UnifiedTextValVec {
 
     fn try_into(self) -> Result<Vec<TextVal>, Self::Error> {
         let mut iter = self.0.into_iter();
-        let mut cur_c = None;
+        let mut cgt_vec: Option<Vec<CGTransform>> = None;
         let mut res = vec![];
         for v in iter.by_ref() {
             match v {
                 UnifiedText::CGTransform(c) => {
-                    if cur_c.is_some() {
-                        return Err(TryIntoTextValError::CgtNotValid);
+                    if let Some(v) = cgt_vec.as_mut() {
+                        v.push(c)
                     } else {
-                        cur_c = Some(c)
+                        cgt_vec = Some(vec![c])
                     }
                 }
                 UnifiedText::TextCode(t) => res.push(TextVal {
-                    cg_transform: cur_c.take(),
+                    cg_transform: cgt_vec.take(),
                     text_code: t,
                 }),
             }
@@ -293,10 +293,12 @@ impl From<Vec<TextVal>> for UnifiedTextValVec {
             .into_iter()
             .map(|v| {
                 if let Some(c) = v.cg_transform {
-                    vec![
-                        UnifiedText::CGTransform(c),
-                        UnifiedText::TextCode(v.text_code),
-                    ]
+                    let mut res = c
+                        .into_iter()
+                        .map(UnifiedText::CGTransform)
+                        .collect::<Vec<_>>();
+                    res.push(UnifiedText::TextCode(v.text_code));
+                    res
                 } else {
                     vec![UnifiedText::TextCode(v.text_code)]
                 }
@@ -310,7 +312,7 @@ impl From<Vec<TextVal>> for UnifiedTextValVec {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct TextVal {
     #[serde(rename = "CGTransform")]
-    pub cg_transform: Option<CGTransform>,
+    pub cg_transform: Option<Vec<CGTransform>>,
 
     #[serde(rename = "TextCode")]
     pub text_code: TextCode,
@@ -338,7 +340,7 @@ pub struct CGTransform {
 #[derive(Debug, Serialize, Deserialize, EnumString, Clone)]
 pub enum FillRule {
     NoneZero,
-    // #[serde]
+    #[serde(rename = "Even-Odd")]
     EvenOdd,
 }
 
@@ -477,7 +479,8 @@ mod tests {
                             // dbg!(&to.text_vals.);
                             for tv in to.text_vals {
                                 if let Some(cgt) = tv.cg_transform {
-                                    dbg!(cgt.glyphs);
+                                    assert!(!cgt.is_empty());
+                                    dbg!(&cgt[0].glyphs);
                                 }
                             }
                         }

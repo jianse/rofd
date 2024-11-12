@@ -39,8 +39,7 @@ pub(super) fn draw_text_object(ctx: &mut RenderCtx, text_object: &TextObject) ->
         if let Some(font_file) = font.font_file.as_ref() {
             debug!("embedded font file: {}", font_file.display());
             let p = file.resolve(&PathBuf::from(&file.content.base_loc).join(font_file));
-            warn!("embedded font file: {}", p);
-            // todo!()
+            debug!("embedded font file: {}", p);
             ctx.font_mgr.load_embed_font(p)?
         } else {
             ctx.font_mgr
@@ -55,11 +54,11 @@ pub(super) fn draw_text_object(ctx: &mut RenderCtx, text_object: &TextObject) ->
         // fallback font
         ctx.font_mgr.fallback_typeface()
     };
-    debug!("font: {}", typeface.family_name());
+    debug!("using font: {}", typeface.family_name());
 
     let font = Font::from_typeface(typeface, Some(text_object.size));
     for text_val in &text_object.text_vals {
-        let text_code = &text_val.text_code;
+        let text_code = text_val.text_code.clone();
         if let Some(cgf) = &text_val.cg_transform {
             warn!("text transform not implemented. {:?}", cgf);
         }
@@ -71,7 +70,7 @@ pub(super) fn draw_text_object(ctx: &mut RenderCtx, text_object: &TextObject) ->
             text_code.x.unwrap_or(last_pos.0),
             text_code.y.unwrap_or(last_pos.1),
         );
-        let blob = from_text_code(text_code, &font)?;
+        let blob = from_text_code(&text_code, &font)?;
 
         if text_object.stroke.unwrap_or(false) {
             let stroke_color = draw_param_stack.get_stroke_color(
@@ -115,8 +114,12 @@ fn from_text_code(
         origin,
         text_code.delta_x.as_ref(),
         text_code.delta_y.as_ref(),
+        // TODO: this should be glyph count not char count
         text.chars().count(),
     )?;
+    // TextBlobBuilder::new().alloc_run_text(font)
+    //     font.
+    // TextBlob::get_intercepts();
     TextBlob::from_pos_text(text, &pos, font).ok_or_eyre("message")
 }
 
@@ -189,4 +192,94 @@ fn flat_g(d: &StArray<String>) -> eyre::Result<Vec<f32>> {
         }
     }
     Ok(res)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use ofd_base::file::page::{CGTransform, TextCode, TextVal};
+    use ofd_base::StBox;
+    use skia_safe::{FontMgr, TextBlobBuilder};
+
+    #[test]
+    fn test_text_blob_from_text_val() {
+        // init_test_logger()
+
+        // value
+        let text = TextObject {
+            id: 794,
+            ctm: Some(vec![0.3528, 0.0, 0.0, 0.3528, 0.0, 0.0].into()),
+            draw_param: None,
+            line_width: None,
+            cap: None,
+            join: None,
+            miter_limit: None,
+            dash_offset: None,
+            dash_pattern: None,
+            alpha: None,
+            boundary: StBox {
+                x: 40.2237,
+                y: 248.3684,
+                w: 15.2292,
+                h: 3.4608,
+            },
+            name: None,
+            font: 115,
+            size: 10.56,
+
+            stroke: None,
+            fill: None,
+            h_scale: None,
+            read_direction: None,
+            char_direction: None,
+            weight: None,
+            italic: None,
+            fill_color: None,
+            stroke_color: None,
+            text_vals: vec![TextVal {
+                cg_transform: Some(vec![CGTransform {
+                    code_position: 0,
+                    code_count: Some(4),
+                    glyph_count: Some(4),
+                    glyphs: StArray(vec![16, 224, 210, 225]),
+                }]),
+                text_code: TextCode {
+                    x: Some(0.0),
+                    y: Some(8.7437),
+                    delta_x: Some(
+                        ["g", "2", "10.56", "10.4438"]
+                            .iter()
+                            .map(|s| s.to_string())
+                            .collect::<Vec<String>>()
+                            .into(),
+                    ),
+                    delta_y: None,
+                    val: "".to_string(),
+                },
+            }],
+            visible: None,
+            actions: None,
+        };
+        let tv = text.text_vals[0].clone();
+
+        // font
+        let fm = FontMgr::new();
+        let typeface = fm.match_family_style("楷体", FontStyle::normal());
+        if typeface.is_none() {
+            println!("no match");
+            return;
+        }
+        let typeface = typeface.unwrap();
+        let font = Font::from_typeface(typeface, None);
+
+        // textblob
+        let mut tb = TextBlobBuilder::new();
+        let (gid, point) = tb.alloc_run_pos(&font, 1, None);
+        gid[0] = 5;
+        point[0].x = 0.0;
+        point[0].y = 0.0;
+
+        let res = tb.make();
+        dbg!(&res);
+    }
 }
