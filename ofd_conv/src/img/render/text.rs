@@ -33,8 +33,8 @@ pub(super) fn draw_text_object(ctx: &mut RenderCtx, text_object: &TextObject) ->
     assert!(!text_vals.is_empty(), "text_vals must not be empty!");
     let tc0 = &text_vals[0].text_code;
     let mut last_pos = (
-        tc0.x.expect("x in first textcode must be set"),
-        tc0.y.expect("y in first textcode must be set"),
+        tc0.x.expect("x in first TextCode must be set"),
+        tc0.y.expect("y in first TextCode must be set"),
     );
 
     let font = get_font(ctx, text_object, resources)?;
@@ -73,14 +73,7 @@ pub(super) fn draw_text_object(ctx: &mut RenderCtx, text_object: &TextObject) ->
             canvas.draw_text_blob(&blob, (0.0, 0.0), &paint);
         }
         last_pos = origin;
-        // let mut paint = Paint::default();
-        // paint.set_stroke(true);
-        // paint.set_blend_mode(BlendMode::SrcOver);
-        // // paint.se
-        // canvas.draw_rect(&blob.bounds(),&paint);
     }
-
-    // canvas.draw_text_align(text, p, font, paint, align);
 
     canvas.restore();
     Ok(())
@@ -126,25 +119,28 @@ fn from_text_val(
     font: &Font,
 ) -> eyre::Result<TextBlob> {
     let tv = text_val.clone();
+    let tc = tv.text_code;
+    let text = tc.val;
+    let d_points = Deltas::from_dx_dy(origin, tc.delta_x.as_ref(), tc.delta_y.as_ref())?;
 
-    let cgt_map = if let Some(cgts) = tv.cg_transform {
-        cgts.into_iter()
+    let cgt_map = if let Some(cgt_vec) = tv.cg_transform {
+        cgt_vec
+            .into_iter()
             .map(|c| (c.code_position as usize, c))
             .collect::<HashMap<_, _>>()
     } else {
-        HashMap::new()
+        // without cgt just return
+        // TODO: use more proper error
+        // or maybe this should not happened
+        return TextBlob::from_pos_text(text, &d_points.points, font).ok_or_eyre("msg");
     };
-
-    let tc = tv.text_code;
-
-    let text = tc.val;
 
     // textblob
     let mut tb = TextBlobBuilder::new();
 
-    let d_points = Deltas::from_dx_dy(origin, tc.delta_x.as_ref(), tc.delta_y.as_ref())?;
     let mut point_i: usize = 0;
     let mut skip = 0;
+    // TODO: replace this with a more efficient way. doing parse part by part not one by one
     text.chars().enumerate().for_each(|(char_pos, c)| {
         if skip > 0 {
             skip -= 1;
@@ -373,7 +369,7 @@ mod tests {
     }
 
     #[test]
-    fn test_char_to_unichar() {
+    fn test_char_to_i32() {
         let s = "你好！";
         s.chars().for_each(|c| println!("{}", c as i32))
     }
