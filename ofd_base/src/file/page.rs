@@ -334,7 +334,7 @@ pub struct CGTransform {
 
     #[serde_as(as = "serde_with::DisplayFromStr")]
     #[serde(rename = "Glyphs")]
-    pub glyphs: StArray<u32>,
+    pub glyphs: StArray<u16>,
 }
 
 #[derive(Debug, Serialize, Deserialize, EnumString, Clone)]

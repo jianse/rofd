@@ -6,6 +6,7 @@ use ofd_conv::img::render;
 use ofd_rw::{self, Ofd};
 use std::collections::HashMap;
 use std::path::Path;
+use std::time::Instant;
 use std::{
     fs::{create_dir_all, File},
     io::Write,
@@ -197,6 +198,7 @@ pub(crate) fn render_ofd(p0: &PathBuf, p1: &Path, path_template: &str) -> Result
     for doc_index in 0..doc_count {
         let page_count = get_page_count(&res, doc_index)?;
         for page_index in 0..page_count {
+            let bt = Instant::now();
             let mut sur = render.render_page(doc_index, page_index)?;
             let img = sur.image_snapshot();
             let data = img
@@ -204,6 +206,13 @@ pub(crate) fn render_ofd(p0: &PathBuf, p1: &Path, path_template: &str) -> Result
                 .ok_or_eyre("can not encode image to png!")?;
 
             write_image(&data, path_template, p0, p1, doc_index, page_index, "png")?;
+            let t = bt.elapsed();
+            info!(
+                "rendering doc {} page {} took: {} ms",
+                doc_index,
+                page_index,
+                t.as_millis()
+            );
         }
     }
 

@@ -2,7 +2,11 @@ use crate::img::render::{apply_boundary, apply_ctm, next_val, RenderCtx};
 use eyre::OptionExt;
 use ofd_base::file::page::TextObject;
 use ofd_base::StArray;
-use skia_safe::{Color, Font, FontStyle, Paint, Point, TextBlob};
+use ofd_rw::Resources;
+use skia_safe::{Color, Font, FontStyle, Paint, Point, TextBlob, TextBlobBuilder};
+use std::cmp::max;
+use std::collections::HashMap;
+use std::ops::Index;
 use std::path::PathBuf;
 use std::str::FromStr;
 use tracing::{debug, warn};
@@ -19,11 +23,8 @@ pub(super) fn draw_text_object(ctx: &mut RenderCtx, text_object: &TextObject) ->
     let boundary = text_object.boundary;
     apply_boundary(canvas, boundary);
 
-    // debug!("??: {:?}", text_object.f);
     debug!("boundary: {:?}", text_object.boundary);
     debug!("bounds: {:?}", canvas.local_clip_bounds());
-    // debug
-    // canvas.draw_color(Color::from_argb(0xcc, 0, 0xcc, 0), None);
 
     let ctm = text_object.ctm.as_ref();
     apply_ctm(canvas, ctm);
@@ -31,7 +32,65 @@ pub(super) fn draw_text_object(ctx: &mut RenderCtx, text_object: &TextObject) ->
     let text_vals = &text_object.text_vals;
     assert!(!text_vals.is_empty(), "text_vals must not be empty!");
     let tc0 = &text_vals[0].text_code;
-    let mut last_pos = (tc0.x.unwrap(), tc0.y.unwrap());
+    let mut last_pos = (
+        tc0.x.expect("x in first textcode must be set"),
+        tc0.y.expect("y in first textcode must be set"),
+    );
+
+    let font = get_font(ctx, text_object, resources)?;
+    for text_val in &text_object.text_vals {
+        let text_code = &text_val.text_code;
+        if text_code.val.is_empty() {
+            warn!("skipped an empty text code!");
+            continue;
+        }
+
+        let origin = (
+            text_code.x.unwrap_or(last_pos.0),
+            text_code.y.unwrap_or(last_pos.1),
+        );
+        let blob = from_text_val(origin, text_val, &font)?;
+
+        if text_object.stroke.unwrap_or(false) {
+            let stroke_color = draw_param_stack.get_stroke_color(
+                text_object.stroke_color.as_ref(),
+                resources,
+                Color::TRANSPARENT.into(),
+            );
+            let mut paint = Paint::new(stroke_color, None);
+            paint.set_stroke(true);
+            canvas.draw_text_blob(&blob, (0.0, 0.0), &paint);
+        }
+
+        if text_object.fill.unwrap_or(true) {
+            let fill_color = draw_param_stack.get_fill_color(
+                text_object.fill_color.as_ref(),
+                resources,
+                Color::BLACK.into(),
+            );
+            let mut paint = Paint::new(fill_color, None);
+            paint.set_stroke(false);
+            canvas.draw_text_blob(&blob, (0.0, 0.0), &paint);
+        }
+        last_pos = origin;
+        // let mut paint = Paint::default();
+        // paint.set_stroke(true);
+        // paint.set_blend_mode(BlendMode::SrcOver);
+        // // paint.se
+        // canvas.draw_rect(&blob.bounds(),&paint);
+    }
+
+    // canvas.draw_text_align(text, p, font, paint, align);
+
+    canvas.restore();
+    Ok(())
+}
+
+fn get_font(
+    ctx: &RenderCtx,
+    text_object: &TextObject,
+    resources: &Resources,
+) -> eyre::Result<Font> {
     let font_id = text_object.font;
     let file_and_font = resources.get_font_by_id(font_id);
     // let typeface = ctx.font_mgr.typeface_by_resource_id(font_id);
@@ -57,119 +116,137 @@ pub(super) fn draw_text_object(ctx: &mut RenderCtx, text_object: &TextObject) ->
     debug!("using font: {}", typeface.family_name());
 
     let font = Font::from_typeface(typeface, Some(text_object.size));
-    for text_val in &text_object.text_vals {
-        let text_code = text_val.text_code.clone();
-        if let Some(cgf) = &text_val.cg_transform {
-            warn!("text transform not implemented. {:?}", cgf);
-        }
-        if text_code.val.is_empty() {
-            warn!("skipped an empty text code!");
-            continue;
-        }
-        let origin = (
-            text_code.x.unwrap_or(last_pos.0),
-            text_code.y.unwrap_or(last_pos.1),
-        );
-        let blob = from_text_code(&text_code, &font)?;
-
-        if text_object.stroke.unwrap_or(false) {
-            let stroke_color = draw_param_stack.get_stroke_color(
-                text_object.stroke_color.as_ref(),
-                resources,
-                Color::TRANSPARENT.into(),
-            );
-            let mut paint = Paint::new(stroke_color, None);
-            paint.set_stroke(true);
-            canvas.draw_text_blob(blob.clone(), origin, &paint);
-        }
-
-        if text_object.fill.unwrap_or(true) {
-            let fill_color = draw_param_stack.get_fill_color(
-                text_object.fill_color.as_ref(),
-                resources,
-                Color::BLACK.into(),
-            );
-            let mut paint = Paint::new(fill_color, None);
-            paint.set_stroke(false);
-            canvas.draw_text_blob(blob, origin, &paint);
-        }
-        last_pos = origin;
-    }
-    // canvas.draw_text_align(text, p, font, paint, align);
-
-    canvas.restore();
-    Ok(())
+    Ok(font)
 }
 
 /// make TextBlob from TextCode
-fn from_text_code(
-    // origin: (f32, f32),
-    text_code: &ofd_base::file::page::TextCode,
+fn from_text_val(
+    origin: (f32, f32),
+    text_val: &ofd_base::file::page::TextVal,
     font: &Font,
 ) -> eyre::Result<TextBlob> {
-    let origin = (0.0, 0.0);
-    let text = &text_code.val;
+    let tv = text_val.clone();
 
-    let pos = decode_dx_dy(
-        origin,
-        text_code.delta_x.as_ref(),
-        text_code.delta_y.as_ref(),
-        // TODO: this should be glyph count not char count
-        text.chars().count(),
-    )?;
-    // TextBlobBuilder::new().alloc_run_text(font)
-    //     font.
-    // TextBlob::get_intercepts();
-    TextBlob::from_pos_text(text, &pos, font).ok_or_eyre("message")
+    let cgt_map = if let Some(cgts) = tv.cg_transform {
+        cgts.into_iter()
+            .map(|c| (c.code_position as usize, c))
+            .collect::<HashMap<_, _>>()
+    } else {
+        HashMap::new()
+    };
+
+    let tc = tv.text_code;
+
+    let text = tc.val;
+
+    // textblob
+    let mut tb = TextBlobBuilder::new();
+
+    let d_points = Deltas::from_dx_dy(origin, tc.delta_x.as_ref(), tc.delta_y.as_ref())?;
+    let mut point_i: usize = 0;
+    let mut skip = 0;
+    text.chars().enumerate().for_each(|(char_pos, c)| {
+        if skip > 0 {
+            skip -= 1;
+            return;
+        }
+        let cgt = cgt_map.get(&char_pos);
+        if let Some(cgt) = cgt {
+            let cc = cgt.code_count.unwrap_or(1) as usize;
+            if cc < 1 {
+                warn!("invalid cgt.code_count: {}, {:#?}", cc, cgt);
+                return;
+            }
+            skip = cc - 1;
+            let gc = cgt.glyph_count.unwrap_or(1) as usize;
+            assert!(
+                cgt.glyphs.len() >= gc,
+                "cgt glyphs not enough expected {} got  {}",
+                gc,
+                cgt.glyphs.len()
+            );
+            let (glyphs, points) = tb.alloc_run_pos(font, gc, None);
+            glyphs.copy_from_slice(&cgt.glyphs[0..gc]);
+            points.copy_from_slice(&d_points.slice(point_i, point_i + cc));
+            point_i += cc;
+        } else {
+            let (glyph, point) = tb.alloc_run_pos(font, 1, None);
+
+            let gid = font.unichar_to_glyph(c as i32);
+            glyph[0] = gid;
+            point[0] = d_points[point_i];
+            point_i += 1;
+        }
+    });
+
+    let res = tb.make().ok_or_eyre("")?;
+    Ok(res)
 }
 
-/// decode dx dy into points
-fn decode_dx_dy(
-    origin: (f32, f32),
-    delta_x: Option<&StArray<String>>,
-    delta_y: Option<&StArray<String>>,
-    len: usize,
-) -> eyre::Result<Vec<Point>> {
-    let mut res = vec![];
-    let mut dxs = delta_x
-        .map(flat_g)
-        .transpose()?
-        .unwrap_or(vec![0_f32; len - 1]);
-    let mut dys = delta_y
-        .map(flat_g)
-        .transpose()?
-        .unwrap_or(vec![0_f32; len - 1]);
-    assert!(
-        dxs.len() >= (len - 1),
-        "dx for textCode is not enough! required: {}, got: {}, dxs: {:?}",
-        len - 1,
-        dxs.len(),
-        dxs
-    );
-    if dxs.len() > len - 1 {
-        debug!("dx for textCode is longer than text! truncating!");
-        dxs.truncate(len - 1);
+#[derive(Debug)]
+struct Deltas {
+    points: Vec<Point>,
+}
+
+impl Deltas {
+    fn from_dx_dy(
+        origin: (f32, f32),
+        delta_x: Option<&StArray<String>>,
+        delta_y: Option<&StArray<String>>,
+    ) -> eyre::Result<Self> {
+        let dxs = delta_x.map(flat_g).transpose()?.unwrap_or(Vec::new());
+        let dys = delta_y.map(flat_g).transpose()?.unwrap_or(Vec::new());
+        let longest_length = max(dxs.len(), dys.len());
+
+        // first point is origin
+        let mut points = Vec::new();
+        points.push(Point::from(origin));
+
+        let mut last_point = origin;
+        for i in 0..longest_length {
+            let dx = dxs.get(i).unwrap_or(&0_f32);
+            let dy = dys.get(i).unwrap_or(&0_f32);
+
+            last_point = (last_point.0 + dx, last_point.1 + dy);
+            points.push(Point::from(last_point));
+        }
+
+        Ok(Self { points })
     }
-    assert!(
-        dys.len() >= (len - 1),
-        "dy for textCode is not enough! required: {}, got: {}, dys: {:?}",
-        len - 1,
-        dys.len(),
-        dys
-    );
-    if dys.len() > len - 1 {
-        debug!("dy for textCode is longer than text! truncating!");
-        dys.truncate(len - 1);
+
+    fn slice(&self, start: usize, end: usize) -> Vec<Point> {
+        assert!(start <= end, "index error");
+        if end < self.points.len() {
+            self.points[start..end].to_vec()
+        } else if self.points.len() <= start {
+            let len = end - start;
+            let last_e = self.points.last().unwrap();
+            [*last_e].repeat(len)
+        } else {
+            let mut p1 = self.points[start..].to_vec();
+            let len = end - start;
+            let p2_len = len - p1.len();
+            let last_e = self.points.last().unwrap();
+
+            let mut p2 = [*last_e].repeat(p2_len);
+            p1.append(&mut p2);
+            p1
+        }
     }
-    let mut last_pos = origin;
-    res.push(Point::new(last_pos.0, last_pos.1));
-    for (dx, dy) in std::iter::zip(dxs, dys) {
-        last_pos = (last_pos.0 + dx, last_pos.1 + dy);
-        res.push(Point::new(last_pos.0, last_pos.1));
+}
+
+impl Index<usize> for Deltas {
+    type Output = Point;
+
+    fn index(&self, index: usize) -> &Self::Output {
+        // self.points.set_len(index);
+        // Index::index(&self.points, index)
+        if index >= self.points.len() {
+            self.points.last().unwrap()
+        } else {
+            &self.points[index]
+        }
     }
-    // todo!();
-    assert_eq!(res.len(), len);
-    Ok(res)
 }
 
 /// flat sparse format (include g command) dx or dy into dense format (only numbers)
@@ -197,12 +274,15 @@ fn flat_g(d: &StArray<String>) -> eyre::Result<Vec<f32>> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use eyre::Result;
     use ofd_base::file::page::{CGTransform, TextCode, TextVal};
     use ofd_base::StBox;
-    use skia_safe::{FontMgr, TextBlobBuilder};
+    use skia_safe::{AlphaType, Color4f, EncodedImageFormat, FontMgr, ISize, ImageInfo};
+    use std::fs::File;
+    use std::io::{Read, Write};
 
     #[test]
-    fn test_text_blob_from_text_val() {
+    fn test_text_blob_from_text_val() -> Result<()> {
         // init_test_logger()
 
         // value
@@ -264,22 +344,43 @@ mod tests {
 
         // font
         let fm = FontMgr::new();
-        let typeface = fm.match_family_style("楷体", FontStyle::normal());
+        let mut data = vec![];
+        let mut file = File::open("../samples/ano/Doc_0/Res/font_13132_0.ttf")?;
+        let _ = file.read_to_end(&mut data)?;
+        let typeface = fm.new_from_data(&data, 0);
         if typeface.is_none() {
             println!("no match");
-            return;
+            return Ok(());
         }
         let typeface = typeface.unwrap();
-        let font = Font::from_typeface(typeface, None);
+        let font = Font::from_typeface(typeface, text.size);
 
-        // textblob
-        let mut tb = TextBlobBuilder::new();
-        let (gid, point) = tb.alloc_run_pos(&font, 1, None);
-        gid[0] = 5;
-        point[0].x = 0.0;
-        point[0].y = 0.0;
+        let res = from_text_val((0.0, 0.0), &tv, &font)?;
+        let tb = res;
+        let ii = ImageInfo::new_s32(ISize::new(210, 297), AlphaType::Unpremul);
+        let mut sur =
+            skia_safe::surfaces::raster(&ii, None, None).ok_or_eyre("create surface error")?;
+        let can = sur.canvas();
+        let color = Color::RED;
+        let c4f: Color4f = color.into();
+        can.draw_text_blob(tb, (10, 10), &Paint::new(c4f, None));
+        can.save();
+        let img = sur.image_snapshot();
+        let data = img.encode(None, EncodedImageFormat::PNG, 100).unwrap();
+        let mut file = File::create("../output/tb_test.png")?;
+        let _ = file.write(&data)?;
+        Ok(())
+    }
 
-        let res = tb.make();
-        dbg!(&res);
+    #[test]
+    fn test_char_to_unichar() {
+        let s = "你好！";
+        s.chars().for_each(|c| println!("{}", c as i32))
+    }
+
+    #[test]
+    fn test_repeat() {
+        let v = [0].repeat(0);
+        assert_eq!(v.len(), 0);
     }
 }
