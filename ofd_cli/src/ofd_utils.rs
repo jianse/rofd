@@ -126,14 +126,17 @@ pub fn render_page(
             output_path.display()
         );
     }
+    let mut render = render::Render::new(res, "楷体")?;
 
-    let image = if only_template {
-        render::render_template(&res, doc_index, page_index)?
+    let mut sur = if only_template {
+        render.render_template(doc_index, page_index)?
     } else {
-        render::render_page(&res, doc_index, page_index)?
+        render.render_page(doc_index, page_index)?
     };
 
-    let data = image
+    let img = sur.image_snapshot();
+
+    let data = img
         .encode(None, ofd_conv::img::EncodedImageFormat::PNG, 100)
         .ok_or_eyre("message")?;
     write_image(

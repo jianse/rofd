@@ -8,13 +8,11 @@ use std::iter::Enumerate;
 use std::slice::Iter;
 use std::str::FromStr;
 
-use eyre::eyre;
-use eyre::OptionExt;
 use eyre::Result;
+use eyre::{eyre, OptionExt};
 use skia_safe::BlendMode;
 use skia_safe::Color;
 use skia_safe::Color4f;
-use skia_safe::Image;
 use skia_safe::Matrix;
 use skia_safe::PaintCap;
 use skia_safe::PaintJoin;
@@ -74,7 +72,6 @@ impl Render {
         }
     }
 
-    #[allow(dead_code, unused)]
     pub fn render_page(&mut self, doc_index: usize, page_index: usize) -> Result<Surface> {
         let dpi = self.dpi;
 
@@ -120,10 +117,53 @@ impl Render {
         debug!("drawing page");
         draw_page(&mut ctx, &page.content)?;
         can.restore();
-        // let snap = sur.image_snapshot();
         Ok(sur)
+    }
 
-        // todo!()
+    pub fn render_template(&mut self, doc_index: usize, page_index: usize) -> Result<Surface> {
+        let dpi = self.dpi;
+
+        let doc = self.ofd.document_by_index(doc_index)?;
+        let doc_xml = &doc.content;
+
+        let page = self.ofd.page_by_index(doc_index, page_index)?;
+        let page_xml = &page.content;
+
+        let templates = self.ofd.templates_for_page(doc_index, page_index)?;
+        let template_pages = &templates
+            .iter()
+            .map(|i| &i.content)
+            .collect::<Vec<&PageXmlFile>>();
+        let pa = decide_size(page_xml, template_pages, doc_xml);
+        let size = (
+            mm2px_i32(pa.physical_box.w, dpi),
+            mm2px_i32(pa.physical_box.h, dpi),
+        );
+        let resources = self.ofd.resources_for_page(doc_index, page_index)?;
+
+        self.font_mgr.load_page(doc_index, page_index);
+
+        let mut sur = create_surface(size)?;
+        let can = sur.canvas();
+
+        // bgc
+        can.draw_color(Color::WHITE, BlendMode::Color);
+        let scale = calc_scale(dpi);
+        can.scale((scale, scale));
+        let mut ctx = RenderCtx {
+            _ofd: self.ofd.clone(),
+            canvas: can,
+            draw_param_stack: DrawParamStack::new(),
+            resources: &resources,
+            font_mgr: &self.font_mgr,
+        };
+
+        debug!("drawing templates");
+        for tpl in template_pages {
+            draw_page(&mut ctx, tpl)?;
+        }
+        can.restore();
+        Ok(sur)
     }
 }
 
@@ -266,8 +306,6 @@ impl DrawParamStack {
 fn create_surface(size: (i32, i32)) -> Result<Surface> {
     let ii = ImageInfo::new_s32(size, skia_safe::AlphaType::Unpremul);
     let surface = skia_safe::surfaces::raster(&ii, None, None).ok_or_eyre("message")?;
-    // let canvas = Canvas::f
-    // let canvas = surface.canvas();
     Ok(surface)
 }
 
@@ -307,48 +345,57 @@ fn resolve_color(ct_color: &CtColor, resources: &Resources) -> Result<Color4f> {
         &SRGB
     };
 
-    if let Some(val) = &ct_color.value {
-        // value color
-        assert_eq!(
-            cs.r#type.channel_count(),
-            val.0.len(),
-            "color and color space mismatch"
-        );
-        let bpc = cs.bits_per_component.unwrap_or(8);
-        let max_val = (1 << bpc) - 1;
-        let a = (ct_color.alpha.unwrap_or(255) / 255) as f32;
-        let r = match cs.r#type {
-            ofd_base::file::res::Type::RGB => {
-                let r = val.0[0] as f32 / max_val as f32;
-                let g = val.0[1] as f32 / max_val as f32;
-                let b = val.0[2] as f32 / max_val as f32;
-                Color4f::new(r, g, b, a)
-            }
-            ofd_base::file::res::Type::GRAY => {
-                let y = val.0[0] as f32 / max_val as f32;
-                Color4f::new(y, y, y, a)
-            }
-            ofd_base::file::res::Type::CMYK => {
-                // cmyk to rgb
-                let c = val.0[0] as f32 / max_val as f32;
-                let m = val.0[1] as f32 / max_val as f32;
-                let y = val.0[2] as f32 / max_val as f32;
-                let k = val.0[2] as f32 / max_val as f32;
-
-                let x = 1.0 - k;
-                let r = (1.0 - c) * x;
-                let g = (1.0 - m) * c;
-                let b = (1.0 - y) * c;
-
-                Color4f::new(r, g, b, a)
-            }
-        };
-        Ok(r)
-    } else {
+    let val = if let Some(val) = &ct_color.value {
+        Ok(val)
+    } else if let Some(idx) = ct_color.index {
         // plate color
-        todo!()
-    }
-    // ct_color.
+        if let Some(pal) = &cs.palette {
+            let c = pal.cv.get(idx).ok_or_eyre("plate color not found!")?;
+            Ok(c)
+        } else {
+            Err(eyre!("color palette not found"))
+        }
+    } else {
+        // TODO: may be it is a shadow
+        Err(eyre!("invalid color!"))
+    }?;
+
+    // value color
+    assert_eq!(
+        cs.r#type.channel_count(),
+        val.0.len(),
+        "color and color space mismatch"
+    );
+    let bpc = cs.bits_per_component.unwrap_or(8);
+    let max_val = (1 << bpc) - 1;
+    let a = (ct_color.alpha.unwrap_or(255) / 255) as f32;
+    let r = match &cs.r#type {
+        ofd_base::file::res::Type::RGB => {
+            let r = val.0[0] as f32 / max_val as f32;
+            let g = val.0[1] as f32 / max_val as f32;
+            let b = val.0[2] as f32 / max_val as f32;
+            Color4f::new(r, g, b, a)
+        }
+        ofd_base::file::res::Type::GRAY => {
+            let y = val.0[0] as f32 / max_val as f32;
+            Color4f::new(y, y, y, a)
+        }
+        ofd_base::file::res::Type::CMYK => {
+            // cmyk to rgb
+            let c = val.0[0] as f32 / max_val as f32;
+            let m = val.0[1] as f32 / max_val as f32;
+            let y = val.0[2] as f32 / max_val as f32;
+            let k = val.0[2] as f32 / max_val as f32;
+
+            let x = 1.0 - k;
+            let r = (1.0 - c) * x;
+            let g = (1.0 - m) * c;
+            let b = (1.0 - y) * c;
+
+            Color4f::new(r, g, b, a)
+        }
+    };
+    Ok(r)
 }
 
 fn decide_size(
@@ -363,60 +410,6 @@ fn decide_size(
     pa = pa.or(Some(&doc.common_data.page_area));
     let size = pa.unwrap();
     CtPageArea { ..*size }
-}
-pub fn render_template(container: &Ofd, doc_index: usize, page_index: usize) -> Result<Image> {
-    let dpi = 300;
-
-    let doc = container.document_by_index(doc_index)?;
-    let doc_xml = &doc.content;
-
-    let page = container.page_by_index(doc_index, page_index)?;
-    let page_xml = &page.content;
-
-    let templates = container.templates_for_page(doc_index, page_index)?;
-    let tpls = &templates
-        .iter()
-        .map(|i| &i.content)
-        .collect::<Vec<&PageXmlFile>>();
-
-    if templates.is_empty() {
-        return Err(eyre!("no such template!"));
-    }
-    let pa = decide_size(page_xml, tpls, doc_xml);
-
-    let size = (
-        mm2px_i32(pa.physical_box.w, dpi),
-        mm2px_i32(pa.physical_box.h, dpi),
-    );
-    let _resources = container.resources_for_page(doc_index, page_index)?;
-
-    let mut sur = create_surface(size)?;
-    let _can = sur.canvas();
-    todo!()
-
-    // let mut ctx = RenderCtx {
-    //     ofd: container.clone(),
-    //     canvas: can,
-    //     draw_param_stack: DrawParamStack::new(),
-    //     resources: &resources,
-    // };
-    //
-    // can.draw_color(Color::WHITE, BlendMode::Color);
-    // let scale = calc_scale(dpi);
-    // can.scale((scale, scale));
-    // for tpl in tpls {
-    //     draw_page(&mut ctx, tpl)?;
-    // }
-    // can.restore();
-    // let snap = sur.image_snapshot();
-    // Ok(snap)
-}
-
-pub fn render_page(container: &Ofd, doc_index: usize, page_index: usize) -> Result<Image> {
-    let mut render = Render::new(container.clone(), "楷体")?;
-    let mut sur = render.render_page(doc_index, page_index)?;
-    let snap = sur.image_snapshot();
-    Ok(snap)
 }
 
 fn draw_page(ctx: &mut RenderCtx, tpl: &PageXmlFile) -> Result<()> {
@@ -508,9 +501,7 @@ fn draw_layer(
 }
 
 fn draw_image_object(_ctx: &mut RenderCtx, _image_object: &ImageObject) -> Result<()> {
-    // resources.get_image_by_id(image_object.resource_id);
-
-    // todo!()
+    warn!("draw_image_object is not implemented!");
     Ok(())
 }
 
