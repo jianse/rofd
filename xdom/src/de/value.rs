@@ -4,6 +4,7 @@ use serde::de::{DeserializeSeed, EnumAccess, VariantAccess, Visitor};
 use serde::Deserializer;
 use std::borrow::Cow;
 use std::ops::Deref;
+use std::vec;
 use tracing::trace;
 
 use super::key::KeyDe;
@@ -236,7 +237,7 @@ impl<'de> EnumAccess<'de> for EnumDeserializer<'de> {
 
     fn variant_seed<V>(self, seed: V) -> Result<(V::Value, Self::Variant), Self::Error>
     where
-        V: serde::de::DeserializeSeed<'de>,
+        V: DeserializeSeed<'de>,
     {
         let mut de = KeyDe::new_ele(self.input);
         seed.deserialize(&mut de).map(|v| (v, self))
@@ -252,7 +253,7 @@ impl<'de> VariantAccess<'de> for EnumDeserializer<'de> {
 
     fn newtype_variant_seed<T>(self, seed: T) -> Result<T::Value, Self::Error>
     where
-        T: serde::de::DeserializeSeed<'de>,
+        T: DeserializeSeed<'de>,
     {
         todo!()
     }
@@ -471,20 +472,28 @@ impl<'de, 'a> Deserializer<'de> for &'a mut TextValueDe {
 pub(super) struct ValueDe<'de> {
     parent: &'de Element,
     excludes: Option<&'de [&'de str]>,
+    elements: Vec<&'de Element>,
 }
 
 impl<'de> ValueDe<'de> {
     pub(crate) fn from_ele_with_excludes(p0: &'de Element, p1: &'de [&'de str]) -> Self {
+        let elements = p0
+            .children()
+            .filter(|e| !p1.contains(&e.name()))
+            .collect::<Vec<_>>();
         Self {
             parent: p0,
             excludes: Some(p1),
+            elements,
         }
     }
 
     pub(super) fn from_ele(parent: &'de Element) -> Self {
+        let elements = parent.children().collect::<Vec<_>>();
         Self {
             parent,
             excludes: None,
+            elements,
         }
     }
 }
@@ -615,7 +624,12 @@ impl<'de, 'a> Deserializer<'de> for &'a mut ValueDe<'de> {
     where
         V: Visitor<'de>,
     {
-        visitor.visit_some(self)
+        trace!("[$value] deserialize_option");
+        if self.elements.is_empty() {
+            visitor.visit_none()
+        } else {
+            visitor.visit_some(self)
+        }
     }
 
     fn deserialize_unit<V>(self, visitor: V) -> Result<V::Value, Self::Error>
@@ -705,18 +719,8 @@ impl<'de, 'a> Deserializer<'de> for &'a mut ValueDe<'de> {
         V: Visitor<'de>,
     {
         trace!("[$value] deserialize_enum {}", name);
-        let vec = self
-            .parent
-            .children()
-            .filter(|e| {
-                if let Some(ex) = self.excludes {
-                    !ex.contains(&e.name())
-                } else {
-                    true
-                }
-            })
-            .collect::<Vec<_>>();
-        if let Some(e) = vec.first() {
+
+        if let Some(e) = self.elements.first() {
             let enum_access = Enum::new(e);
             visitor.visit_enum(enum_access)
         } else {

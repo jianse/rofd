@@ -21,6 +21,7 @@ use std::ops::Deref;
 use std::path::Path;
 use std::rc::Rc;
 use std::{fs::File, io::BufReader, path::PathBuf};
+use tracing::debug;
 use zip::{read::ZipFile, ZipArchive};
 
 #[derive(Eq, Hash, PartialEq)]
@@ -116,7 +117,7 @@ impl RawOfd {
         if buf.starts_with(&[0xef_u8, 0xbb, 0xbf]) {
             reader.consume(3);
         }
-        let root = Element::from_reader(reader)?;
+        let root = Element::from_reader_with_prefixes(reader, Self::OFD_ENTRY.to_string())?;
         let res: T = xdom::de::from_ele(&root)?;
         Ok(res)
     }
@@ -125,9 +126,11 @@ impl RawOfd {
     where
         P: AsRef<str> + Into<String>,
     {
+        let path = path.as_ref();
+        debug!("opening item in zip: {}", path);
         let file = self
             .zip_archive
-            .by_name(path.as_ref())
+            .by_name(path)
             .map_err(|e| Error::OpenZipError(e, path.into()))?;
         Ok(file)
     }

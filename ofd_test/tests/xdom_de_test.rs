@@ -4,9 +4,10 @@ use ofd_base::file::annotation::AnnotationXmlFile;
 use ofd_base::file::document::DocumentXmlFile;
 use ofd_base::file::ofd::OfdXmlFile;
 use ofd_base::file::page::PageXmlFile;
+use ofd_misc::dom::OFD_NS;
 use serde::Deserialize;
 use std::fs::File;
-use std::io::{BufReader, Read};
+use std::io::{BufRead, BufReader, Read};
 use std::path::Path;
 use xdom::de::{from_ele, XmlDe};
 
@@ -73,6 +74,27 @@ fn test_ano() -> Result<()> {
     let file = File::open("../samples/ano/Doc_0/Pages/Page_1/Annotation.xml")?;
     let reader = BufReader::new(file);
     let root: Element = Element::from_reader(reader)?;
+
+    let st = from_ele::<AnnotationXmlFile>(&root)?;
+    dbg!(st);
+
+    Ok(())
+}
+
+#[test]
+fn test_ano2() -> Result<()> {
+    init_tracing_subscriber();
+    let file = File::open("../samples/sample2/Doc_0/Annots/Page_0/Annotation.xml")?;
+    let mut reader = BufReader::new(file);
+    let buf = reader.fill_buf()?;
+
+    // UTF-8 BOM
+    // handle u+FEFF in utf-8 file
+    // just skip this three bytes
+    if buf.starts_with(&[0xef_u8, 0xbb, 0xbf]) {
+        reader.consume(3);
+    }
+    let root: Element = Element::from_reader_with_prefixes(reader, OFD_NS.to_string())?;
 
     let st = from_ele::<AnnotationXmlFile>(&root)?;
     dbg!(st);

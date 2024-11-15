@@ -137,7 +137,9 @@ fn from_text_val(
         // without cgt just return
         // TODO: use more proper error
         // or maybe this should not happened
-        return TextBlob::from_pos_text(text, &d_points.points, font).ok_or_eyre("msg");
+        let glyph_len = font.count_text(&text);
+        return TextBlob::from_pos_text(text, &d_points.slice(0, glyph_len), font)
+            .ok_or_eyre("msg");
     };
 
     // textblob

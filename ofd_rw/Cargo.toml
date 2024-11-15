@@ -12,6 +12,7 @@ relative-path = { workspace = true }
 zip = { workspace = true }
 serde = { workspace = true }
 xdom = { path = "../xdom" }
+tracing = { workspace = true, features = ['release_max_level_info'] }
 #cached = "0.53.1"
 
 [dev-dependencies]

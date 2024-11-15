@@ -99,7 +99,7 @@ pub struct Parameter {
     #[serde(rename = "@Name")]
     pub name: String,
 
-    #[serde(rename = "$value")]
+    #[serde(rename = "$text")]
     pub value: String,
 }
 
