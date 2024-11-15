@@ -70,6 +70,9 @@ pub(super) fn draw_path_object(ctx: &mut RenderCtx, path_object: &PathObject) ->
         paint.set_stroke_cap(cap);
         let lw = path_object.line_width.unwrap_or(0.353);
         paint.set_stroke_width(lw);
+        if let Some(alpha) = path_object.alpha {
+            paint.set_alpha(alpha);
+        }
         ctx.canvas.draw_path(&path, &paint);
     }
 
@@ -91,7 +94,9 @@ pub(super) fn draw_path_object(ctx: &mut RenderCtx, path_object: &PathObject) ->
             ofd_base::file::page::FillRule::EvenOdd => skia_safe::PathFillType::EvenOdd,
         };
         path.set_fill_type(ft);
-        // paint.set_
+        if let Some(alpha) = path_object.alpha {
+            paint.set_alpha(alpha);
+        }
         ctx.canvas.draw_path(&path, &paint);
     }
 
