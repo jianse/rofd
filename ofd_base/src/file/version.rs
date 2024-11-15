@@ -5,12 +5,15 @@ use crate::base::StLoc;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct VersionXmlFile {
-    #[serde(rename = "@Version")]
+    #[serde(rename = "@ID")]
     pub id: String,
+
     #[serde(rename = "@Version")]
     pub version: Option<String>,
+
     #[serde(rename = "@Name")]
     pub name: Option<String>,
+
     #[serde(rename = "@CreationDate")]
     pub creation_date: Option<NaiveDate>,
 

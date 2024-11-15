@@ -241,7 +241,7 @@ impl<'de, 'a> Deserializer<'de> for &'a mut XmlDe<'de> {
     where
         V: Visitor<'de>,
     {
-        let enum_access = Enum::new(self);
+        let enum_access = Enum::new(self.input);
         visitor.visit_enum(enum_access)
     }
 
@@ -388,9 +388,6 @@ impl<'a, 'de> MapAccess<'de> for AttrChild<'a, 'de> {
                 seed.deserialize(&mut de)
             }
             Ctx::Value => {
-                // let v = self.de.input.children().filter(|e|{
-                //     !self.fields.contains(&e.name())
-                // }).collect::<Vec<_>>();
                 let mut de = ValueDe::from_ele_with_excludes(self.de.input, self.fields);
                 seed.deserialize(&mut de)
             }
@@ -398,16 +395,16 @@ impl<'a, 'de> MapAccess<'de> for AttrChild<'a, 'de> {
     }
 }
 
-struct Enum<'a, 'de: 'a> {
-    de: &'a XmlDe<'de>,
+struct Enum<'de> {
+    input: &'de Element,
 }
-impl<'a, 'de> Enum<'a, 'de> {
-    fn new(de: &'a XmlDe<'de>) -> Self {
-        Self { de }
+impl<'de> Enum<'de> {
+    fn new(input: &'de Element) -> Self {
+        Self { input }
     }
 }
 
-impl<'a, 'de> EnumAccess<'de> for Enum<'a, 'de> {
+impl<'de> EnumAccess<'de> for Enum<'de> {
     type Error = XmlDeError;
     type Variant = Self;
 
@@ -415,13 +412,13 @@ impl<'a, 'de> EnumAccess<'de> for Enum<'a, 'de> {
     where
         V: DeserializeSeed<'de>,
     {
-        let mut de = KeyDe::new_ele(self.de.input.name());
+        let mut de = KeyDe::new_ele(self.input.name());
         let result = seed.deserialize(&mut de)?;
         Ok((result, self))
     }
 }
 
-impl<'a, 'de> VariantAccess<'de> for Enum<'a, 'de> {
+impl<'de> VariantAccess<'de> for Enum<'de> {
     type Error = XmlDeError;
 
     fn unit_variant(self) -> Result<(), Self::Error> {
@@ -432,7 +429,7 @@ impl<'a, 'de> VariantAccess<'de> for Enum<'a, 'de> {
     where
         T: DeserializeSeed<'de>,
     {
-        let mut de = XmlDe::from_ele(self.de.input);
+        let mut de = XmlDe::from_ele(self.input);
         seed.deserialize(&mut de)
     }
 
@@ -451,7 +448,7 @@ impl<'a, 'de> VariantAccess<'de> for Enum<'a, 'de> {
     where
         V: Visitor<'de>,
     {
-        let mut de = XmlDe::from_ele(self.de.input);
+        let mut de = XmlDe::from_ele(self.input);
         de.deserialize_struct("", fields, visitor)
     }
 }
@@ -549,6 +546,8 @@ mod tests {
     use eyre::Result;
     use minidom::Element;
     use serde::Deserialize;
+    use std::fs::File;
+    use std::io::BufReader;
     #[derive(Debug, Deserialize)]
     struct Foo {
         #[serde(rename = "@attr1")]

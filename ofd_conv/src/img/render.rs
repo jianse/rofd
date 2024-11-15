@@ -27,10 +27,11 @@ use crate::img::render::text::draw_text_object;
 use ofd_base::common::Cap;
 use ofd_base::common::CtColor;
 use ofd_base::common::Join;
+use ofd_base::file::annotation::AnnotationXmlFile;
 use ofd_base::file::document::CtPageArea;
 use ofd_base::file::document::DocumentXmlFile;
-use ofd_base::file::page::ImageObject;
 use ofd_base::file::page::PageXmlFile;
+use ofd_base::file::page::{ImageObject, VtGraphicUnit};
 use ofd_base::file::res::DrawParam;
 use ofd_base::file::res::SRGB;
 use ofd_base::StArray;
@@ -116,6 +117,13 @@ impl Render {
         }
         debug!("drawing page");
         draw_page(&mut ctx, &page.content)?;
+
+        debug!("drawing annotations");
+        let anno_vec = self.ofd.annotations_for_page(doc_index, page_index)?;
+        for anno in anno_vec {
+            draw_anno(&mut ctx, &anno)?;
+        }
+
         can.restore();
         Ok(sur)
     }
@@ -165,6 +173,18 @@ impl Render {
         can.restore();
         Ok(sur)
     }
+}
+
+fn draw_anno(ctx: &mut RenderCtx, anno: &AnnotationXmlFile) -> Result<()> {
+    for annot in &anno.annot {
+        if !annot.visible.unwrap_or(true) {
+            continue;
+        }
+        if let Some(objects) = &annot.appearance.objects {
+            draw_object(ctx, objects)
+        }
+    }
+    Ok(())
 }
 
 struct DrawParamStack {
@@ -412,6 +432,7 @@ fn decide_size(
     CtPageArea { ..*size }
 }
 
+/// draw a page
 fn draw_page(ctx: &mut RenderCtx, tpl: &PageXmlFile) -> Result<()> {
     let init_sc = ctx.canvas.save_count();
     if let Some(content) = tpl.content.as_ref() {
@@ -443,60 +464,64 @@ fn get_draw_param_by_id(resources: &Resources, id: Option<StRefId>) -> Option<Dr
     }
 }
 
-fn draw_layer(
-    ctx: &mut RenderCtx,
-    // canvas: &Canvas,
-    layer: &ofd_base::file::page::Layer,
-    // resources: &Resources,
-    // draw_param_stack: &mut DrawParamStack,
-) {
-    // let RenderCtx { canvas, resources, draw_param_stack } = ctx.canvas;
+fn draw_layer(ctx: &mut RenderCtx, layer: &ofd_base::file::page::Layer) {
+    let resources = ctx.resources;
+    if let Some(dp_id) = layer.draw_param {
+        let dp = resources.get_draw_param_by_id(dp_id);
+        ctx.draw_param_stack.push(dp.clone());
+        if let Some(objects) = layer.objects.as_ref() {
+            draw_object(ctx, objects);
+        }
+        ctx.draw_param_stack.pop(dp);
+    } else if let Some(objects) = layer.objects.as_ref() {
+        draw_object(ctx, objects);
+    }
+}
+
+fn draw_object(ctx: &mut RenderCtx, objects: &Vec<VtGraphicUnit>) {
     let canvas = ctx.canvas;
     let resources = ctx.resources;
-    // let draw_param_stack = ctx.draw_param_stack;
 
-    if let Some(objects) = layer.objects.as_ref() {
-        for obj in objects {
-            let init_sc = canvas.save_count();
-            let r = match obj {
-                ofd_base::file::page::VtGraphicUnit::TextObject(text) => {
-                    let dp_id = text.draw_param;
-                    let dp = get_draw_param_by_id(resources, dp_id);
-                    ctx.draw_param_stack.push(dp.clone());
-                    let dtr = draw_text_object(ctx, text);
-                    ctx.draw_param_stack.pop(dp);
-                    dtr
-                }
-                ofd_base::file::page::VtGraphicUnit::PathObject(path) => {
-                    let dp_id = path.draw_param;
-                    let dp = get_draw_param_by_id(resources, dp_id);
-                    ctx.draw_param_stack.push(dp.clone());
-                    let dpr = draw_path_object(ctx, path);
-                    ctx.draw_param_stack.pop(dp);
-                    dpr
-                }
-                ofd_base::file::page::VtGraphicUnit::ImageObject(image) => {
-                    let dp_id = image.draw_param;
-                    let dp = get_draw_param_by_id(resources, dp_id);
-                    ctx.draw_param_stack.push(dp.clone());
-                    // TODO: draw image
-                    let dir = draw_image_object(ctx, image);
-                    ctx.draw_param_stack.pop(dp);
-                    dir
-                }
-                ofd_base::file::page::VtGraphicUnit::CompositeObject(_co) => todo!(),
-                ofd_base::file::page::VtGraphicUnit::PageBlock(_pb) => todo!(),
-            };
-            if r.is_err() {
-                error!("draw_layer_error: {:?}", r);
+    for obj in objects {
+        let init_sc = canvas.save_count();
+        let r = match obj {
+            VtGraphicUnit::TextObject(text) => {
+                let dp_id = text.draw_param;
+                let dp = get_draw_param_by_id(resources, dp_id);
+                ctx.draw_param_stack.push(dp.clone());
+                let dtr = draw_text_object(ctx, text);
+                ctx.draw_param_stack.pop(dp);
+                dtr
             }
-            let after_sc = canvas.save_count();
-            assert_eq!(
-                init_sc, after_sc,
-                "imbalanced skia save count. obj: {:?}",
-                obj
-            );
+            VtGraphicUnit::PathObject(path) => {
+                let dp_id = path.draw_param;
+                let dp = get_draw_param_by_id(resources, dp_id);
+                ctx.draw_param_stack.push(dp.clone());
+                let dpr = draw_path_object(ctx, path);
+                ctx.draw_param_stack.pop(dp);
+                dpr
+            }
+            VtGraphicUnit::ImageObject(image) => {
+                let dp_id = image.draw_param;
+                let dp = get_draw_param_by_id(resources, dp_id);
+                ctx.draw_param_stack.push(dp.clone());
+                // TODO: draw image
+                let dir = draw_image_object(ctx, image);
+                ctx.draw_param_stack.pop(dp);
+                dir
+            }
+            VtGraphicUnit::CompositeObject(_co) => todo!(),
+            VtGraphicUnit::PageBlock(_pb) => todo!(),
+        };
+        if r.is_err() {
+            error!("draw_layer_error: {:?}", r);
         }
+        let after_sc = canvas.save_count();
+        assert_eq!(
+            init_sc, after_sc,
+            "imbalanced skia save count. obj: {:?}",
+            obj
+        );
     }
 }
 

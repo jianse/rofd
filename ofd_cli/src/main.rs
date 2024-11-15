@@ -6,6 +6,7 @@ use cli_table::{print_stdout, WithTitle};
 use eyre::Result;
 use std::path::PathBuf;
 use tracing::info;
+use tracing_subscriber::EnvFilter;
 
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
@@ -54,12 +55,12 @@ enum Commands {
 }
 
 fn init_logger() {
-    use tracing_subscriber::{filter, fmt, layer::SubscriberExt, util::SubscriberInitExt};
+    use tracing_subscriber::{fmt, layer::SubscriberExt, util::SubscriberInitExt};
     let fmt = fmt::layer()
         .with_ansi(true)
         .with_file(true)
         .with_line_number(true);
-    let filter = filter::LevelFilter::INFO;
+    let filter = EnvFilter::try_from_default_env().unwrap_or(EnvFilter::new("info"));
     let _ = tracing_subscriber::registry()
         .with(filter)
         .with(fmt)

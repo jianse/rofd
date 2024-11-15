@@ -1,6 +1,6 @@
-use crate::de::{XmlDeError, XmlSeqAccess};
+use crate::de::{Enum, XmlDe, XmlDeError, XmlSeqAccess};
 use minidom::Element;
-use serde::de::{EnumAccess, VariantAccess, Visitor};
+use serde::de::{DeserializeSeed, EnumAccess, VariantAccess, Visitor};
 use serde::Deserializer;
 use std::borrow::Cow;
 use std::ops::Deref;
@@ -139,7 +139,7 @@ impl<'de, 'a> Deserializer<'de> for &'a mut AttrValueDe<'de> {
     where
         V: Visitor<'de>,
     {
-        trace!("deserialize_newtype_struct {}", name);
+        trace!("[@attr] deserialize_newtype_struct {}", name);
         visitor.visit_newtype_struct(self)
     }
 
@@ -644,7 +644,7 @@ impl<'de, 'a> Deserializer<'de> for &'a mut ValueDe<'de> {
     where
         V: Visitor<'de>,
     {
-        trace!("deserialize_newtype_struct {}", name);
+        trace!("[$value] deserialize_newtype_struct {}", name);
         visitor.visit_newtype_struct(self)
     }
 
@@ -652,6 +652,7 @@ impl<'de, 'a> Deserializer<'de> for &'a mut ValueDe<'de> {
     where
         V: Visitor<'de>,
     {
+        trace!("[$value] deserialize_seq");
         let acc = XmlSeqAccess::new_with_excludes(self.parent, self.excludes);
         visitor.visit_seq(acc)
     }
@@ -703,7 +704,24 @@ impl<'de, 'a> Deserializer<'de> for &'a mut ValueDe<'de> {
     where
         V: Visitor<'de>,
     {
-        todo!()
+        trace!("[$value] deserialize_enum {}", name);
+        let vec = self
+            .parent
+            .children()
+            .filter(|e| {
+                if let Some(ex) = self.excludes {
+                    !ex.contains(&e.name())
+                } else {
+                    true
+                }
+            })
+            .collect::<Vec<_>>();
+        if let Some(e) = vec.first() {
+            let enum_access = Enum::new(e);
+            visitor.visit_enum(enum_access)
+        } else {
+            visitor.visit_none()
+        }
     }
 
     fn deserialize_identifier<V>(self, visitor: V) -> Result<V::Value, Self::Error>

@@ -1,5 +1,6 @@
 use crate::error::{Error, Result};
 use minidom::Element;
+use ofd_base::file::annotation::{AnnotationXmlFile, AnnotationsXmlFile};
 use ofd_base::file::res::Resource;
 use ofd_base::{
     file::{
@@ -10,7 +11,7 @@ use ofd_base::{
     },
     StRefId,
 };
-use relative_path::RelativePathBuf;
+use relative_path::{PathExt, RelativePathBuf};
 use serde::de::DeserializeOwned;
 use std::any::{Any, TypeId};
 use std::cell::RefCell;
@@ -73,6 +74,16 @@ impl Ofd {
         self.0
             .borrow_mut()
             .resources_for_page(doc_index, page_index)
+    }
+
+    pub fn annotations_for_page(
+        &self,
+        doc_index: usize,
+        page_index: usize,
+    ) -> Result<Vec<OfdItem<AnnotationXmlFile>>> {
+        self.0
+            .borrow_mut()
+            .annotations_for_page(doc_index, page_index)
     }
 
     pub fn item_names(&self) -> Vec<String> {
@@ -362,6 +373,46 @@ impl RawOfd {
         // xml.doc_body
         todo!()
     }
+
+    pub fn annotations_for_page(
+        &mut self,
+        doc_index: usize,
+        page_index: usize,
+    ) -> Result<Vec<OfdItem<AnnotationXmlFile>>> {
+        let doc = self.document_by_index(doc_index)?;
+
+        let vec = &doc.pages.page;
+        assert!(page_index < vec.len(), "page_index out of range");
+        let page_id = vec[page_index].id;
+        if let Some(loc) = &doc.annotations {
+            let path = doc.resolve(loc);
+            let file = self.open(path.to_string())?;
+            let reader = BufReader::new(file);
+            let xml: AnnotationsXmlFile = RawOfd::read_item(reader)?;
+            if let Some(pages) = &xml.page {
+                let anno_vec = pages
+                    .iter()
+                    .filter(|p| p.page_id == page_id)
+                    .map(|f| {
+                        let p = inner_resolve(&path, &f.file_loc);
+                        let file = self.open(p.to_string())?;
+
+                        let reader = BufReader::new(file);
+                        let xml: AnnotationXmlFile = RawOfd::read_item(reader)?;
+                        Ok(OfdItem {
+                            path: p,
+                            content: xml,
+                        })
+                    })
+                    .collect::<Result<Vec<_>>>();
+                anno_vec
+            } else {
+                Ok(Vec::new())
+            }
+        } else {
+            Ok(Vec::new())
+        }
+    }
 }
 
 #[derive(Debug)]
@@ -474,21 +525,26 @@ impl Resources {
 impl<T> OfdItem<T> {
     pub fn resolve(&self, other: &PathBuf) -> RelativePathBuf {
         let this = self.path.clone();
-        let that = RelativePathBuf::from_path(other).unwrap();
-        let res = if that.to_string().starts_with('/') {
-            that.normalize()
-        } else {
-            let folder = this.parent();
-            let base = match folder {
-                Some(p) => p.into(),
-                None => RelativePathBuf::new(),
-            };
-            base.join(that).normalize()
-        };
-        res
+        inner_resolve(&this, other)
     }
 }
-
+fn inner_resolve(this: &RelativePathBuf, other: &PathBuf) -> RelativePathBuf {
+    if other.starts_with("/") {
+        return other.relative_to("/").unwrap();
+    }
+    let that = RelativePathBuf::from_path(other).unwrap();
+    let res = if that.to_string().starts_with('/') {
+        that.normalize()
+    } else {
+        let folder = this.parent();
+        let base = match folder {
+            Some(p) => p.into(),
+            None => RelativePathBuf::new(),
+        };
+        base.join(that).normalize()
+    };
+    res
+}
 pub fn from_path(path: impl AsRef<Path>) -> Result<Ofd> {
     let f = File::open(path)?;
     let reader = BufReader::new(f);

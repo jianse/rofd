@@ -13,5 +13,5 @@ ofd_base = { path = "../ofd_base" }
 ofd_rw = { path = "../ofd_rw" }
 ofd_conv = { path = "../ofd_conv" }
 tracing = { workspace = true }
-tracing-subscriber = { workspace = true }
-interpolator = { version = "0.5.0",features = ["number"] }
+tracing-subscriber = { workspace = true, features = ["env-filter"] }
+interpolator = { workspace = true, features = ["number"] }
