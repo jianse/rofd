@@ -44,7 +44,7 @@ struct RenderCtx<'a> {
     canvas: &'a Canvas,
     draw_param_stack: DrawParamStack,
     resources: &'a Resources,
-    font_mgr: &'a AggFontMgr,
+    font_mgr: &'a mut AggFontMgr,
 }
 
 #[allow(unused)]
@@ -108,7 +108,7 @@ impl Render {
             canvas: can,
             draw_param_stack: DrawParamStack::new(),
             resources: &resources,
-            font_mgr: &self.font_mgr,
+            font_mgr: &mut self.font_mgr,
         };
 
         debug!("drawing templates");
@@ -163,7 +163,7 @@ impl Render {
             canvas: can,
             draw_param_stack: DrawParamStack::new(),
             resources: &resources,
-            font_mgr: &self.font_mgr,
+            font_mgr: &mut self.font_mgr,
         };
 
         debug!("drawing templates");

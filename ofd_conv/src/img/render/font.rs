@@ -130,10 +130,25 @@ impl FontStyleSet {
 struct EmbeddedFontMgr {
     ofd: Ofd,
     system_font_mgr: FontMgr,
-    font_cache: HashMap<String, FontStyleSet>,
+    font_cache: HashMap<String, Typeface>,
 }
 
 impl EmbeddedFontMgr {
+    pub(crate) fn load_embed_font(
+        &mut self,
+        path: impl AsRef<str> + Into<String>,
+    ) -> Result<Typeface> {
+        let key = path.as_ref().to_string();
+        if let Some(tf) = self.font_cache.get(&key).cloned() {
+            Ok(tf)
+        } else {
+            let bytes = self.ofd.bytes(path)?;
+            let tf = self.system_font_mgr.new_from_data(&bytes, 0);
+            let tf = tf.ok_or_else(|| eyre!("failed to load embedded font"))?;
+            self.font_cache.insert(key.to_string(), tf.clone());
+            Ok(tf)
+        }
+    }
     pub fn from_ofd(ofd: Ofd) -> Self {
         let system_font_mgr = FontMgr::new();
         let font_cache = HashMap::new();
@@ -166,7 +181,7 @@ impl EmbeddedFontMgr {
 
 pub struct AggFontMgr {
     ofd: Ofd,
-    embedded_font_mgr: Option<EmbeddedFontMgr>,
+    embedded_font_mgr: EmbeddedFontMgr,
     local_dir_font_mgr: Option<LocalDirFontMgr>,
     system_font_mgr: FontMgr,
     fallback_font_name: String,
@@ -174,11 +189,15 @@ pub struct AggFontMgr {
 }
 
 impl AggFontMgr {
-    pub(crate) fn match_family_style(&self, p0: &String, p1: FontStyle) -> Option<Typeface> {
+    pub(crate) fn match_family_style(
+        &self,
+        family_name: &String,
+        style: FontStyle,
+    ) -> Option<Typeface> {
         self.local_dir_font_mgr
             .as_ref()
-            .and_then(|lfm| lfm.match_family_style(p0, p1))
-            .or_else(|| self.system_font_mgr.match_family_style(p0, p1))
+            .and_then(|lfm| lfm.match_family_style(family_name, style))
+            .or_else(|| self.system_font_mgr.match_family_style(family_name, style))
     }
 }
 
@@ -187,10 +206,11 @@ impl AggFontMgr {
         self.fallback.clone()
     }
 
-    pub(super) fn load_embed_font(&self, path: impl AsRef<str> + Into<String>) -> Result<Typeface> {
-        let bytes = self.ofd.bytes(path)?;
-        let tf = self.system_font_mgr.new_from_data(&bytes, 0);
-        tf.ok_or_else(|| eyre!("failed to load embedded font"))
+    pub(super) fn load_embed_font(
+        &mut self,
+        path: impl AsRef<str> + Into<String>,
+    ) -> Result<Typeface> {
+        self.embedded_font_mgr.load_embed_font(path)
     }
     pub(crate) fn typeface_by_resource_id(&self, resource_id: StRefId) -> Typeface {
         // self.ofd.resources_for_page()
@@ -246,7 +266,7 @@ impl AggFontMgrBuilder {
 
         Ok(AggFontMgr {
             ofd: self.ofd.clone(),
-            embedded_font_mgr: Some(EmbeddedFontMgr::from_ofd(self.ofd)),
+            embedded_font_mgr: EmbeddedFontMgr::from_ofd(self.ofd),
             local_dir_font_mgr: local_dir_fm,
             system_font_mgr: system_fm,
             fallback_font_name: self.fallback_font_name,

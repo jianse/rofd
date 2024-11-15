@@ -14,7 +14,6 @@ use tracing::{debug, warn};
 pub(super) fn draw_text_object(ctx: &mut RenderCtx, text_object: &TextObject) -> eyre::Result<()> {
     let canvas = ctx.canvas;
     let resources = ctx.resources;
-    let draw_param_stack = &ctx.draw_param_stack;
     let vis = text_object.visible.unwrap_or(true);
     if !vis {
         return Ok(());
@@ -52,24 +51,30 @@ pub(super) fn draw_text_object(ctx: &mut RenderCtx, text_object: &TextObject) ->
         let blob = from_text_val(origin, text_val, &font)?;
 
         if text_object.stroke.unwrap_or(false) {
-            let stroke_color = draw_param_stack.get_stroke_color(
+            let stroke_color = ctx.draw_param_stack.get_stroke_color(
                 text_object.stroke_color.as_ref(),
                 resources,
                 Color::TRANSPARENT.into(),
             );
             let mut paint = Paint::new(stroke_color, None);
             paint.set_stroke(true);
+            if let Some(alpha) = text_object.alpha {
+                paint.set_alpha(alpha);
+            }
             canvas.draw_text_blob(&blob, (0.0, 0.0), &paint);
         }
 
         if text_object.fill.unwrap_or(true) {
-            let fill_color = draw_param_stack.get_fill_color(
+            let fill_color = ctx.draw_param_stack.get_fill_color(
                 text_object.fill_color.as_ref(),
                 resources,
                 Color::BLACK.into(),
             );
             let mut paint = Paint::new(fill_color, None);
             paint.set_stroke(false);
+            if let Some(alpha) = text_object.alpha {
+                paint.set_alpha(alpha);
+            }
             canvas.draw_text_blob(&blob, (0.0, 0.0), &paint);
         }
         last_pos = origin;
@@ -80,7 +85,7 @@ pub(super) fn draw_text_object(ctx: &mut RenderCtx, text_object: &TextObject) ->
 }
 
 fn get_font(
-    ctx: &RenderCtx,
+    ctx: &mut RenderCtx,
     text_object: &TextObject,
     resources: &Resources,
 ) -> eyre::Result<Font> {
