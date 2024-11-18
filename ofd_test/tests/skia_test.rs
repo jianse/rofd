@@ -1,6 +1,8 @@
 #[cfg(test)]
 mod test_skia {
-    use skia_safe::{Color, Color4f, FontMgr, FontStyle, Image, ImageInfo, Paint, Path, Typeface};
+    use skia_safe::{
+        Color, Color4f, Data, FontMgr, FontStyle, Image, ImageInfo, Paint, Path, Typeface,
+    };
     use std::path::PathBuf;
     use std::{
         fs::File,
@@ -207,6 +209,19 @@ mod test_skia {
         let tf = fm.new_from_data(&data, None);
         // dbg!(tf);
         assert!(tf.is_some());
+        Ok(())
+    }
+
+    #[test]
+    fn test_load_image() -> Result<()> {
+        let data = Data::from_filename("../samples/sample2/Doc_0/Res/qrcode.png").unwrap();
+        let image = Image::from_encoded(data);
+        assert!(image.is_some());
+
+        // skia not support jb2 image
+        let data = Data::from_filename("../samples/sample/Doc_0/Res/image_78.jb2").unwrap();
+        let image = Image::from_encoded(data);
+        assert!(image.is_none());
         Ok(())
     }
 }

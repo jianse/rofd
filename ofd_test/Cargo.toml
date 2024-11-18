@@ -16,6 +16,7 @@ skia-safe = { workspace = true }
 eyre = { workspace = true }
 minidom = { workspace = true }
 chrono = { workspace = true }
-tracing-subscriber = {workspace = true}
+tracing-subscriber = { workspace = true }
 
 quick-xml = { version = "0.37.0", features = ["serde"] }
+#pdf = { workspace = true }

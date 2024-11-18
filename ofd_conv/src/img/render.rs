@@ -525,8 +525,15 @@ fn draw_object(ctx: &mut RenderCtx, objects: &Vec<VtGraphicUnit>) {
     }
 }
 
-fn draw_image_object(_ctx: &mut RenderCtx, _image_object: &ImageObject) -> Result<()> {
+fn draw_image_object(ctx: &mut RenderCtx, image_object: &ImageObject) -> Result<()> {
+    if !image_object.visible.unwrap_or(true) {
+        return Ok(());
+    }
+    apply_boundary(ctx.canvas, image_object.boundary);
+    apply_ctm(ctx.canvas, image_object.ctm.as_ref());
+    // ctx.canvas.draw_image()
     warn!("draw_image_object is not implemented!");
+    ctx.canvas.restore();
     Ok(())
 }
 

@@ -48,7 +48,7 @@ pub(super) fn draw_text_object(ctx: &mut RenderCtx, text_object: &TextObject) ->
             text_code.x.unwrap_or(last_pos.0),
             text_code.y.unwrap_or(last_pos.1),
         );
-        let blob = from_text_val(origin, text_val, &font)?;
+        let blob = from_text_val(text_val, &font)?;
 
         if text_object.stroke.unwrap_or(false) {
             let stroke_color = ctx.draw_param_stack.get_stroke_color(
@@ -61,7 +61,7 @@ pub(super) fn draw_text_object(ctx: &mut RenderCtx, text_object: &TextObject) ->
             if let Some(alpha) = text_object.alpha {
                 paint.set_alpha(alpha);
             }
-            canvas.draw_text_blob(&blob, (0.0, 0.0), &paint);
+            canvas.draw_text_blob(&blob, origin, &paint);
         }
 
         if text_object.fill.unwrap_or(true) {
@@ -75,7 +75,7 @@ pub(super) fn draw_text_object(ctx: &mut RenderCtx, text_object: &TextObject) ->
             if let Some(alpha) = text_object.alpha {
                 paint.set_alpha(alpha);
             }
-            canvas.draw_text_blob(&blob, (0.0, 0.0), &paint);
+            canvas.draw_text_blob(&blob, origin, &paint);
         }
         last_pos = origin;
     }
@@ -119,14 +119,14 @@ fn get_font(
 
 /// make TextBlob from TextCode
 fn from_text_val(
-    origin: (f32, f32),
+    // origin: (f32, f32),
     text_val: &ofd_base::file::page::TextVal,
     font: &Font,
 ) -> eyre::Result<TextBlob> {
     let tv = text_val.clone();
     let tc = tv.text_code;
     let text = tc.val;
-    let d_points = Deltas::from_dx_dy(origin, tc.delta_x.as_ref(), tc.delta_y.as_ref())?;
+    let d_points = Deltas::from_dx_dy(tc.delta_x.as_ref(), tc.delta_y.as_ref())?;
 
     let cgt_map = if let Some(cgt_vec) = tv.cg_transform {
         cgt_vec
@@ -138,8 +138,8 @@ fn from_text_val(
         // TODO: use more proper error
         // or maybe this should not happened
         let glyph_len = font.count_text(&text);
-        return TextBlob::from_pos_text(text, &d_points.slice(0, glyph_len), font)
-            .ok_or_eyre("msg");
+        return TextBlob::from_pos_text(&text, &d_points.slice(0, glyph_len), font)
+            .ok_or_eyre("can not create TextBlob from text");
     };
 
     // textblob
@@ -193,10 +193,11 @@ struct Deltas {
 
 impl Deltas {
     fn from_dx_dy(
-        origin: (f32, f32),
+        // origin: (f32, f32),
         delta_x: Option<&StArray<String>>,
         delta_y: Option<&StArray<String>>,
     ) -> eyre::Result<Self> {
+        let origin = (0.0, 0.0);
         let dxs = delta_x.map(flat_g).transpose()?.unwrap_or(Vec::new());
         let dys = delta_y.map(flat_g).transpose()?.unwrap_or(Vec::new());
         let longest_length = max(dxs.len(), dys.len());
@@ -358,7 +359,7 @@ mod tests {
         let typeface = typeface.unwrap();
         let font = Font::from_typeface(typeface, text.size);
 
-        let res = from_text_val((0.0, 0.0), &tv, &font)?;
+        let res = from_text_val(&tv, &font)?;
         let tb = res;
         let ii = ImageInfo::new_s32(ISize::new(210, 297), AlphaType::Unpremul);
         let mut sur =
