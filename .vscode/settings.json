@@ -16,6 +16,7 @@
         "qname",
         "qxml",
         "rofd",
+        "serde",
         "simkai",
         "skia",
         "SRGB",

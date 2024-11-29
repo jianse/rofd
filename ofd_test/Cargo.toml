@@ -18,5 +18,5 @@ minidom = { workspace = true }
 chrono = { workspace = true }
 tracing-subscriber = { workspace = true }
 
-quick-xml = { version = "0.37.0", features = ["serde"] }
+quick-xml = { workspace = true, features = ["serde"] }
 #pdf = { workspace = true }

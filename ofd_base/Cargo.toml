@@ -13,4 +13,4 @@ serde_with = { workspace = true }
 eyre ={workspace = true}
 
 [dev-dependencies]
-quick-xml = { version = "0.37.0", features = ["serde", "serialize"] }
+quick-xml = { workspace = true, features = ["serde", "serialize"] }
