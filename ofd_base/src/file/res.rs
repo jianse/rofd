@@ -170,13 +170,21 @@ pub struct MultiMedia {
     pub id: StId,
 
     #[serde(rename = "@Type")]
-    pub r#type: String,
+    pub r#type: MultiMediaType,
 
     #[serde(rename = "@Format")]
     pub format: Option<String>,
 
     #[serde(rename = "MediaFile")]
     pub media_file: StLoc,
+}
+
+// #[strum]
+#[derive(Debug, Serialize, Deserialize, Eq, PartialEq, EnumString)]
+pub enum MultiMediaType {
+    Video,
+    Audio,
+    Image,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

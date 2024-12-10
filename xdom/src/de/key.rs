@@ -45,7 +45,7 @@ impl<'de> KeyDe<'de> {
     }
 }
 
-impl<'de, 'a> Deserializer<'de> for &'a mut KeyDe<'de> {
+impl<'de> Deserializer<'de> for &mut KeyDe<'de> {
     type Error = XmlDeError;
 
     fn deserialize_any<V>(self, visitor: V) -> Result<V::Value, Self::Error>

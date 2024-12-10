@@ -38,7 +38,7 @@ impl<'de> AttrValueDe<'de> {
     }
 }
 
-impl<'de, 'a> Deserializer<'de> for &'a mut AttrValueDe<'de> {
+impl<'de> Deserializer<'de> for &mut AttrValueDe<'de> {
     type Error = XmlDeError;
 
     fn deserialize_any<V>(self, visitor: V) -> Result<V::Value, Self::Error>
@@ -300,7 +300,7 @@ macro_rules! de_primitives2 {
     };
 }
 
-impl<'de, 'a> Deserializer<'de> for &'a mut TextValueDe {
+impl<'de> Deserializer<'de> for &mut TextValueDe {
     type Error = XmlDeError;
 
     fn deserialize_any<V>(self, visitor: V) -> Result<V::Value, Self::Error>
@@ -498,7 +498,7 @@ impl<'de> ValueDe<'de> {
     }
 }
 
-impl<'de, 'a> Deserializer<'de> for &'a mut ValueDe<'de> {
+impl<'de> Deserializer<'de> for &mut ValueDe<'de> {
     type Error = XmlDeError;
 
     fn deserialize_any<V>(self, visitor: V) -> Result<V::Value, Self::Error>

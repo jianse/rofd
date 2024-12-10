@@ -8,7 +8,8 @@ use ofd_base::common::{Cap, CellContent, CtColor, CtPattern, Join, Palette};
 use ofd_base::file::page::VtGraphicUnit;
 use ofd_base::file::res::{
     ColorSpace, ColorSpaces, CompositeGraphicUnit, CompositeGraphicUnits, CtVectorG, DrawParam,
-    DrawParams, Font, Fonts, MultiMedia, MultiMedias, Resource, ResourceXmlFile, Type,
+    DrawParams, Font, Fonts, MultiMedia, MultiMediaType, MultiMedias, Resource, ResourceXmlFile,
+    Type,
 };
 use ofd_base::{StArray, StId, StLoc, StRefId};
 use std::str::FromStr;
@@ -278,7 +279,7 @@ impl TryFromDom<&Element> for MultiMedias {
 impl TryFromDom<&Element> for MultiMedia {
     fn try_from_dom(dom: &Element) -> Result<Self, TryFromDomError> {
         let id = parse_required_from_attr(dom, "ID", StId::from_str)?;
-        let r#type = parse_required_from_attr(dom, "Type", String::from_str)?;
+        let r#type = parse_required_from_attr(dom, "Type", MultiMediaType::from_str)?;
         let format = parse_optional_from_attr(dom, "Format", String::from_str)?;
         let media_file = parse_required_from_text(dom, "MediaFile", StLoc::from_str)?;
         Ok(MultiMedia {

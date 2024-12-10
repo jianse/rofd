@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::base::{StBox, StLoc, StRefId};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct SignaturesXmlFile {
     #[serde(rename = "MaxSignId")]
     pub max_sign_id: Option<String>,
@@ -11,7 +11,7 @@ pub struct SignaturesXmlFile {
     pub signature: Option<Vec<Signature>>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Signature {
     #[serde(rename = "@ID")]
     pub id: String,
@@ -24,7 +24,7 @@ pub struct Signature {
     pub base_loc: StLoc,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct SignatureXmlFile {
     #[serde(rename = "SignedInfo")]
     pub signed_info: SignedInfo,
@@ -33,7 +33,7 @@ pub struct SignatureXmlFile {
     pub signed_value: StLoc,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct SignedInfo {
     #[serde(rename = "Provider")]
     pub provider: Provider,
@@ -52,13 +52,13 @@ pub struct SignedInfo {
     pub seal: Option<Seal>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Seal {
     #[serde(rename = "BaseLoc")]
     pub base_loc: StLoc,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct StampAnnot {
     #[serde(rename = "@ID")]
     pub id: String,
@@ -73,7 +73,7 @@ pub struct StampAnnot {
     pub clip: Option<StBox>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct References {
     /// default `MD5`
     #[serde(rename = "@CheckMethod")]
@@ -82,7 +82,7 @@ pub struct References {
     pub references: Vec<Reference>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Reference {
     #[serde(rename = "@FileRef")]
     pub file_ref: StLoc,
@@ -90,7 +90,7 @@ pub struct Reference {
     pub check_value: String,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Provider {
     #[serde(rename = "@ProviderName")]
     pub provider_name: String,

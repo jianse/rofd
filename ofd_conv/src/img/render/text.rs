@@ -49,6 +49,7 @@ pub(super) fn draw_text_object(ctx: &mut RenderCtx, text_object: &TextObject) ->
             text_code.y.unwrap_or(last_pos.1),
         );
         let blob = from_text_val(text_val, &font)?;
+        debug!("blob: {:?}", blob);
 
         if text_object.stroke.unwrap_or(false) {
             let stroke_color = ctx.draw_param_stack.get_stroke_color(

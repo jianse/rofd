@@ -1,7 +1,8 @@
 use crate::error::{Error, Result};
 use minidom::Element;
 use ofd_base::file::annotation::{AnnotationXmlFile, AnnotationsXmlFile};
-use ofd_base::file::res::Resource;
+use ofd_base::file::res::{MultiMedia, MultiMediaType, Resource};
+use ofd_base::file::signature::{SignatureXmlFile, SignaturesXmlFile};
 use ofd_base::{
     file::{
         document::DocumentXmlFile,
@@ -97,6 +98,21 @@ impl Ofd {
 
     pub fn bytes(&self, path: impl AsRef<str> + Into<String>) -> Result<Vec<u8>> {
         self.0.borrow_mut().bytes(path)
+    }
+
+    pub fn signatures_for_doc(
+        &self,
+        doc_index: usize,
+    ) -> Result<Option<OfdItem<SignaturesXmlFile>>> {
+        self.0.borrow_mut().signatures_for_doc(doc_index)
+    }
+
+    pub fn signature_for_doc(
+        &self,
+        doc_index: usize,
+    ) -> Result<Option<Vec<OfdItem<SignatureXmlFile>>>> {
+        self.0.borrow_mut().signature_for_doc(doc_index)
+        // todo!()
     }
 }
 
@@ -416,6 +432,47 @@ impl RawOfd {
             Ok(Vec::new())
         }
     }
+
+    fn signatures_for_doc(
+        &mut self,
+        doc_index: usize,
+    ) -> Result<Option<OfdItem<SignaturesXmlFile>>> {
+        let entry = self.entry()?;
+        let xml = &entry.content.doc_body[doc_index];
+        if let Some(p) = &xml.signatures {
+            let path = entry.resolve(p);
+            let e = self.cache_or::<SignaturesXmlFile, _>(path.clone())?;
+            Ok(Some(OfdItem { path, content: e }))
+        } else {
+            Ok(None)
+        }
+    }
+
+    pub fn signature_for_doc(
+        &mut self,
+        doc_index: usize,
+        // page_index: usize,
+    ) -> Result<Option<Vec<OfdItem<SignatureXmlFile>>>> {
+        let sigs = self.signatures_for_doc(doc_index)?;
+        if sigs.is_none() {
+            return Ok(None);
+        }
+        let sigs_file = sigs.unwrap();
+        if sigs_file.signature.is_none() {
+            return Ok(None);
+        }
+        let sigs = sigs_file.signature.as_ref().unwrap();
+
+        let s = sigs
+            .iter()
+            .map(|sig| -> Result<OfdItem<SignatureXmlFile>> {
+                let path = sigs_file.resolve(&sig.base_loc);
+                let f = self.cache_or::<SignatureXmlFile, _>(path.clone())?;
+                Ok(OfdItem { path, content: f })
+            })
+            .collect::<Result<Vec<OfdItem<SignatureXmlFile>>>>()?;
+        Ok(Some(s))
+    }
 }
 
 #[derive(Debug)]
@@ -509,9 +566,8 @@ impl Resources {
     }
     pub fn get_font_by_id(&self, font_id: StRefId) -> Option<(&OfdItem<ResourceXmlFile>, &Font)> {
         let font = self
-            .iter()
-            .filter_map(|f| f.content.resources.as_ref().map(|r| (f, r)))
-            .flat_map(|(f, v)| v.iter().map(move |v| (f, v)))
+            .flat()
+            .into_iter()
             .filter_map(|(f, r)| match r {
                 Resource::Fonts(fts) => Some((f, fts)),
                 _ => None,
@@ -520,8 +576,30 @@ impl Resources {
             .find(|(_, f)| f.id == font_id);
         font
     }
-    pub fn _get_image_by_id(&self, _image_id: StRefId) -> Option<String> {
-        todo!()
+
+    fn flat(&self) -> Vec<(&OfdItem<ResourceXmlFile>, &Resource)> {
+        let x = self
+            .iter()
+            .filter_map(|f| f.content.resources.as_ref().map(|r| (f, r)))
+            .flat_map(|(f, v)| v.iter().map(move |v| (f, v)))
+            .collect::<Vec<_>>();
+        x
+    }
+    pub fn get_image_by_id(
+        &self,
+        image_id: StRefId,
+    ) -> Option<(&OfdItem<ResourceXmlFile>, &MultiMedia)> {
+        let image = self
+            .flat()
+            .into_iter()
+            .filter_map(|(f, r)| match r {
+                Resource::MultiMedias(multi_medias) => Some((f, multi_medias)),
+                _ => None,
+            })
+            .flat_map(|(fi, f)| f.multi_medias.iter().map(move |f| (fi, f)))
+            .filter(|(_, f)| f.r#type == MultiMediaType::Image)
+            .find(|(_, f)| f.id == image_id);
+        image
     }
 }
 

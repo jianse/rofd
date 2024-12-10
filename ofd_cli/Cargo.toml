@@ -9,9 +9,9 @@ clap = { workspace = true, features = ["derive", "string"] }
 cli-table = { workspace = true }
 eyre = { workspace = true }
 thiserror = { workspace = true }
-ofd_base = { path = "../ofd_base" }
-ofd_rw = { path = "../ofd_rw" }
-ofd_conv = { path = "../ofd_conv" }
+ofd_base = { workspace = true }
+ofd_rw = { workspace = true }
+ofd_conv = { workspace = true }
 tracing = { workspace = true }
 tracing-subscriber = { workspace = true, features = ["env-filter"] }
 interpolator = { workspace = true, features = ["number"] }

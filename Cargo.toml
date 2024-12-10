@@ -9,6 +9,7 @@ members = [
     "ofd_conv",
     "ofd_misc",
     "ofd_test",
+    "ofd_sign",
 ]
 
 
@@ -39,6 +40,13 @@ syn = "2.0.89"
 tracing = "0.1.41"
 tracing-subscriber = "0.3.18"
 interpolator = "0.5.0"
+
+# workspace
+xdom = { path = "xdom" }
+ofd_base = { path = "ofd_base" }
+ofd_rw = { path = "ofd_rw" }
+ofd_conv = { path = "ofd_conv" }
+
 
 # only dev use
 quick-xml = "0.37.0"

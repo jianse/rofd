@@ -252,7 +252,7 @@ impl serde::ser::Error for XmlSerErr {
     }
 }
 
-impl<'a> Serializer for &'a mut XmlSer {
+impl Serializer for &mut XmlSer {
     type Ok = ();
     type Error = XmlSerErr;
     type SerializeSeq = Self;
@@ -428,7 +428,7 @@ impl<'a> Serializer for &'a mut XmlSer {
     }
 }
 
-impl<'a> SerializeSeq for &'a mut XmlSer {
+impl SerializeSeq for &mut XmlSer {
     type Ok = ();
     type Error = XmlSerErr;
 
@@ -464,7 +464,7 @@ impl<'a> SerializeSeq for &'a mut XmlSer {
     }
 }
 
-impl<'a> SerializeStruct for &'a mut XmlSer {
+impl SerializeStruct for &mut XmlSer {
     type Ok = ();
     type Error = XmlSerErr;
 
@@ -522,7 +522,7 @@ impl<'a> SerializeStruct for &'a mut XmlSer {
     }
 }
 
-impl<'a> SerializeStructVariant for &'a mut XmlSer {
+impl SerializeStructVariant for &mut XmlSer {
     type Ok = ();
     type Error = XmlSerErr;
 

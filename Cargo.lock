@@ -102,6 +102,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "asn1"
+version = "0.20.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2d8b84b4ea1de2bf1dcd2a759737ddb328fb6695b2a95eb7e44fed67e3406f32"
+dependencies = [
+ "asn1_derive",
+ "itoa",
+]
+
+[[package]]
+name = "asn1_derive"
+version = "0.20.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a200809d0138620b3dba989f1d08d0620e76248bc1e62a2ec1b2df5eb1ee08ad"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.89",
+]
+
+[[package]]
 name = "autocfg"
 version = "1.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -462,6 +483,12 @@ name = "deflate64"
 version = "0.1.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "da692b8d1080ea3045efaab14434d40468c3d8657e42abddfffca87b428f4c1b"
+
+[[package]]
+name = "der"
+version = "0.7.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f55bf8e7b65898637379c1b74eb1551107c8294ed26d855ceb9fd1a09cfc9bc0"
 
 [[package]]
 name = "deranged"
@@ -949,6 +976,16 @@ dependencies = [
  "tracing",
  "xdom",
  "zip",
+]
+
+[[package]]
+name = "ofd_sign"
+version = "0.1.0"
+dependencies = [
+ "asn1",
+ "der",
+ "eyre",
+ "ofd_rw",
 ]
 
 [[package]]

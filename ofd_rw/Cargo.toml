@@ -5,13 +5,13 @@ edition = "2021"
 license = "MIT OR Apache-2.0"
 
 [dependencies]
-ofd_base = { path = "../ofd_base" }
+ofd_base = { workspace = true }
 thiserror = { workspace = true }
 minidom = { workspace = true }
 relative-path = { workspace = true }
 zip = { workspace = true }
 serde = { workspace = true }
-xdom = { path = "../xdom" }
+xdom = { workspace = true }
 tracing = { workspace = true, features = ['release_max_level_info'] }
 #cached = "0.53.1"
 

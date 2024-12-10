@@ -4,19 +4,21 @@ mod font;
 mod path;
 mod text;
 
+use std::io::Cursor;
 use std::iter::Enumerate;
 use std::slice::Iter;
 use std::str::FromStr;
 
 use eyre::Result;
 use eyre::{eyre, OptionExt};
-use skia_safe::BlendMode;
+use skia_safe::canvas::SrcRectConstraint;
 use skia_safe::Color;
 use skia_safe::Color4f;
 use skia_safe::Matrix;
 use skia_safe::PaintCap;
 use skia_safe::PaintJoin;
 use skia_safe::Rect;
+use skia_safe::{BlendMode, Data, Image, Paint};
 use skia_safe::{Canvas, ImageInfo, Surface};
 use tracing::{debug, error, warn};
 
@@ -342,6 +344,7 @@ fn apply_ctm(can: &Canvas, ctm: Option<&StArray<f32>>) {
     }
     let ctm = ctm.unwrap();
     assert_eq!(ctm.0.len(), 6, "ctm len must be 6");
+    dbg!(ctm);
     let mat = Matrix::new_all(
         ctm.0[0], ctm.0[2], ctm.0[4], ctm.0[1], ctm.0[3], ctm.0[5], 0.0, 0.0, 1.0,
     );
@@ -483,36 +486,20 @@ fn draw_object(ctx: &mut RenderCtx, objects: &Vec<VtGraphicUnit>) {
     let resources = ctx.resources;
 
     for obj in objects {
+        let dp_id = obj.draw_param();
+        let dp = get_draw_param_by_id(resources, dp_id);
+        ctx.draw_param_stack.push(dp.clone());
+        ctx.canvas.save();
         let init_sc = canvas.save_count();
+        assert!(init_sc > 0);
         let r = match obj {
-            VtGraphicUnit::TextObject(text) => {
-                let dp_id = text.draw_param;
-                let dp = get_draw_param_by_id(resources, dp_id);
-                ctx.draw_param_stack.push(dp.clone());
-                let dtr = draw_text_object(ctx, text);
-                ctx.draw_param_stack.pop(dp);
-                dtr
-            }
-            VtGraphicUnit::PathObject(path) => {
-                let dp_id = path.draw_param;
-                let dp = get_draw_param_by_id(resources, dp_id);
-                ctx.draw_param_stack.push(dp.clone());
-                let dpr = draw_path_object(ctx, path);
-                ctx.draw_param_stack.pop(dp);
-                dpr
-            }
-            VtGraphicUnit::ImageObject(image) => {
-                let dp_id = image.draw_param;
-                let dp = get_draw_param_by_id(resources, dp_id);
-                ctx.draw_param_stack.push(dp.clone());
-                // TODO: draw image
-                let dir = draw_image_object(ctx, image);
-                ctx.draw_param_stack.pop(dp);
-                dir
-            }
+            VtGraphicUnit::TextObject(text) => draw_text_object(ctx, text),
+            VtGraphicUnit::PathObject(path) => draw_path_object(ctx, path),
+            VtGraphicUnit::ImageObject(image) => draw_image_object(ctx, image),
             VtGraphicUnit::CompositeObject(_co) => todo!(),
             VtGraphicUnit::PageBlock(_pb) => todo!(),
         };
+        ctx.draw_param_stack.pop(dp);
         if r.is_err() {
             error!("draw_layer_error: {:?}", r);
         }
@@ -522,17 +509,91 @@ fn draw_object(ctx: &mut RenderCtx, objects: &Vec<VtGraphicUnit>) {
             "imbalanced skia save count. obj: {:?}",
             obj
         );
+        ctx.canvas.restore();
     }
 }
+// trait ToMatrix {
+//     fn to_matrix(&self) -> Matrix;
+// }
+// fn to_matrix(ctm: &StArray<f32>) -> Matrix {
+//     Matrix::new_all(
+//         ctm.0[0], ctm.0[2], ctm.0[4], ctm.0[1], ctm.0[3], ctm.0[5], 0.0, 0.0, 1.0,
+//     )
+// }
+
+// impl ToMatrix for
 
 fn draw_image_object(ctx: &mut RenderCtx, image_object: &ImageObject) -> Result<()> {
     if !image_object.visible.unwrap_or(true) {
         return Ok(());
     }
+    ctx.canvas.save();
     apply_boundary(ctx.canvas, image_object.boundary);
-    apply_ctm(ctx.canvas, image_object.ctm.as_ref());
+    // apply_ctm(ctx.canvas, image_object.ctm.as_ref());
+    if let Some((ofd_item, image)) = ctx.resources.get_image_by_id(image_object.resource_id) {
+        match &image.format {
+            Some(format) => match format.to_lowercase().as_str() {
+                "png" => {
+                    let p = ofd_item.resolve(&ofd_item.base_loc.join(&image.media_file));
+                    // dbg!(&p);
+                    let bytes = ctx._ofd.bytes(p)?;
+                    let len = bytes.len();
+                    let data =
+                        Data::from_stream(Cursor::new(bytes), len).ok_or(eyre!("data in None"))?;
+                    let img = Image::from_encoded(data).ok_or(eyre!("image encoded in None"))?;
+                    let mut paint = Paint::default();
+                    paint.set_anti_alias(true);
+                    // img.
+                    // let mut mat = Matrix::new_identity();
+                    let b = img.bounds().into();
+
+                    let dst = Rect::from_wh(
+                        // image_object.boundary.x,
+                        // image_object.boundary.y,
+                        image_object.boundary.w,
+                        image_object.boundary.h,
+                    );
+                    dbg!(&img);
+                    // if let Some(ctm) = image_object.ctm.as_ref() {
+                    //     let image_filter =
+                    //         matrix_transform(&to_matrix(ctm), SamplingOptions::default(), None)
+                    //             .unwrap();
+                    //     paint.set_image_filter(image_filter);
+                    // }
+                    ctx.canvas.draw_image_rect(
+                        img,
+                        Some((&b, SrcRectConstraint::Strict)),
+                        dst,
+                        &paint,
+                    );
+                    // ctx.canvas.draw_image_with_sampling_options(
+                    //     img,
+                    //     (0,0),
+                    //     // SamplingOptions::from()
+                    //     image_filter.into(),
+                    //     // Some(&img.bounds()),
+                    //     // Rect::from_wh(image_object.boundary.w, image_object.boundary.h),
+                    //     None
+                    // );
+                }
+                _ => {
+                    // unsupported format
+                    warn!("unsupported image format {}", format);
+                }
+            },
+            None => {
+                // detect format
+            }
+        }
+        // dbg!(mm);
+    } else {
+        warn!(
+            "image resource not found! id = {}",
+            image_object.resource_id
+        );
+    }
     // ctx.canvas.draw_image()
-    warn!("draw_image_object is not implemented!");
+    // warn!("draw_image_object is not implemented!");
     ctx.canvas.restore();
     Ok(())
 }

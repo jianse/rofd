@@ -6,8 +6,8 @@ license = "MIT OR Apache-2.0"
 
 
 [dependencies]
-ofd_base = { path = "../ofd_base" }
-ofd_rw = { path = "../ofd_rw" }
+ofd_base = { workspace = true }
+ofd_rw = { workspace = true }
 eyre = { workspace = true }
 skia-safe = { workspace = true }
 thiserror = { workspace = true }

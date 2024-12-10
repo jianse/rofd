@@ -53,6 +53,19 @@ pub enum VtGraphicUnit {
     CompositeObject(CompositeObject),
     PageBlock(PageBlock),
 }
+
+impl VtGraphicUnit {
+    pub fn draw_param(&self) -> Option<StRefId> {
+        match self {
+            VtGraphicUnit::TextObject(text) => text.draw_param,
+            VtGraphicUnit::PathObject(path) => path.draw_param,
+            VtGraphicUnit::ImageObject(image) => image.draw_param,
+            VtGraphicUnit::CompositeObject(composite) => composite.draw_param,
+            VtGraphicUnit::PageBlock(_) => None,
+        }
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct PageBlock {
     #[serde(rename = "@ID")]
@@ -99,6 +112,7 @@ pub struct CompositeObject {
     pub actions: Option<Actions>,
     // endregion
 }
+
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ImageObject {
     #[serde(rename = "@ID")]

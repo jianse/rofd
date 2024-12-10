@@ -15,7 +15,7 @@ impl AttrValueSer {
         Ok(ser.output)
     }
 }
-impl<'a> SerializeSeq for &'a mut AttrValueSer {
+impl SerializeSeq for &mut AttrValueSer {
     type Ok = ();
     type Error = XmlSerErr;
 
@@ -52,7 +52,7 @@ impl<'a> SerializeSeq for &'a mut AttrValueSer {
     }
 }
 
-impl<'a> Serializer for &'a mut AttrValueSer {
+impl Serializer for &mut AttrValueSer {
     type Ok = ();
     type Error = XmlSerErr;
     type SerializeSeq = Self;

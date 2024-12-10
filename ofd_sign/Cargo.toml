@@ -1,0 +1,11 @@
+[package]
+name = "ofd_sign"
+version = "0.1.0"
+edition = "2021"
+license.workspace = true
+
+[dependencies]
+ofd_rw = { workspace = true }
+eyre = { workspace = true }
+asn1 = "0.20.0"
+der = "0.7.9"

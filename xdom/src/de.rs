@@ -79,7 +79,7 @@ where
     T::deserialize(&mut de)
 }
 
-impl<'de, 'a> Deserializer<'de> for &'a mut XmlDe<'de> {
+impl<'de> Deserializer<'de> for &mut XmlDe<'de> {
     type Error = XmlDeError;
 
     fn deserialize_any<V>(self, visitor: V) -> Result<V::Value, Self::Error>
@@ -316,7 +316,7 @@ impl<'a, 'de> AttrChild<'a, 'de> {
     }
 }
 
-impl<'a, 'de> MapAccess<'de> for AttrChild<'a, 'de> {
+impl<'de> MapAccess<'de> for AttrChild<'_, 'de> {
     type Error = XmlDeError;
 
     fn next_key_seed<K>(&mut self, seed: K) -> Result<Option<K::Value>, Self::Error>
@@ -458,8 +458,8 @@ struct XmlSeqAccess<'de> {
     iter: std::vec::IntoIter<&'de Element>,
 }
 
-impl<'a, 'de> XmlSeqAccess<'de> {
-    fn from_xml_de(de: &'a mut XmlDe<'de>) -> Self {
+impl<'de> XmlSeqAccess<'de> {
+    fn from_xml_de(de: &mut XmlDe<'de>) -> Self {
         let name = de.name.as_ref();
         let iter = if let Some(parent) = de.parent {
             parent

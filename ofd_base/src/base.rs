@@ -138,7 +138,7 @@ impl<'de> Deserialize<'de> for StBox {
     {
         struct StBoxVisitor;
 
-        impl<'de> Visitor<'de> for StBoxVisitor {
+        impl Visitor<'_> for StBoxVisitor {
             type Value = StBox;
 
             fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
@@ -193,7 +193,7 @@ impl<'de, T: FromStr + Display> Deserialize<'de> for StArray<T> {
         struct StArrayVisitor<C: FromStr + Display> {
             marker: PhantomData<fn() -> StArray<C>>,
         }
-        impl<'de, C: FromStr + Display> Visitor<'de> for StArrayVisitor<C> {
+        impl<C: FromStr + Display> Visitor<'_> for StArrayVisitor<C> {
             type Value = StArray<C>;
 
             fn expecting(&self, formatter: &mut Formatter) -> std::fmt::Result {
