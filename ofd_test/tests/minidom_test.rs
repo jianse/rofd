@@ -17,7 +17,7 @@ use xdom::ser::XmlSer;
 
 #[test]
 fn test() -> Result<()> {
-    let file = File::open("../samples/ano/OFD.xml")?;
+    let file = File::open("../samples/002/OFD.xml")?;
     let mut reader = BufReader::new(file);
     let mut data = String::new();
     let _ = reader.read_to_string(&mut data);
@@ -32,7 +32,7 @@ fn test() -> Result<()> {
 
 #[test]
 fn test_try_from_dom_ofd() -> Result<()> {
-    let file = File::open("../samples/sample/OFD.xml")?;
+    let file = File::open("../samples/000/OFD.xml")?;
     let mut reader = BufReader::new(file);
     let mut data = String::new();
     let _ = reader.read_to_string(&mut data);
@@ -45,7 +45,7 @@ fn test_try_from_dom_ofd() -> Result<()> {
 
 #[test]
 fn test_try_from_dom_doc() -> Result<()> {
-    let file = File::open("../samples/sample/Doc_0/Document.xml")?;
+    let file = File::open("../samples/000/Doc_0/Document.xml")?;
     let mut reader = BufReader::new(file);
     let mut data = String::new();
     let _ = reader.read_to_string(&mut data);
@@ -261,7 +261,7 @@ fn test_doc_ser_to_ele() -> Result<()> {
 
 #[test]
 fn test_page_ser_to_ele() -> Result<()> {
-    let file = File::open("../samples/sample/Doc_0/Pages/Page_0/Content.xml")?;
+    let file = File::open("../samples/000/Doc_0/Pages/Page_0/Content.xml")?;
     let reader = BufReader::new(file);
     let root = Element::from_reader(reader)?;
     let a = PageXmlFile::try_from_dom(&root)?;

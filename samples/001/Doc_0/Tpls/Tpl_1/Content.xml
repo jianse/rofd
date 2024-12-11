@@ -1,0 +1,154 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ofd:Page xmlns:ofd="http://www.ofdspec.org/2016">
+  <ofd:Area>
+    <ofd:PhysicalBox>0 0 210 297</ofd:PhysicalBox>
+  </ofd:Area>
+  <ofd:Content>
+    <ofd:Layer DrawParam="602" ID="93">
+      <ofd:PathObject ID="94" Boundary="4.5 65.8 201 0.4" LineWidth="0.25">
+        <ofd:FillColor Value="0 0 0" ColorSpace="1" />
+        <ofd:AbbreviatedData>M 0 0.2 L 201 0.2 </ofd:AbbreviatedData>
+      </ofd:PathObject>
+      <ofd:PathObject ID="95" Boundary="4.5 268.8 201 0.4" LineWidth="0.25">
+        <ofd:FillColor Value="0 0 0" ColorSpace="1" />
+        <ofd:AbbreviatedData>M 0 0.2 L 201 0.2 </ofd:AbbreviatedData>
+      </ofd:PathObject>
+      <ofd:PathObject ID="96" Boundary="4.5 276.8 201 0.4" LineWidth="0.25">
+        <ofd:FillColor Value="0 0 0" ColorSpace="1" />
+        <ofd:AbbreviatedData>M 0 0.2 L 201 0.2 </ofd:AbbreviatedData>
+      </ofd:PathObject>
+      <ofd:PathObject ID="97" Boundary="4.5 58.8 201 0.4" LineWidth="0.25">
+        <ofd:FillColor Value="0 0 0" ColorSpace="1" />
+        <ofd:AbbreviatedData>M 0 0.2 L 201 0.2 </ofd:AbbreviatedData>
+      </ofd:PathObject>
+      <ofd:PathObject ID="98" Boundary="4.3 59 0.4 218" LineWidth="0.25">
+        <ofd:FillColor Value="0 0 0" ColorSpace="1" />
+        <ofd:AbbreviatedData>M 0.2 0 L 0.2 218 </ofd:AbbreviatedData>
+      </ofd:PathObject>
+      <ofd:PathObject ID="99" Boundary="13.3 59 0.4 218" LineWidth="0.25">
+        <ofd:FillColor Value="0 0 0" ColorSpace="1" />
+        <ofd:AbbreviatedData>M 0.2 0 L 0.2 218 </ofd:AbbreviatedData>
+      </ofd:PathObject>
+      <ofd:PathObject ID="100" Boundary="205.3 59 0.4 218" LineWidth="0.25">
+        <ofd:FillColor Value="0 0 0" ColorSpace="1" />
+        <ofd:AbbreviatedData>M 0.2 0 L 0.2 218 </ofd:AbbreviatedData>
+      </ofd:PathObject>
+      <ofd:PathObject ID="101" Boundary="56.3 59 0.4 210" LineWidth="0.25">
+        <ofd:FillColor Value="0 0 0" ColorSpace="1" />
+        <ofd:AbbreviatedData>M 0.2 0 L 0.2 210 </ofd:AbbreviatedData>
+      </ofd:PathObject>
+      <ofd:PathObject ID="102" Boundary="82.3 59 0.4 210" LineWidth="0.25">
+        <ofd:FillColor Value="0 0 0" ColorSpace="1" />
+        <ofd:AbbreviatedData>M 0.2 0 L 0.2 210 </ofd:AbbreviatedData>
+      </ofd:PathObject>
+      <ofd:PathObject ID="103" Boundary="94.3 59 0.4 210" LineWidth="0.25">
+        <ofd:FillColor Value="0 0 0" ColorSpace="1" />
+        <ofd:AbbreviatedData>M 0.2 0 L 0.2 210 </ofd:AbbreviatedData>
+      </ofd:PathObject>
+      <ofd:PathObject ID="104" Boundary="114.3 59 0.4 210" LineWidth="0.25">
+        <ofd:FillColor Value="0 0 0" ColorSpace="1" />
+        <ofd:AbbreviatedData>M 0.2 0 L 0.2 210 </ofd:AbbreviatedData>
+      </ofd:PathObject>
+      <ofd:PathObject ID="105" Boundary="134.3 59 0.4 210" LineWidth="0.25">
+        <ofd:FillColor Value="0 0 0" ColorSpace="1" />
+        <ofd:AbbreviatedData>M 0.2 0 L 0.2 210 </ofd:AbbreviatedData>
+      </ofd:PathObject>
+      <ofd:PathObject ID="106" Boundary="164.3 59 0.4 210" LineWidth="0.25">
+        <ofd:FillColor Value="0 0 0" ColorSpace="1" />
+        <ofd:AbbreviatedData>M 0.2 0 L 0.2 210 </ofd:AbbreviatedData>
+      </ofd:PathObject>
+      <ofd:PathObject ID="107" Boundary="175.3 59 0.4 210" LineWidth="0.25">
+        <ofd:FillColor Value="0 0 0" ColorSpace="1" />
+        <ofd:AbbreviatedData>M 0.2 0 L 0.2 210 </ofd:AbbreviatedData>
+      </ofd:PathObject>
+      <ofd:TextObject ID="108" Boundary="44 14 122.5 7.08" Font="2" Size="6.7028">
+        <ofd:StrokeColor Value="0 0 0" ColorSpace="1" />
+        <ofd:TextCode X="1.05" Y="6.1" DeltaX="g 16 7.05">销售货物或者提供应税劳务、服务清单</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="109" Boundary="10 37 20.0025 3.175" Font="2" Size="3.175">
+        <ofd:StrokeColor Value="0 0 0" ColorSpace="1" />
+        <ofd:TextCode X="0.5" Y="2.734" DeltaX="g 5 3.175">购买方名称：</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="110" Boundary="10 44 20.0025 3.175" Font="2" Size="3.175">
+        <ofd:StrokeColor Value="0 0 0" ColorSpace="1" />
+        <ofd:TextCode X="0.5" Y="2.734" DeltaX="g 5 3.175">销售方名称：</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="111" Boundary="10 51 45.4 3.175" Font="2" Size="3.175">
+        <ofd:StrokeColor Value="0 0 0" ColorSpace="1" />
+        <ofd:TextCode X="0.5" Y="2.734" DeltaX="g 13 3.175">所属增值税电子普通发票代码：</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="112" Boundary="95 51 10.5 3.175" Font="2" Size="3.175">
+        <ofd:StrokeColor Value="0 0 0" ColorSpace="1" />
+        <ofd:TextCode X="0.5" Y="2.734" DeltaX="g 2 3.175">号码：</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="113" Boundary="165 51 4.13 3.175" Font="2" Size="3.175">
+        <ofd:StrokeColor Value="0 0 0" ColorSpace="1" />
+        <ofd:TextCode X="0.5" Y="2.734">共</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="114" Boundary="180 51 4.13 3.175" Font="2" Size="3.175">
+        <ofd:StrokeColor Value="0 0 0" ColorSpace="1" />
+        <ofd:TextCode X="0.5" Y="2.734">页</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="115" Boundary="186 51 4.13 3.175" Font="2" Size="3.175">
+        <ofd:StrokeColor Value="0 0 0" ColorSpace="1" />
+        <ofd:TextCode X="0.5" Y="2.734">第</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="116" Boundary="201 51 4.13 3.175" Font="2" Size="3.175">
+        <ofd:StrokeColor Value="0 0 0" ColorSpace="1" />
+        <ofd:TextCode X="0.5" Y="2.734">页</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="117" Boundary="147 278.5 18 3.175" Font="2" Size="3.175">
+        <ofd:StrokeColor Value="0 0 0" ColorSpace="1" />
+        <ofd:TextCode X="0.5" Y="2.734" DeltaX="g 4 3.175">开票日期：</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="118" Boundary="4.5 60.7 9 3.175" Font="2" Size="3.175">
+        <ofd:StrokeColor Value="0 0 0" ColorSpace="1" />
+        <ofd:TextCode X="1.5" Y="2.734" DeltaX="3.175">序号</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="119" Boundary="25 60.7 26.5 3.175" Font="2" Size="3.175">
+        <ofd:StrokeColor Value="0 0 0" ColorSpace="1" />
+        <ofd:TextCode X="0.5" Y="2.734" DeltaX="g 7 3.175">项目名称</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="120" Boundary="63 60.7 13.8 3.175" Font="2" Size="3.175">
+        <ofd:StrokeColor Value="0 0 0" ColorSpace="1" />
+        <ofd:TextCode X="0.5" Y="2.734" DeltaX="g 3 3.175">规格型号</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="121" Boundary="85 60.7 7.5 3.175" Font="2" Size="3.175">
+        <ofd:StrokeColor Value="0 0 0" ColorSpace="1" />
+        <ofd:TextCode X="0.5" Y="2.734" DeltaX="3.175">单位</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="122" Boundary="100 60.7 9.5 3.175" Font="2" Size="3.175">
+        <ofd:StrokeColor Value="0 0 0" ColorSpace="1" />
+        <ofd:TextCode X="0.5" Y="2.734" DeltaX="5">数量</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="123" Boundary="119 60.7 11.5 3.175" Font="2" Size="3.175">
+        <ofd:StrokeColor Value="0 0 0" ColorSpace="1" />
+        <ofd:TextCode X="0.5" Y="2.734" DeltaX="7">单价</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="124" Boundary="144 60.7 11.5 3.175" Font="2" Size="3.175">
+        <ofd:StrokeColor Value="0 0 0" ColorSpace="1" />
+        <ofd:TextCode X="0.5" Y="2.734" DeltaX="7">金额</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="125" Boundary="166.5 60.7 7.5 3.175" Font="2" Size="3.175">
+        <ofd:StrokeColor Value="0 0 0" ColorSpace="1" />
+        <ofd:TextCode X="0.5" Y="2.734" DeltaX="3.175">税率</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="126" Boundary="182.5 60.7 13.5 3.175" Font="2" Size="3.175">
+        <ofd:StrokeColor Value="0 0 0" ColorSpace="1" />
+        <ofd:TextCode X="0.4762" Y="2.734" DeltaX="9">税额</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="127" Boundary="4.5 257 9 3.175" Font="2" Size="3.175">
+        <ofd:StrokeColor Value="0 0 0" ColorSpace="1" />
+        <ofd:TextCode X="1.5" Y="2.734" DeltaX="3.175">小计</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="128" Boundary="4.5 264 9 3.175" Font="2" Size="3.175">
+        <ofd:StrokeColor Value="0 0 0" ColorSpace="1" />
+        <ofd:TextCode X="1.5" Y="2.734" DeltaX="3.175">折扣</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="129" Boundary="4.5 271.5 9 3.175" Font="2" Size="3.175">
+        <ofd:StrokeColor Value="0 0 0" ColorSpace="1" />
+        <ofd:TextCode X="1.5" Y="2.734" DeltaX="3.175">备注</ofd:TextCode>
+      </ofd:TextObject>
+    </ofd:Layer>
+  </ofd:Content>
+</ofd:Page>

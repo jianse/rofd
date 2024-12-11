@@ -462,7 +462,7 @@ mod tests {
 
     #[test]
     fn test_page_file() -> Result<()> {
-        let path = "../samples/sample/Doc_0/Pages/Page_0/Content.xml";
+        let path = "../samples/000/Doc_0/Pages/Page_0/Content.xml";
         let file = File::open(path)?;
         let reader = BufReader::new(file);
         let xml: PageXmlFile = quick_xml::de::from_reader(reader)?;
@@ -471,7 +471,7 @@ mod tests {
     }
     #[test]
     fn test_tpl_file() -> Result<()> {
-        let path = "../samples/sample/Doc_0/Tpls/Tpl_0/Content.xml";
+        let path = "../samples/000/Doc_0/Tpls/Tpl_0/Content.xml";
         let file = File::open(path)?;
         let reader = BufReader::new(file);
         let xml: PageXmlFile = quick_xml::de::from_reader(reader)?;
@@ -481,7 +481,7 @@ mod tests {
 
     #[test]
     fn test_text_val() -> Result<()> {
-        let path = "../samples/ano/Doc_0/Pages/Page_0/Content.xml";
+        let path = "../samples/002/Doc_0/Pages/Page_0/Content.xml";
         let file = File::open(path)?;
         let reader = BufReader::new(file);
         let xml: PageXmlFile = quick_xml::de::from_reader(reader)?;

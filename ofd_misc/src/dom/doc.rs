@@ -216,7 +216,7 @@ mod tests {
 
     #[test]
     fn test_try_from_dom_doc() -> Result<()> {
-        let file = File::open("../samples/sample/Doc_0/Document.xml")?;
+        let file = File::open("../samples/000/Doc_0/Document.xml")?;
         let mut reader = BufReader::new(file);
         let mut data = String::new();
         let _ = reader.read_to_string(&mut data);

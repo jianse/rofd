@@ -202,7 +202,7 @@ mod test_skia {
     fn test_load_cff() -> Result<()> {
         let fm = FontMgr::new();
 
-        let path = PathBuf::from("../samples/ano/Doc_0/Res/font_84_84.cff");
+        let path = PathBuf::from("../samples/002/Doc_0/Res/font_84_84.cff");
         let mut file = File::open(path)?;
         let mut data = Vec::new();
         file.read_to_end(&mut data)?;
@@ -214,12 +214,12 @@ mod test_skia {
 
     #[test]
     fn test_load_image() -> Result<()> {
-        let data = Data::from_filename("../samples/sample2/Doc_0/Res/qrcode.png").unwrap();
+        let data = Data::from_filename("../samples/001/Doc_0/Res/qrcode.png").unwrap();
         let image = Image::from_encoded(data);
         assert!(image.is_some());
 
         // skia not support jb2 image
-        let data = Data::from_filename("../samples/sample/Doc_0/Res/image_78.jb2").unwrap();
+        let data = Data::from_filename("../samples/000/Doc_0/Res/image_78.jb2").unwrap();
         let image = Image::from_encoded(data);
         assert!(image.is_none());
         Ok(())

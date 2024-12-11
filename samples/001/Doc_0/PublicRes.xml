@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ofd:Res xmlns:ofd="http://www.ofdspec.org/2016" BaseLoc="Res">
+  <ofd:ColorSpaces>
+    <ofd:ColorSpace ID="1" Type="RGB" BitsPerComponent="8" />
+  </ofd:ColorSpaces>
+  <ofd:Fonts>
+    <ofd:Font ID="2" FontName="楷体" FamilyName="楷体" />
+    <ofd:Font ID="3" FontName="宋体" FamilyName="宋体" />
+    <ofd:Font ID="4" FontName="Courier New" FamilyName="Courier New" />
+    <ofd:Font ID="5" FontName="黑体" FamilyName="黑体" />
+  </ofd:Fonts>
+</ofd:Res>

@@ -15,7 +15,7 @@ mod tests {
 
     #[test]
     fn test_zip() -> Result<()> {
-        let f = File::open("../samples/test.ofd")?;
+        let f = File::open("../samples/000.ofd")?;
         let reader = BufReader::new(f);
         let zip = zip::ZipArchive::new(reader)?;
 

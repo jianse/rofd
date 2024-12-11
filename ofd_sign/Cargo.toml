@@ -7,5 +7,4 @@ license.workspace = true
 [dependencies]
 ofd_rw = { workspace = true }
 eyre = { workspace = true }
-asn1 = "0.20.0"
-der = "0.7.9"
+der = { version = "0.7.9", features = ["alloc", "derive", "oid", "std"] }

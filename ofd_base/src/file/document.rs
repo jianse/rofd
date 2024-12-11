@@ -227,7 +227,7 @@ mod tests {
 
     #[test]
     fn test_de() -> Result<()> {
-        let path = "../samples/sample/Doc_0/Document.xml";
+        let path = "../samples/000/Doc_0/Document.xml";
         let file = File::open(path)?;
         let reader = BufReader::new(file);
         let xml: DocumentXmlFile = quick_xml::de::from_reader(reader)?;

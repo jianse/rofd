@@ -36,7 +36,7 @@ where
 
 #[test]
 fn test_de_ofd() -> Result<()> {
-    let s = read_to_string("../samples/sample/OFD.xml")?;
+    let s = read_to_string("../samples/000/OFD.xml")?;
     let root: Element = s.parse()?;
 
     let mut de = XmlDe::from_ele(&root);
@@ -49,7 +49,7 @@ fn test_de_ofd() -> Result<()> {
 
 #[test]
 fn test_de_doc() -> Result<()> {
-    let s = read_to_string("../samples/sample/Doc_0/Document.xml")?;
+    let s = read_to_string("../samples/000/Doc_0/Document.xml")?;
     let root: Element = s.parse()?;
     let mut de = XmlDe::from_ele(&root);
     let st = DocumentXmlFile::deserialize(&mut de)?;
@@ -59,7 +59,7 @@ fn test_de_doc() -> Result<()> {
 
 #[test]
 fn test_de_page() -> Result<()> {
-    let s = read_to_string("../samples/sample/Doc_0/Pages/Page_0/Content.xml")?;
+    let s = read_to_string("../samples/000/Doc_0/Pages/Page_0/Content.xml")?;
 
     let root: Element = s.parse()?;
     let mut de = XmlDe::from_ele(&root);
@@ -71,7 +71,7 @@ fn test_de_page() -> Result<()> {
 #[test]
 fn test_ano() -> Result<()> {
     init_tracing_subscriber();
-    let file = File::open("../samples/ano/Doc_0/Pages/Page_1/Annotation.xml")?;
+    let file = File::open("../samples/002/Doc_0/Pages/Page_1/Annotation.xml")?;
     let reader = BufReader::new(file);
     let root: Element = Element::from_reader(reader)?;
 
@@ -84,7 +84,7 @@ fn test_ano() -> Result<()> {
 #[test]
 fn test_ano2() -> Result<()> {
     init_tracing_subscriber();
-    let file = File::open("../samples/sample2/Doc_0/Annots/Page_0/Annotation.xml")?;
+    let file = File::open("../samples/001/Doc_0/Annots/Page_0/Annotation.xml")?;
     let mut reader = BufReader::new(file);
     let buf = reader.fill_buf()?;
 

@@ -110,7 +110,7 @@ mod tests {
     use eyre::Result;
     #[test]
     fn test_sigs() -> Result<()> {
-        let file = File::open("../samples/sample/Doc_0/Signs/Signatures.xml")?;
+        let file = File::open("../samples/000/Doc_0/Signs/Signatures.xml")?;
         let reader = BufReader::new(file);
         let xml = quick_xml::de::from_reader::<_, SignaturesXmlFile>(reader)?;
         dbg!(xml);
@@ -118,7 +118,7 @@ mod tests {
     }
     #[test]
     fn test_sig() -> Result<()> {
-        let file = File::open("../samples/sample/Doc_0/Signs/Sign_0/Signature.xml")?;
+        let file = File::open("../samples/000/Doc_0/Signs/Sign_0/Signature.xml")?;
         let reader = BufReader::new(file);
         let xml = quick_xml::de::from_reader::<_, SignatureXmlFile>(reader)?;
         dbg!(xml);

@@ -50,7 +50,7 @@ mod tests {
 
     #[test]
     fn test_works() -> Result<()> {
-        let file = File::open("../samples/sample/Doc_0/Attachs/Attachments.xml")?;
+        let file = File::open("../samples/000/Doc_0/Attachs/Attachments.xml")?;
         let reader = std::io::BufReader::new(file);
         let xml = quick_xml::de::from_reader::<_, AttachmentsXmlFile>(reader)?;
         dbg!(xml);

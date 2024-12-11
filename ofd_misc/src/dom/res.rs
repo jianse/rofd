@@ -301,7 +301,7 @@ mod tests {
 
     #[test]
     fn test_try_from_dom_doc_res() -> Result<()> {
-        let file = File::open("../samples/sample/Doc_0/DocumentRes.xml")?;
+        let file = File::open("../samples/000/Doc_0/DocumentRes.xml")?;
         let mut reader = BufReader::new(file);
         let mut data = String::new();
         reader.read_to_string(&mut data)?;
@@ -313,7 +313,7 @@ mod tests {
 
     #[test]
     fn test_try_from_dom_pub_res() -> Result<()> {
-        let file = File::open("../samples/sample/Doc_0/PublicRes.xml")?;
+        let file = File::open("../samples/000/Doc_0/PublicRes.xml")?;
         let mut reader = BufReader::new(file);
         let mut data = String::new();
         reader.read_to_string(&mut data)?;

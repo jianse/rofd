@@ -111,7 +111,7 @@ mod tests {
 
     #[test]
     fn annotations_xml_file_works() -> Result<()> {
-        let file = File::open("../samples/sample/Doc_0/Annots/Annotations.xml")?;
+        let file = File::open("../samples/000/Doc_0/Annots/Annotations.xml")?;
         let reader = BufReader::new(file);
         let xml = quick_xml::de::from_reader::<_, AnnotationsXmlFile>(reader)?;
         dbg!(xml);
@@ -120,7 +120,7 @@ mod tests {
 
     #[test]
     fn annotation_xml_file_works() -> Result<()> {
-        let file = File::open("../samples/sample/Doc_0/Annots/Page_0/Annotation.xml")?;
+        let file = File::open("../samples/000/Doc_0/Annots/Page_0/Annotation.xml")?;
         let reader = BufReader::new(file);
         let xml = quick_xml::de::from_reader::<_, AnnotationXmlFile>(reader)?;
         dbg!(xml);

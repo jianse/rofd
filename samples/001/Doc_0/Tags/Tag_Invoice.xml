@@ -1,0 +1,1759 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<fp:eInvoice xmlns:fp="http://www.edrm.org.cn/schema/e-invoice/2019" version="1.0">
+  <fp:InvoiceCode>
+    <fp:ObjectRef PageRef="10">69</fp:ObjectRef>
+  </fp:InvoiceCode>
+  <fp:Buyer>
+    <fp:BuyerName>
+      <fp:ObjectRef PageRef="10">75</fp:ObjectRef>
+    </fp:BuyerName>
+  </fp:Buyer>
+  <fp:Seller>
+    <fp:SellerName>
+      <fp:ObjectRef PageRef="10">76</fp:ObjectRef>
+    </fp:SellerName>
+    <fp:SellerTaxID>
+      <fp:ObjectRef PageRef="10">77</fp:ObjectRef>
+    </fp:SellerTaxID>
+    <fp:SellerAddrTel>
+      <fp:ObjectRef PageRef="10">78</fp:ObjectRef>
+    </fp:SellerAddrTel>
+    <fp:SellerFinancialAccount>
+      <fp:ObjectRef PageRef="10">79</fp:ObjectRef>
+    </fp:SellerFinancialAccount>
+  </fp:Seller>
+  <fp:InvoiceNo>
+    <fp:ObjectRef PageRef="10">70</fp:ObjectRef>
+  </fp:InvoiceNo>
+  <fp:MachineNo>
+    <fp:ObjectRef PageRef="10">73</fp:ObjectRef>
+  </fp:MachineNo>
+  <fp:InvoiceClerk>
+    <fp:ObjectRef PageRef="10">84</fp:ObjectRef>
+  </fp:InvoiceClerk>
+  <fp:InvoiceCheckCode>
+    <fp:ObjectRef PageRef="10">72</fp:ObjectRef>
+  </fp:InvoiceCheckCode>
+  <fp:Note>
+  </fp:Note>
+  <fp:IssueDate>
+    <fp:ObjectRef PageRef="10">71</fp:ObjectRef>
+  </fp:IssueDate>
+  <fp:TaxInclusiveTotalAmount>
+    <fp:ObjectRef PageRef="10">83</fp:ObjectRef>
+  </fp:TaxInclusiveTotalAmount>
+  <fp:TaxExclusiveTotalAmount>
+    <fp:ObjectRef PageRef="10">80</fp:ObjectRef>
+  </fp:TaxExclusiveTotalAmount>
+  <fp:TaxTotalAmount>
+    <fp:ObjectRef PageRef="10">81</fp:ObjectRef>
+  </fp:TaxTotalAmount>
+  <fp:Payee>
+    <fp:ObjectRef PageRef="10">85</fp:ObjectRef>
+  </fp:Payee>
+  <fp:Checker>
+    <fp:ObjectRef PageRef="10">86</fp:ObjectRef>
+  </fp:Checker>
+  <fp:GoodsInfos>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="92">138</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="92">139</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="92">140</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="92">141</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="92">142</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="92">143</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="92">144</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="92">145</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="92">146</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="92">147</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="92">148</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="92">149</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="92">150</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="92">151</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="92">152</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="92">153</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="92">154</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="92">155</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="92">156</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="92">157</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="92">158</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="92">159</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="92">160</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="92">161</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="92">162</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="92">163</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="92">164</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="92">165</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="92">166</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="92">167</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="92">168</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="92">169</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="92">170</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="92">171</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="92">172</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="92">173</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="92">174</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="92">175</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="92">176</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="92">177</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="92">178</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="92">179</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="92">180</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="92">181</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="92">182</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="92">183</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="92">184</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="92">185</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="92">186</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="92">187</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="92">188</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="92">189</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="92">190</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="92">191</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="92">192</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="92">193</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="92">194</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="92">195</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="92">196</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="92">197</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="92">198</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="92">199</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="92">200</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="92">201</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="92">202</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="92">203</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="92">204</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="92">205</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="92">206</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="92">207</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="92">208</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="92">209</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="92">210</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="92">211</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="92">212</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="92">213</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="92">214</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="92">215</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="92">216</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="92">217</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="92">218</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="92">219</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="92">220</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="92">221</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="92">222</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="92">223</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="92">224</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="92">225</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="92">226</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="92">227</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="92">228</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="92">229</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="92">230</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="92">231</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="92">232</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="92">233</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="92">234</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="92">235</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="92">236</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="92">237</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="92">238</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="92">239</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="92">240</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="92">241</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="92">242</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="92">243</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="92">244</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="92">245</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="92">246</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="92">247</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="92">248</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="92">249</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="92">250</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="92">251</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="92">252</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="92">253</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="92">254</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="92">255</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="92">256</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="92">257</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="92">258</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="92">259</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="92">260</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="92">261</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="92">262</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="92">263</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="92">264</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="92">265</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="92">266</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="92">267</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="271">317</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="271">318</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="271">319</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="271">320</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="271">321</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="271">322</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="271">323</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="271">324</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="271">325</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="271">326</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="271">327</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="271">328</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="271">329</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="271">330</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="271">331</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="271">332</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="271">333</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="271">334</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="271">335</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="271">336</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="271">337</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="271">338</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="271">339</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="271">340</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="271">341</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="271">342</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="271">343</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="271">344</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="271">345</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="271">346</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="271">347</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="271">348</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="271">349</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="271">350</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="271">351</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="271">352</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="271">353</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="271">354</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="271">355</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="271">356</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="271">357</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="271">358</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="271">359</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="271">360</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="271">361</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="271">362</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="271">363</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="271">364</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="271">365</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="271">366</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="271">367</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="271">368</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="271">369</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="271">370</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="271">371</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="271">372</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="271">373</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="271">374</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="271">375</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="271">376</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="271">377</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="271">378</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="271">379</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="271">380</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="271">381</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="271">382</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="271">383</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="271">384</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="271">385</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="271">386</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="271">387</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="271">388</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="271">389</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="271">390</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="271">391</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="271">392</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="271">393</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="271">394</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="271">395</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="271">396</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="271">397</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="271">398</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="271">399</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="271">400</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="271">401</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="271">402</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="271">403</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="271">404</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="271">405</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="271">406</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="271">407</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="271">408</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="271">409</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="271">410</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="271">411</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="271">412</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="271">413</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="271">414</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="271">415</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="271">416</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="271">417</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="271">418</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="271">419</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="271">420</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="271">421</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="271">422</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="271">423</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="271">424</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="271">425</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="271">426</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="271">427</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="271">428</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="271">429</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="271">430</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="271">431</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="271">432</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="271">433</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="271">434</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="271">435</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="271">436</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="271">437</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="271">438</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="271">439</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="271">440</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="271">441</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="271">442</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="271">443</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="271">444</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="271">445</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="271">446</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="450">496</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="450">497</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="450">498</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="450">499</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="450">500</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="450">501</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="450">502</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="450">503</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="450">504</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="450">505</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="450">506</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="450">507</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="450">508</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="450">509</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="450">510</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="450">511</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="450">512</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="450">513</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="450">514</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="450">515</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="450">516</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="450">517</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="450">518</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="450">519</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="450">520</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="450">521</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="450">522</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="450">523</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="450">524</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="450">525</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="450">526</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="450">527</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="450">528</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="450">529</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="450">530</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="450">531</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="450">532</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="450">533</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="450">534</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="450">535</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="450">536</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="450">537</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="450">538</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="450">539</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="450">540</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="450">541</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="450">542</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="450">543</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="450">544</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="450">545</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="450">546</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="450">547</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="450">548</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="450">549</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="450">550</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="450">551</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="450">552</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="450">553</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="450">554</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="450">555</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="450">556</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="450">557</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="450">558</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="450">559</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="450">560</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="450">561</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="450">562</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="450">563</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="450">564</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="450">565</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="450">566</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="450">567</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="450">568</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="450">569</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="450">570</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="450">571</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="450">572</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="450">573</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="450">574</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="450">575</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="450">576</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="450">577</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="450">578</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="450">579</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="450">580</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="450">581</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="450">582</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="450">583</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="450">584</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="450">585</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="450">586</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="450">587</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="450">588</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="450">589</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="450">590</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="450">591</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="450">592</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="450">593</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="450">594</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="450">595</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="450">596</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="450">597</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="450">598</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="450">599</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="450">600</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="450">601</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="450">602</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="450">603</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="450">604</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="450">605</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="450">606</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="450">607</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="450">608</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="450">609</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="450">610</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="450">611</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="450">612</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="450">613</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="450">614</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="450">615</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="450">616</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="450">617</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="450">618</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="450">619</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="450">620</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="450">621</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="450">622</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="450">623</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="450">624</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="450">625</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="629">676</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="629">677</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="629">678</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="629">679</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="629">680</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="629">681</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="629">682</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="629">683</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="629">684</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="629">685</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="629">686</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="629">687</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="629">688</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="629">689</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="629">690</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="629">691</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="629">692</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="629">693</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="629">694</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="629">695</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="629">696</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="629">697</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="629">698</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="629">699</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="629">700</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="629">701</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="629">702</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="629">703</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="629">704</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="629">705</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="629">706</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="629">707</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="629">708</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="629">709</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="629">710</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="629">711</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="629">712</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="629">713</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="629">714</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="629">715</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="629">716</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="629">717</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="629">718</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="629">719</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="629">720</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="629">721</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="629">722</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="629">723</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="629">724</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="629">725</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="629">726</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="629">727</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="629">728</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="629">729</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="629">730</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="629">731</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="629">732</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="629">733</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="629">734</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="629">735</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="629">736</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="629">737</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="629">738</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="629">739</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="629">740</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="629">741</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="629">742</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="629">743</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="629">744</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="629">745</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="629">746</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="629">747</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="629">748</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="629">749</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="629">750</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="629">751</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="629">752</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="629">753</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="629">754</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="629">755</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="629">756</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="629">757</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="629">758</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="629">759</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="629">760</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="629">761</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="629">762</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="629">763</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="629">764</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="629">765</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="629">766</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="629">767</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="629">768</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="629">769</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="629">770</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="629">771</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="629">772</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="629">773</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="629">774</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="629">775</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="629">776</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="629">777</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="629">778</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="629">779</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="629">780</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+    <fp:GoodsInfo>
+      <fp:ItemIndex>
+        <fp:ObjectRef PageRef="629">781</fp:ObjectRef>
+      </fp:ItemIndex>
+      <fp:Item>
+        <fp:ObjectRef PageRef="629">782</fp:ObjectRef>
+      </fp:Item>
+      <fp:Amount>
+        <fp:ObjectRef PageRef="629">783</fp:ObjectRef>
+      </fp:Amount>
+      <fp:TaxScheme>
+        <fp:ObjectRef PageRef="629">784</fp:ObjectRef>
+      </fp:TaxScheme>
+      <fp:TaxAmount>
+        <fp:ObjectRef PageRef="629">785</fp:ObjectRef>
+      </fp:TaxAmount>
+    </fp:GoodsInfo>
+  </fp:GoodsInfos>
+</fp:eInvoice>

@@ -1,0 +1,428 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ofd:Page xmlns:ofd="http://www.ofdspec.org/2016">
+  <ofd:Area>
+    <ofd:PhysicalBox>0 0 210 297</ofd:PhysicalBox>
+  </ofd:Area>
+  <ofd:Template TemplateID="270" ZOrder="Background" />
+  <ofd:Content>
+    <ofd:Layer ID="309">
+      <ofd:TextObject ID="310" Boundary="30 34.5 168 7" Font="3" Size="3.175">
+        <ofd:TextCode X="0" Y="5.0875" DeltaX="g 1 3.175 -3.175" DeltaY="g 1 0 3.175">个人</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="311" Boundary="30 41.5 168 7" Font="3" Size="3.175">
+        <ofd:TextCode X="0" Y="5.0875" DeltaX="g 8 3.175 -25.4" DeltaY="g 8 0 3.175">财天下科技有限公司</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="312" Boundary="55 49.8 38 5" Font="3" Size="3.175">
+        <ofd:TextCode X="0" Y="4.0875" DeltaX="g 11 1.5875 -17.4625" DeltaY="g 11 0 3.175">050001700111</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="313" Boundary="105 49.8 38 5" Font="3" Size="3.175">
+        <ofd:TextCode X="0" Y="4.0875" DeltaX="g 7 1.5875 -11.1125" DeltaY="g 7 0 3.175">12235358</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="314" Boundary="170.063 50.5 10 5.2894" Font="3" Size="3.175">
+        <ofd:TextCode X="4.2063" Y="3.175" DeltaX="0" DeltaY="g 0 0 3.175">4</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="315" Boundary="191.063 50.5 10 5.2894" Font="3" Size="3.175">
+        <ofd:TextCode X="4.2063" Y="3.175" DeltaX="0" DeltaY="g 0 0 3.175">2</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="316" Boundary="164 278 38 5" Font="3" Size="3.175">
+        <ofd:TextCode X="0" Y="3.175" DeltaX="g 4 1.5875  3.175 g 2 1.5875  3.175 g 2 1.5875 -19.05" DeltaY="g 10 0 3.175">2020年08月05日</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="317" Boundary="5.5 66 7 7" Font="3" Size="3.175">
+        <ofd:TextCode X="1.9125" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">27</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="318" Boundary="14.5 66 41 7" Font="3" Size="3.175">
+        <ofd:TextCode X="0" Y="5.0875" DeltaX="1.5875 g 4 3.175  1.5875 g 1 3.175 -19.05" DeltaY="g 7 0 3.175">*餐饮服务*餐费</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="319" Boundary="135.5 66 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="18.475" Y="5.0875" DeltaX="g 5 1.5875 -7.9375" DeltaY="g 5 0 3.175">100.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="320" Boundary="165 66 10 7" Font="3" Size="3.175">
+        <ofd:TextCode X="6.825" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">6%</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="321" Boundary="176.5 66 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="21.65" Y="5.0875" DeltaX="g 3 1.5875 -4.7625" DeltaY="g 3 0 3.175">6.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="322" Boundary="5.5 73 7 7" Font="3" Size="3.175">
+        <ofd:TextCode X="1.9125" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">28</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="323" Boundary="14.5 73 41 7" Font="3" Size="3.175">
+        <ofd:TextCode X="0" Y="5.0875" DeltaX="1.5875 g 4 3.175  1.5875 g 1 3.175 -19.05" DeltaY="g 7 0 3.175">*餐饮服务*餐费</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="324" Boundary="135.5 73 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="18.475" Y="5.0875" DeltaX="g 5 1.5875 -7.9375" DeltaY="g 5 0 3.175">100.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="325" Boundary="165 73 10 7" Font="3" Size="3.175">
+        <ofd:TextCode X="6.825" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">6%</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="326" Boundary="176.5 73 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="21.65" Y="5.0875" DeltaX="g 3 1.5875 -4.7625" DeltaY="g 3 0 3.175">6.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="327" Boundary="5.5 80 7 7" Font="3" Size="3.175">
+        <ofd:TextCode X="1.9125" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">29</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="328" Boundary="14.5 80 41 7" Font="3" Size="3.175">
+        <ofd:TextCode X="0" Y="5.0875" DeltaX="1.5875 g 4 3.175  1.5875 g 1 3.175 -19.05" DeltaY="g 7 0 3.175">*餐饮服务*餐费</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="329" Boundary="135.5 80 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="18.475" Y="5.0875" DeltaX="g 5 1.5875 -7.9375" DeltaY="g 5 0 3.175">100.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="330" Boundary="165 80 10 7" Font="3" Size="3.175">
+        <ofd:TextCode X="6.825" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">6%</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="331" Boundary="176.5 80 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="21.65" Y="5.0875" DeltaX="g 3 1.5875 -4.7625" DeltaY="g 3 0 3.175">6.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="332" Boundary="5.5 87 7 7" Font="3" Size="3.175">
+        <ofd:TextCode X="1.9125" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">30</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="333" Boundary="14.5 87 41 7" Font="3" Size="3.175">
+        <ofd:TextCode X="0" Y="5.0875" DeltaX="1.5875 g 4 3.175  1.5875 g 1 3.175 -19.05" DeltaY="g 7 0 3.175">*餐饮服务*餐费</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="334" Boundary="135.5 87 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="18.475" Y="5.0875" DeltaX="g 5 1.5875 -7.9375" DeltaY="g 5 0 3.175">100.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="335" Boundary="165 87 10 7" Font="3" Size="3.175">
+        <ofd:TextCode X="6.825" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">6%</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="336" Boundary="176.5 87 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="21.65" Y="5.0875" DeltaX="g 3 1.5875 -4.7625" DeltaY="g 3 0 3.175">6.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="337" Boundary="5.5 94 7 7" Font="3" Size="3.175">
+        <ofd:TextCode X="1.9125" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">31</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="338" Boundary="14.5 94 41 7" Font="3" Size="3.175">
+        <ofd:TextCode X="0" Y="5.0875" DeltaX="1.5875 g 4 3.175  1.5875 g 1 3.175 -19.05" DeltaY="g 7 0 3.175">*餐饮服务*餐费</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="339" Boundary="135.5 94 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="18.475" Y="5.0875" DeltaX="g 5 1.5875 -7.9375" DeltaY="g 5 0 3.175">100.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="340" Boundary="165 94 10 7" Font="3" Size="3.175">
+        <ofd:TextCode X="6.825" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">6%</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="341" Boundary="176.5 94 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="21.65" Y="5.0875" DeltaX="g 3 1.5875 -4.7625" DeltaY="g 3 0 3.175">6.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="342" Boundary="5.5 101 7 7" Font="3" Size="3.175">
+        <ofd:TextCode X="1.9125" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">32</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="343" Boundary="14.5 101 41 7" Font="3" Size="3.175">
+        <ofd:TextCode X="0" Y="5.0875" DeltaX="1.5875 g 4 3.175  1.5875 g 1 3.175 -19.05" DeltaY="g 7 0 3.175">*餐饮服务*餐费</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="344" Boundary="135.5 101 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="18.475" Y="5.0875" DeltaX="g 5 1.5875 -7.9375" DeltaY="g 5 0 3.175">100.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="345" Boundary="165 101 10 7" Font="3" Size="3.175">
+        <ofd:TextCode X="6.825" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">6%</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="346" Boundary="176.5 101 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="21.65" Y="5.0875" DeltaX="g 3 1.5875 -4.7625" DeltaY="g 3 0 3.175">6.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="347" Boundary="5.5 108 7 7" Font="3" Size="3.175">
+        <ofd:TextCode X="1.9125" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">33</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="348" Boundary="14.5 108 41 7" Font="3" Size="3.175">
+        <ofd:TextCode X="0" Y="5.0875" DeltaX="1.5875 g 4 3.175  1.5875 g 1 3.175 -19.05" DeltaY="g 7 0 3.175">*餐饮服务*餐费</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="349" Boundary="135.5 108 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="18.475" Y="5.0875" DeltaX="g 5 1.5875 -7.9375" DeltaY="g 5 0 3.175">100.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="350" Boundary="165 108 10 7" Font="3" Size="3.175">
+        <ofd:TextCode X="6.825" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">6%</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="351" Boundary="176.5 108 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="21.65" Y="5.0875" DeltaX="g 3 1.5875 -4.7625" DeltaY="g 3 0 3.175">6.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="352" Boundary="5.5 115 7 7" Font="3" Size="3.175">
+        <ofd:TextCode X="1.9125" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">34</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="353" Boundary="14.5 115 41 7" Font="3" Size="3.175">
+        <ofd:TextCode X="0" Y="5.0875" DeltaX="1.5875 g 4 3.175  1.5875 g 1 3.175 -19.05" DeltaY="g 7 0 3.175">*餐饮服务*餐费</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="354" Boundary="135.5 115 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="18.475" Y="5.0875" DeltaX="g 5 1.5875 -7.9375" DeltaY="g 5 0 3.175">100.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="355" Boundary="165 115 10 7" Font="3" Size="3.175">
+        <ofd:TextCode X="6.825" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">6%</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="356" Boundary="176.5 115 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="21.65" Y="5.0875" DeltaX="g 3 1.5875 -4.7625" DeltaY="g 3 0 3.175">6.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="357" Boundary="5.5 122 7 7" Font="3" Size="3.175">
+        <ofd:TextCode X="1.9125" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">35</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="358" Boundary="14.5 122 41 7" Font="3" Size="3.175">
+        <ofd:TextCode X="0" Y="5.0875" DeltaX="1.5875 g 4 3.175  1.5875 g 1 3.175 -19.05" DeltaY="g 7 0 3.175">*餐饮服务*餐费</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="359" Boundary="135.5 122 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="18.475" Y="5.0875" DeltaX="g 5 1.5875 -7.9375" DeltaY="g 5 0 3.175">100.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="360" Boundary="165 122 10 7" Font="3" Size="3.175">
+        <ofd:TextCode X="6.825" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">6%</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="361" Boundary="176.5 122 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="21.65" Y="5.0875" DeltaX="g 3 1.5875 -4.7625" DeltaY="g 3 0 3.175">6.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="362" Boundary="5.5 129 7 7" Font="3" Size="3.175">
+        <ofd:TextCode X="1.9125" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">36</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="363" Boundary="14.5 129 41 7" Font="3" Size="3.175">
+        <ofd:TextCode X="0" Y="5.0875" DeltaX="1.5875 g 4 3.175  1.5875 g 1 3.175 -19.05" DeltaY="g 7 0 3.175">*餐饮服务*餐费</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="364" Boundary="135.5 129 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="18.475" Y="5.0875" DeltaX="g 5 1.5875 -7.9375" DeltaY="g 5 0 3.175">100.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="365" Boundary="165 129 10 7" Font="3" Size="3.175">
+        <ofd:TextCode X="6.825" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">6%</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="366" Boundary="176.5 129 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="21.65" Y="5.0875" DeltaX="g 3 1.5875 -4.7625" DeltaY="g 3 0 3.175">6.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="367" Boundary="5.5 136 7 7" Font="3" Size="3.175">
+        <ofd:TextCode X="1.9125" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">37</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="368" Boundary="14.5 136 41 7" Font="3" Size="3.175">
+        <ofd:TextCode X="0" Y="5.0875" DeltaX="1.5875 g 4 3.175  1.5875 g 1 3.175 -19.05" DeltaY="g 7 0 3.175">*餐饮服务*餐费</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="369" Boundary="135.5 136 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="18.475" Y="5.0875" DeltaX="g 5 1.5875 -7.9375" DeltaY="g 5 0 3.175">100.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="370" Boundary="165 136 10 7" Font="3" Size="3.175">
+        <ofd:TextCode X="6.825" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">6%</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="371" Boundary="176.5 136 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="21.65" Y="5.0875" DeltaX="g 3 1.5875 -4.7625" DeltaY="g 3 0 3.175">6.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="372" Boundary="5.5 143 7 7" Font="3" Size="3.175">
+        <ofd:TextCode X="1.9125" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">38</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="373" Boundary="14.5 143 41 7" Font="3" Size="3.175">
+        <ofd:TextCode X="0" Y="5.0875" DeltaX="1.5875 g 4 3.175  1.5875 g 1 3.175 -19.05" DeltaY="g 7 0 3.175">*餐饮服务*餐费</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="374" Boundary="135.5 143 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="18.475" Y="5.0875" DeltaX="g 5 1.5875 -7.9375" DeltaY="g 5 0 3.175">100.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="375" Boundary="165 143 10 7" Font="3" Size="3.175">
+        <ofd:TextCode X="6.825" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">6%</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="376" Boundary="176.5 143 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="21.65" Y="5.0875" DeltaX="g 3 1.5875 -4.7625" DeltaY="g 3 0 3.175">6.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="377" Boundary="5.5 150 7 7" Font="3" Size="3.175">
+        <ofd:TextCode X="1.9125" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">39</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="378" Boundary="14.5 150 41 7" Font="3" Size="3.175">
+        <ofd:TextCode X="0" Y="5.0875" DeltaX="1.5875 g 4 3.175  1.5875 g 1 3.175 -19.05" DeltaY="g 7 0 3.175">*餐饮服务*餐费</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="379" Boundary="135.5 150 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="18.475" Y="5.0875" DeltaX="g 5 1.5875 -7.9375" DeltaY="g 5 0 3.175">100.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="380" Boundary="165 150 10 7" Font="3" Size="3.175">
+        <ofd:TextCode X="6.825" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">6%</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="381" Boundary="176.5 150 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="21.65" Y="5.0875" DeltaX="g 3 1.5875 -4.7625" DeltaY="g 3 0 3.175">6.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="382" Boundary="5.5 157 7 7" Font="3" Size="3.175">
+        <ofd:TextCode X="1.9125" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">40</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="383" Boundary="14.5 157 41 7" Font="3" Size="3.175">
+        <ofd:TextCode X="0" Y="5.0875" DeltaX="1.5875 g 4 3.175  1.5875 g 1 3.175 -19.05" DeltaY="g 7 0 3.175">*餐饮服务*餐费</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="384" Boundary="135.5 157 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="18.475" Y="5.0875" DeltaX="g 5 1.5875 -7.9375" DeltaY="g 5 0 3.175">100.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="385" Boundary="165 157 10 7" Font="3" Size="3.175">
+        <ofd:TextCode X="6.825" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">6%</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="386" Boundary="176.5 157 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="21.65" Y="5.0875" DeltaX="g 3 1.5875 -4.7625" DeltaY="g 3 0 3.175">6.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="387" Boundary="5.5 164 7 7" Font="3" Size="3.175">
+        <ofd:TextCode X="1.9125" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">41</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="388" Boundary="14.5 164 41 7" Font="3" Size="3.175">
+        <ofd:TextCode X="0" Y="5.0875" DeltaX="1.5875 g 4 3.175  1.5875 g 1 3.175 -19.05" DeltaY="g 7 0 3.175">*餐饮服务*餐费</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="389" Boundary="135.5 164 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="18.475" Y="5.0875" DeltaX="g 5 1.5875 -7.9375" DeltaY="g 5 0 3.175">100.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="390" Boundary="165 164 10 7" Font="3" Size="3.175">
+        <ofd:TextCode X="6.825" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">6%</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="391" Boundary="176.5 164 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="21.65" Y="5.0875" DeltaX="g 3 1.5875 -4.7625" DeltaY="g 3 0 3.175">6.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="392" Boundary="5.5 171 7 7" Font="3" Size="3.175">
+        <ofd:TextCode X="1.9125" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">42</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="393" Boundary="14.5 171 41 7" Font="3" Size="3.175">
+        <ofd:TextCode X="0" Y="5.0875" DeltaX="1.5875 g 4 3.175  1.5875 g 1 3.175 -19.05" DeltaY="g 7 0 3.175">*餐饮服务*餐费</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="394" Boundary="135.5 171 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="18.475" Y="5.0875" DeltaX="g 5 1.5875 -7.9375" DeltaY="g 5 0 3.175">100.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="395" Boundary="165 171 10 7" Font="3" Size="3.175">
+        <ofd:TextCode X="6.825" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">6%</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="396" Boundary="176.5 171 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="21.65" Y="5.0875" DeltaX="g 3 1.5875 -4.7625" DeltaY="g 3 0 3.175">6.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="397" Boundary="5.5 178 7 7" Font="3" Size="3.175">
+        <ofd:TextCode X="1.9125" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">43</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="398" Boundary="14.5 178 41 7" Font="3" Size="3.175">
+        <ofd:TextCode X="0" Y="5.0875" DeltaX="1.5875 g 4 3.175  1.5875 g 1 3.175 -19.05" DeltaY="g 7 0 3.175">*餐饮服务*餐费</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="399" Boundary="135.5 178 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="18.475" Y="5.0875" DeltaX="g 5 1.5875 -7.9375" DeltaY="g 5 0 3.175">100.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="400" Boundary="165 178 10 7" Font="3" Size="3.175">
+        <ofd:TextCode X="6.825" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">6%</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="401" Boundary="176.5 178 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="21.65" Y="5.0875" DeltaX="g 3 1.5875 -4.7625" DeltaY="g 3 0 3.175">6.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="402" Boundary="5.5 185 7 7" Font="3" Size="3.175">
+        <ofd:TextCode X="1.9125" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">44</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="403" Boundary="14.5 185 41 7" Font="3" Size="3.175">
+        <ofd:TextCode X="0" Y="5.0875" DeltaX="1.5875 g 4 3.175  1.5875 g 1 3.175 -19.05" DeltaY="g 7 0 3.175">*餐饮服务*餐费</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="404" Boundary="135.5 185 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="18.475" Y="5.0875" DeltaX="g 5 1.5875 -7.9375" DeltaY="g 5 0 3.175">100.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="405" Boundary="165 185 10 7" Font="3" Size="3.175">
+        <ofd:TextCode X="6.825" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">6%</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="406" Boundary="176.5 185 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="21.65" Y="5.0875" DeltaX="g 3 1.5875 -4.7625" DeltaY="g 3 0 3.175">6.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="407" Boundary="5.5 192 7 7" Font="3" Size="3.175">
+        <ofd:TextCode X="1.9125" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">45</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="408" Boundary="14.5 192 41 7" Font="3" Size="3.175">
+        <ofd:TextCode X="0" Y="5.0875" DeltaX="1.5875 g 4 3.175  1.5875 g 1 3.175 -19.05" DeltaY="g 7 0 3.175">*餐饮服务*餐费</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="409" Boundary="135.5 192 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="18.475" Y="5.0875" DeltaX="g 5 1.5875 -7.9375" DeltaY="g 5 0 3.175">100.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="410" Boundary="165 192 10 7" Font="3" Size="3.175">
+        <ofd:TextCode X="6.825" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">6%</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="411" Boundary="176.5 192 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="21.65" Y="5.0875" DeltaX="g 3 1.5875 -4.7625" DeltaY="g 3 0 3.175">6.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="412" Boundary="5.5 199 7 7" Font="3" Size="3.175">
+        <ofd:TextCode X="1.9125" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">46</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="413" Boundary="14.5 199 41 7" Font="3" Size="3.175">
+        <ofd:TextCode X="0" Y="5.0875" DeltaX="1.5875 g 4 3.175  1.5875 g 1 3.175 -19.05" DeltaY="g 7 0 3.175">*餐饮服务*餐费</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="414" Boundary="135.5 199 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="18.475" Y="5.0875" DeltaX="g 5 1.5875 -7.9375" DeltaY="g 5 0 3.175">100.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="415" Boundary="165 199 10 7" Font="3" Size="3.175">
+        <ofd:TextCode X="6.825" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">6%</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="416" Boundary="176.5 199 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="21.65" Y="5.0875" DeltaX="g 3 1.5875 -4.7625" DeltaY="g 3 0 3.175">6.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="417" Boundary="5.5 206 7 7" Font="3" Size="3.175">
+        <ofd:TextCode X="1.9125" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">47</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="418" Boundary="14.5 206 41 7" Font="3" Size="3.175">
+        <ofd:TextCode X="0" Y="5.0875" DeltaX="1.5875 g 4 3.175  1.5875 g 1 3.175 -19.05" DeltaY="g 7 0 3.175">*餐饮服务*餐费</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="419" Boundary="135.5 206 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="18.475" Y="5.0875" DeltaX="g 5 1.5875 -7.9375" DeltaY="g 5 0 3.175">100.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="420" Boundary="165 206 10 7" Font="3" Size="3.175">
+        <ofd:TextCode X="6.825" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">6%</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="421" Boundary="176.5 206 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="21.65" Y="5.0875" DeltaX="g 3 1.5875 -4.7625" DeltaY="g 3 0 3.175">6.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="422" Boundary="5.5 213 7 7" Font="3" Size="3.175">
+        <ofd:TextCode X="1.9125" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">48</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="423" Boundary="14.5 213 41 7" Font="3" Size="3.175">
+        <ofd:TextCode X="0" Y="5.0875" DeltaX="1.5875 g 4 3.175  1.5875 g 1 3.175 -19.05" DeltaY="g 7 0 3.175">*餐饮服务*餐费</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="424" Boundary="135.5 213 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="18.475" Y="5.0875" DeltaX="g 5 1.5875 -7.9375" DeltaY="g 5 0 3.175">100.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="425" Boundary="165 213 10 7" Font="3" Size="3.175">
+        <ofd:TextCode X="6.825" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">6%</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="426" Boundary="176.5 213 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="21.65" Y="5.0875" DeltaX="g 3 1.5875 -4.7625" DeltaY="g 3 0 3.175">6.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="427" Boundary="5.5 220 7 7" Font="3" Size="3.175">
+        <ofd:TextCode X="1.9125" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">49</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="428" Boundary="14.5 220 41 7" Font="3" Size="3.175">
+        <ofd:TextCode X="0" Y="5.0875" DeltaX="1.5875 g 4 3.175  1.5875 g 1 3.175 -19.05" DeltaY="g 7 0 3.175">*餐饮服务*餐费</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="429" Boundary="135.5 220 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="18.475" Y="5.0875" DeltaX="g 5 1.5875 -7.9375" DeltaY="g 5 0 3.175">100.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="430" Boundary="165 220 10 7" Font="3" Size="3.175">
+        <ofd:TextCode X="6.825" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">6%</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="431" Boundary="176.5 220 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="21.65" Y="5.0875" DeltaX="g 3 1.5875 -4.7625" DeltaY="g 3 0 3.175">6.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="432" Boundary="5.5 227 7 7" Font="3" Size="3.175">
+        <ofd:TextCode X="1.9125" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">50</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="433" Boundary="14.5 227 41 7" Font="3" Size="3.175">
+        <ofd:TextCode X="0" Y="5.0875" DeltaX="1.5875 g 4 3.175  1.5875 g 1 3.175 -19.05" DeltaY="g 7 0 3.175">*餐饮服务*餐费</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="434" Boundary="135.5 227 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="18.475" Y="5.0875" DeltaX="g 5 1.5875 -7.9375" DeltaY="g 5 0 3.175">100.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="435" Boundary="165 227 10 7" Font="3" Size="3.175">
+        <ofd:TextCode X="6.825" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">6%</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="436" Boundary="176.5 227 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="21.65" Y="5.0875" DeltaX="g 3 1.5875 -4.7625" DeltaY="g 3 0 3.175">6.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="437" Boundary="5.5 234 7 7" Font="3" Size="3.175">
+        <ofd:TextCode X="1.9125" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">51</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="438" Boundary="14.5 234 41 7" Font="3" Size="3.175">
+        <ofd:TextCode X="0" Y="5.0875" DeltaX="1.5875 g 4 3.175  1.5875 g 1 3.175 -19.05" DeltaY="g 7 0 3.175">*餐饮服务*餐费</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="439" Boundary="135.5 234 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="18.475" Y="5.0875" DeltaX="g 5 1.5875 -7.9375" DeltaY="g 5 0 3.175">100.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="440" Boundary="165 234 10 7" Font="3" Size="3.175">
+        <ofd:TextCode X="6.825" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">6%</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="441" Boundary="176.5 234 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="21.65" Y="5.0875" DeltaX="g 3 1.5875 -4.7625" DeltaY="g 3 0 3.175">6.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="442" Boundary="5.5 241 7 7" Font="3" Size="3.175">
+        <ofd:TextCode X="1.9125" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">52</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="443" Boundary="14.5 241 41 7" Font="3" Size="3.175">
+        <ofd:TextCode X="0" Y="5.0875" DeltaX="1.5875 g 4 3.175  1.5875 g 1 3.175 -19.05" DeltaY="g 7 0 3.175">*餐饮服务*餐费</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="444" Boundary="135.5 241 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="18.475" Y="5.0875" DeltaX="g 5 1.5875 -7.9375" DeltaY="g 5 0 3.175">100.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="445" Boundary="165 241 10 7" Font="3" Size="3.175">
+        <ofd:TextCode X="6.825" Y="5.0875" DeltaX="g 1 1.5875 -1.5875" DeltaY="g 1 0 3.175">6%</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="446" Boundary="176.5 241 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="21.65" Y="5.0875" DeltaX="g 3 1.5875 -4.7625" DeltaY="g 3 0 3.175">6.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="447" Boundary="135.5 255 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="12.76" Y="5.0875" DeltaX="g 7 1.905 -13.335" DeltaY="g 7 0 3.175">¥2600.00</ofd:TextCode>
+      </ofd:TextObject>
+      <ofd:TextObject ID="448" Boundary="176.5 255 28 7" Font="3" Size="3.175">
+        <ofd:TextCode X="14.665" Y="5.0875" DeltaX="g 6 1.905 -11.43" DeltaY="g 6 0 3.175">¥156.00</ofd:TextCode>
+      </ofd:TextObject>
+    </ofd:Layer>
+  </ofd:Content>
+</ofd:Page>

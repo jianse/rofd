@@ -350,7 +350,7 @@ mod tests {
         // font
         let fm = FontMgr::new();
         let mut data = vec![];
-        let mut file = File::open("../samples/ano/Doc_0/Res/font_13132_0.ttf")?;
+        let mut file = File::open("../samples/002/Doc_0/Res/font_13132_0.ttf")?;
         let _ = file.read_to_end(&mut data)?;
         let typeface = fm.new_from_data(&data, 0);
         if typeface.is_none() {
