@@ -987,6 +987,7 @@ dependencies = [
  "der",
  "eyre",
  "ofd_rw",
+ "thiserror",
 ]
 
 [[package]]

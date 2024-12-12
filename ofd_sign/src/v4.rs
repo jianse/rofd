@@ -1,5 +1,6 @@
 #![allow(unused)]
 
+use crate::Sign;
 use der::asn1::{
     BitString, GeneralizedTime, Ia5String, ObjectIdentifier, OctetString, PrintableString,
 };
@@ -23,6 +24,8 @@ pub struct SesSignature {
     /// 对签名值的时间戳
     timestamp: Option<BitString>,
 }
+
+impl Sign for SesSignature {}
 
 #[derive(Sequence, Debug)]
 pub struct TbsSign {
@@ -189,6 +192,20 @@ mod tests {
         dbg!(&seq);
         let sign = seq?;
         let data = sign.to_sign.e_seal.e_seal_info.picture.data;
+        // File::create("../samples/stamp.ofd")?.write_all(data.as_ref())?;
+        Ok(())
+    }
+
+    #[test]
+    fn read_sign1() -> Result<()> {
+        let mut f = File::open("../samples/001/Doc_0/Signs/Sign_0/SignedValue.dat")?;
+        let mut data = Vec::new();
+        let _ = f.read_to_end(&mut data)?;
+        let seq = SesSignature::from_der(&data);
+        // dbg!(&seq);
+        let sign = seq?;
+        let image_type = sign.to_sign.e_seal.e_seal_info.picture.r#type.to_string();
+        dbg!(&image_type);
         // File::create("../samples/stamp.ofd")?.write_all(data.as_ref())?;
         Ok(())
     }

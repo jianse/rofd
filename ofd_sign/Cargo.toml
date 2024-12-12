@@ -6,5 +6,9 @@ license.workspace = true
 
 [dependencies]
 ofd_rw = { workspace = true }
-eyre = { workspace = true }
+
 der = { version = "0.7.9", features = ["alloc", "derive", "oid", "std"] }
+thiserror = { workspace = true }
+
+[dev-dependencies]
+eyre = { workspace = true }
