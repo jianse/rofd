@@ -27,7 +27,10 @@ fn next_path_direction(iter: &mut Enumerate<Iter<String>>) -> eyre::Result<PathD
     }?;
     Ok(r)
 }
-pub(super) fn draw_path_object(ctx: &mut RenderCtx, path_object: &PathObject) -> eyre::Result<()> {
+pub(super) fn draw_path_object<I>(
+    ctx: &mut RenderCtx<I>,
+    path_object: &PathObject,
+) -> eyre::Result<()> {
     let vis = path_object.visible.unwrap_or(true);
     if !vis {
         return Ok(());

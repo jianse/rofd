@@ -34,7 +34,17 @@ pub fn detect_sign_class(data: &[u8]) -> SignClass {
     }
 }
 
-pub trait Sign: Debug {}
+pub struct ESealAppearance {
+    pub height: u64,
+    pub width: u64,
+    pub data: Vec<u8>,
+    pub r#type: String,
+}
+
+pub trait Sign: Debug {
+    /// get e seal appearance
+    fn appearance(&self) -> ESealAppearance;
+}
 
 pub fn decode_sign(data: &[u8]) -> Result<Box<dyn Sign>, Error> {
     let class = detect_sign_class(data);
@@ -55,7 +65,7 @@ pub fn decode_sign(data: &[u8]) -> Result<Box<dyn Sign>, Error> {
 /// make it can handle signature stuff
 pub trait SignInfoExt {}
 
-impl SignInfoExt for Ofd {}
+impl<T> SignInfoExt for Ofd<T> {}
 
 #[cfg(test)]
 mod tests {

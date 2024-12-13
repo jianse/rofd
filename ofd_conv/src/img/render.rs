@@ -4,7 +4,7 @@ mod font;
 mod path;
 mod text;
 
-use std::io::Cursor;
+use std::io::{Cursor, Read, Seek};
 use std::iter::Enumerate;
 use std::slice::Iter;
 use std::str::FromStr;
@@ -12,7 +12,6 @@ use std::str::FromStr;
 use eyre::Result;
 use eyre::{eyre, OptionExt};
 use skia_safe::canvas::SrcRectConstraint;
-use skia_safe::Color;
 use skia_safe::Color4f;
 use skia_safe::Matrix;
 use skia_safe::PaintCap;
@@ -20,6 +19,7 @@ use skia_safe::PaintJoin;
 use skia_safe::Rect;
 use skia_safe::{BlendMode, Data, Image, Paint};
 use skia_safe::{Canvas, ImageInfo, Surface};
+use skia_safe::{ClipOp, Color};
 use tracing::{debug, error, warn};
 
 use crate::error::MyError;
@@ -39,25 +39,26 @@ use ofd_base::file::res::SRGB;
 use ofd_base::StArray;
 use ofd_base::StBox;
 use ofd_base::StRefId;
-use ofd_rw::{Ofd, Resources};
+use ofd_rw::{from_bytes, Ofd, Resources};
+use ofd_sign::decode_sign;
 
-struct RenderCtx<'a> {
-    _ofd: Ofd,
+struct RenderCtx<'a, I> {
+    _ofd: Ofd<I>,
     canvas: &'a Canvas,
     draw_param_stack: DrawParamStack,
     resources: &'a Resources,
-    font_mgr: &'a mut AggFontMgr,
+    font_mgr: &'a mut AggFontMgr<I>,
 }
 
 #[allow(unused)]
-pub struct Render {
-    ofd: Ofd,
+pub struct Render<I> {
+    ofd: Ofd<I>,
     dpi: i32,
-    font_mgr: AggFontMgr,
+    font_mgr: AggFontMgr<I>,
 }
 
-impl Render {
-    pub fn new(ofd: Ofd, fallback_font: impl AsRef<str>) -> Result<Self> {
+impl<I: Read + Seek> Render<I> {
+    pub fn new(ofd: Ofd<I>, fallback_font: impl AsRef<str>) -> Result<Self> {
         // let o = ofd.0.clone()
         let font_mgr = AggFontMgr::builder(ofd.clone(), fallback_font).build()?;
         Ok(Render {
@@ -67,7 +68,7 @@ impl Render {
         })
     }
 
-    pub fn new_with_fm(ofd: Ofd, font_mgr: AggFontMgr) -> Self {
+    pub fn new_with_fm(ofd: Ofd<I>, font_mgr: AggFontMgr<I>) -> Self {
         Render {
             ofd,
             dpi: 300,
@@ -126,7 +127,112 @@ impl Render {
             draw_anno(&mut ctx, &anno)?;
         }
 
+        #[cfg(feature = "sign")]
+        {
+            debug!("drawing e seals");
+            let signs = self.ofd.signatures_for_page(doc_index, page_index)?;
+            if let Some(sign_vec) = signs {
+                for (sign_file, sign) in sign_vec {
+                    ctx.canvas.save();
+                    apply_boundary(ctx.canvas, sign.boundary);
+
+                    // clip
+                    if let Some(clip) = sign.clip {
+                        let clip = Rect::from_xywh(clip.x, clip.y, clip.w, clip.h);
+                        ctx.canvas.clip_rect(clip, ClipOp::Intersect, true);
+                    }
+
+                    // ctx.canvas.cl
+                    let path = sign_file.resolve(&sign_file.signed_value);
+
+                    let sign_bytes = self.ofd.bytes(path)?;
+                    let s = decode_sign(&sign_bytes)?;
+                    let appearance = s.appearance();
+                    match appearance.r#type.to_lowercase().as_str() {
+                        "ofd" => {
+                            let ofd = from_bytes(&appearance.data)?;
+                            let mut render = Render::new(ofd, "宋体")?;
+                            let mut sur = render.render_stamp()?;
+                            let image = sur.image_snapshot();
+                            let src_bound = image.bounds().into();
+                            let dst = Rect::from_wh(sign.boundary.w, sign.boundary.h);
+
+                            let mut paint = Paint::default();
+                            paint.set_anti_alias(true);
+
+                            ctx.canvas.draw_image_rect(
+                                image,
+                                Some((&src_bound, SrcRectConstraint::Strict)),
+                                dst,
+                                &paint,
+                            );
+                        }
+                        &_ => {
+                            warn!("unrecognized appearance type: {}", appearance.r#type);
+                        }
+                    }
+                    ctx.canvas.restore();
+                }
+            }
+        }
+
         can.restore();
+        Ok(sur)
+    }
+
+    pub fn render_stamp(&mut self) -> Result<Surface> {
+        let doc_index = 0;
+        let page_index = 0;
+        let dpi = self.dpi;
+
+        let doc = self.ofd.document_by_index(doc_index)?;
+        let doc_xml = &doc.content;
+
+        let page = self.ofd.page_by_index(doc_index, page_index)?;
+        let page_xml = &page.content;
+
+        let templates = self.ofd.templates_for_page(doc_index, page_index)?;
+        let template_pages = &templates
+            .iter()
+            .map(|i| &i.content)
+            .collect::<Vec<&PageXmlFile>>();
+        let pa = decide_size(page_xml, template_pages, doc_xml);
+        let size = (
+            mm2px_i32(pa.physical_box.w, dpi),
+            mm2px_i32(pa.physical_box.h, dpi),
+        );
+        let resources = self.ofd.resources_for_page(doc_index, page_index)?;
+
+        self.font_mgr.load_page(doc_index, page_index);
+
+        let mut sur = create_surface(size)?;
+        let can = sur.canvas();
+
+        // bgc
+        // can.draw_color(Color::WHITE, BlendMode::Color);
+        let scale = calc_scale(dpi);
+        can.scale((scale, scale));
+        let mut ctx = RenderCtx {
+            _ofd: self.ofd.clone(),
+            canvas: can,
+            draw_param_stack: DrawParamStack::new(),
+            resources: &resources,
+            font_mgr: &mut self.font_mgr,
+        };
+
+        debug!("drawing templates");
+        for tpl in template_pages {
+            draw_page(&mut ctx, tpl)?;
+        }
+        debug!("drawing page");
+        draw_page(&mut ctx, &page.content)?;
+
+        debug!("drawing annotations");
+        let anno_vec = self.ofd.annotations_for_page(doc_index, page_index)?;
+        for anno in anno_vec {
+            draw_anno(&mut ctx, &anno)?;
+        }
+        ctx.canvas.restore();
         Ok(sur)
     }
 
@@ -177,7 +283,7 @@ impl Render {
     }
 }
 
-fn draw_anno(ctx: &mut RenderCtx, anno: &AnnotationXmlFile) -> Result<()> {
+fn draw_anno<I: Read + Seek>(ctx: &mut RenderCtx<I>, anno: &AnnotationXmlFile) -> Result<()> {
     for annot in &anno.annot {
         if !annot.visible.unwrap_or(true) {
             continue;
@@ -344,7 +450,7 @@ fn apply_ctm(can: &Canvas, ctm: Option<&StArray<f32>>) {
     }
     let ctm = ctm.unwrap();
     assert_eq!(ctm.0.len(), 6, "ctm len must be 6");
-    dbg!(ctm);
+    // dbg!(ctm);
     let mat = Matrix::new_all(
         ctm.0[0], ctm.0[2], ctm.0[4], ctm.0[1], ctm.0[3], ctm.0[5], 0.0, 0.0, 1.0,
     );
@@ -353,20 +459,33 @@ fn apply_ctm(can: &Canvas, ctm: Option<&StArray<f32>>) {
 
 fn resolve_color(ct_color: &CtColor, resources: &Resources) -> Result<Color4f> {
     // ct_color
-    let cs = if let Some(cs_id) = ct_color.color_space {
-        // have a color space reference
-        resources
-            .get_color_space_by_id(cs_id)
-            .ok_or_eyre(format!("color space not found id: {cs_id}"))?
-    } else if let Some(cs_id) = resources.default_cs {
-        // looking for default color space
-        resources
-            .get_color_space_by_id(cs_id)
-            .ok_or_eyre(format!("default cs not found id {cs_id}"))?
-    } else {
-        // default srgb
-        &SRGB
-    };
+    let cs = ct_color
+        .color_space
+        .map(|cs_id| {
+            let cs = resources.get_color_space_by_id(cs_id);
+            if cs.is_none() {
+                warn!(
+                    "can't find color space! colorspace_id = {}, fallback to default colorspace.",
+                    cs_id
+                );
+            }
+            cs.or_else(|| {
+                if let Some(cs_id) = resources.default_cs {
+                    // looking for default color space
+                    let cs = resources.get_color_space_by_id(cs_id);
+                    if cs.is_none() {
+                        warn!(
+                            "can not find default color space! colorspace_id = {},  fallback to SRGB.",
+                            cs_id
+                        );
+                    }
+                    cs
+                } else {
+                    None
+                }
+            })
+            .unwrap_or(&SRGB)
+        }).unwrap_or(&SRGB);
 
     let val = if let Some(val) = &ct_color.value {
         Ok(val)
@@ -436,7 +555,7 @@ fn decide_size(
 }
 
 /// draw a page
-fn draw_page(ctx: &mut RenderCtx, tpl: &PageXmlFile) -> Result<()> {
+fn draw_page<I: Read + Seek>(ctx: &mut RenderCtx<I>, tpl: &PageXmlFile) -> Result<()> {
     let init_sc = ctx.canvas.save_count();
     if let Some(content) = tpl.content.as_ref() {
         for layer in &content.layer {
@@ -467,7 +586,7 @@ fn get_draw_param_by_id(resources: &Resources, id: Option<StRefId>) -> Option<Dr
     }
 }
 
-fn draw_layer(ctx: &mut RenderCtx, layer: &ofd_base::file::page::Layer) {
+fn draw_layer<I: Read + Seek>(ctx: &mut RenderCtx<I>, layer: &ofd_base::file::page::Layer) {
     let resources = ctx.resources;
     if let Some(dp_id) = layer.draw_param {
         let dp = resources.get_draw_param_by_id(dp_id);
@@ -481,7 +600,7 @@ fn draw_layer(ctx: &mut RenderCtx, layer: &ofd_base::file::page::Layer) {
     }
 }
 
-fn draw_object(ctx: &mut RenderCtx, objects: &Vec<VtGraphicUnit>) {
+fn draw_object<I: Read + Seek>(ctx: &mut RenderCtx<I>, objects: &Vec<VtGraphicUnit>) {
     let canvas = ctx.canvas;
     let resources = ctx.resources;
 
@@ -523,7 +642,10 @@ fn draw_object(ctx: &mut RenderCtx, objects: &Vec<VtGraphicUnit>) {
 
 // impl ToMatrix for
 
-fn draw_image_object(ctx: &mut RenderCtx, image_object: &ImageObject) -> Result<()> {
+fn draw_image_object<I: Read + Seek>(
+    ctx: &mut RenderCtx<I>,
+    image_object: &ImageObject,
+) -> Result<()> {
     if !image_object.visible.unwrap_or(true) {
         return Ok(());
     }
@@ -553,7 +675,7 @@ fn draw_image_object(ctx: &mut RenderCtx, image_object: &ImageObject) -> Result<
                         image_object.boundary.w,
                         image_object.boundary.h,
                     );
-                    dbg!(&img);
+                    // dbg!(&img);
                     // if let Some(ctm) = image_object.ctm.as_ref() {
                     //     let image_filter =
                     //         matrix_transform(&to_matrix(ctm), SamplingOptions::default(), None)

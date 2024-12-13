@@ -946,6 +946,7 @@ dependencies = [
  "eyre",
  "ofd_base",
  "ofd_rw",
+ "ofd_sign",
  "skia-safe",
  "thiserror",
  "tracing",

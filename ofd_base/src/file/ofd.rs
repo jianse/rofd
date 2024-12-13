@@ -10,12 +10,21 @@ use chrono::NaiveDate;
 #[derive(Debug, Deserialize, Serialize, Clone)]
 #[serde(rename = "OFD")]
 pub struct OfdXmlFile {
+    /// 文件格式的版本号，在xsd中描述为1.0，但在实际用例中通常为1.1
     #[serde(rename = "@Version")]
     pub version: String,
-    #[serde(rename = "@DocType")]
+
+    /// 文档格式子集类型，xsd中描述为必选，但在实际用例中可能不存在
+    #[serde(rename = "@DocType", default = "default_doctype")]
     pub doc_type: String,
+
+    /// 文件对象入口
     #[serde(rename = "DocBody")]
     pub doc_body: Vec<DocBody>,
+}
+
+fn default_doctype() -> String {
+    "OFD".to_string()
 }
 
 #[derive(Debug, Deserialize, Serialize, Default, Clone)]

@@ -2,7 +2,7 @@ use crate::error::{Error, Result};
 use minidom::Element;
 use ofd_base::file::annotation::{AnnotationXmlFile, AnnotationsXmlFile};
 use ofd_base::file::res::{MultiMedia, MultiMediaType, Resource};
-use ofd_base::file::signature::{SignatureXmlFile, SignaturesXmlFile};
+use ofd_base::file::signature::{SignatureXmlFile, SignaturesXmlFile, StampAnnot};
 use ofd_base::{
     file::{
         document::DocumentXmlFile,
@@ -17,7 +17,7 @@ use serde::de::DeserializeOwned;
 use std::any::{Any, TypeId};
 use std::cell::RefCell;
 use std::collections::HashMap;
-use std::io::{BufRead, Read};
+use std::io::{BufRead, Cursor, Read, Seek};
 use std::ops::Deref;
 use std::path::Path;
 use std::rc::Rc;
@@ -33,16 +33,22 @@ struct CacheKey {
 
 // pub type  Ofd =  Rc<RefCell<RawOfd>>;
 
-struct RawOfd {
-    zip_archive: ZipArchive<BufReader<File>>,
+struct RawOfd<R> {
+    zip_archive: ZipArchive<R>,
     cache: HashMap<CacheKey, Box<dyn Any>>,
 }
 
-#[derive(Clone)]
-pub struct Ofd(Rc<RefCell<RawOfd>>);
+// #[derive(Clone)]
+pub struct Ofd<I>(Rc<RefCell<RawOfd<I>>>);
 
-impl Ofd {
-    fn from_raw(raw_ofd: RawOfd) -> Self {
+impl<I> Clone for Ofd<I> {
+    fn clone(&self) -> Self {
+        Ofd(self.0.clone())
+    }
+}
+
+impl<R: Read + Seek> Ofd<R> {
+    fn from_raw(raw_ofd: RawOfd<R>) -> Self {
         Self(Rc::new(RefCell::new(raw_ofd)))
     }
 
@@ -112,13 +118,42 @@ impl Ofd {
         doc_index: usize,
     ) -> Result<Option<Vec<OfdItem<SignatureXmlFile>>>> {
         self.0.borrow_mut().signature_for_doc(doc_index)
-        // todo!()
+    }
+
+    pub fn signatures_for_page(&self, p0: usize, p1: usize) -> Result<Option<Stamps>> {
+        self.0.borrow_mut().signature_for_page(p0, p1)
     }
 }
 
-impl RawOfd {
+pub type Stamps = Vec<(OfdItem<SignatureXmlFile>, StampAnnot)>;
+
+impl<R> RawOfd<R> {
     const OFD_ENTRY: &'static str = "OFD.xml";
 
+    /// get an item from cache
+    fn get_cache<T: 'static, S>(&mut self, path: S) -> Option<&T>
+    where
+        S: Into<String>,
+    {
+        let tid = TypeId::of::<T>();
+        let path = path.into();
+        let key = CacheKey { path, tid };
+        self.cache.get(&key).and_then(|x| x.downcast_ref::<T>())
+    }
+
+    /// set an item into cache
+    fn set_cache<T: 'static, S>(&mut self, path: S, value: T)
+    where
+        S: Into<String>,
+    {
+        let tid = TypeId::of::<T>();
+        let p = path.into();
+        let key = CacheKey { path: p, tid };
+        self.cache.insert(key, Box::new(value));
+    }
+}
+
+impl<RD: Read + Seek> RawOfd<RD> {
     fn read_item<T, R>(reader: R) -> Result<T>
     where
         T: DeserializeOwned,
@@ -151,17 +186,6 @@ impl RawOfd {
         Ok(file)
     }
 
-    /// get an item from cache
-    fn get_cache<T: 'static, S>(&mut self, path: S) -> Option<&T>
-    where
-        S: Into<String>,
-    {
-        let tid = TypeId::of::<T>();
-        let path = path.into();
-        let key = CacheKey { path, tid };
-        self.cache.get(&key).and_then(|x| x.downcast_ref::<T>())
-    }
-
     /// getting from cache or parse xml from file
     fn cache_or<R, P>(&mut self, path: P) -> Result<R>
     where
@@ -174,29 +198,18 @@ impl RawOfd {
         } else {
             let inner = self.open(&p)?;
             let reader = BufReader::new(inner);
-            let xml: R = RawOfd::read_item(reader)?;
+            let xml: R = RawOfd::<RD>::read_item(reader)?;
             self.set_cache(p, xml.clone());
             Ok(xml)
         }
     }
 
-    /// set an item into cache
-    fn set_cache<T: 'static, S>(&mut self, path: S, value: T)
-    where
-        S: Into<String>,
-    {
-        let tid = TypeId::of::<T>();
-        let p = path.into();
-        let key = CacheKey { path: p, tid };
-        self.cache.insert(key, Box::new(value));
-    }
-
     /// get entry file of ofd
     pub fn entry(&mut self) -> Result<OfdItem<OfdXmlFile>> {
-        let xml = self.cache_or(RawOfd::OFD_ENTRY)?;
+        let xml = self.cache_or(RawOfd::<RD>::OFD_ENTRY)?;
 
         Ok(OfdItem {
-            path: RawOfd::OFD_ENTRY.into(),
+            path: RawOfd::<RD>::OFD_ENTRY.into(),
             content: xml,
         })
     }
@@ -256,7 +269,7 @@ impl RawOfd {
         let tpl_path = doc.resolve(tpl_path);
         let inner = self.open(tpl_path.to_string())?;
         let reader = BufReader::new(inner);
-        let xml: PageXmlFile = RawOfd::read_item(reader)?;
+        let xml: PageXmlFile = RawOfd::<RD>::read_item(reader)?;
         // let cont = &*self;
         Ok(OfdItem {
             // container: self,
@@ -365,7 +378,7 @@ impl RawOfd {
                         let file = self.open(rp.to_string())?;
                         let reader = BufReader::new(file);
 
-                        let xml: ResourceXmlFile = RawOfd::read_item(reader)?;
+                        let xml: ResourceXmlFile = RawOfd::<RD>::read_item(reader)?;
 
                         Ok(OfdItem {
                             path: rp,
@@ -407,7 +420,7 @@ impl RawOfd {
             let path = doc.resolve(loc);
             let file = self.open(path.to_string())?;
             let reader = BufReader::new(file);
-            let xml: AnnotationsXmlFile = RawOfd::read_item(reader)?;
+            let xml: AnnotationsXmlFile = RawOfd::<RD>::read_item(reader)?;
             if let Some(pages) = &xml.page {
                 let anno_vec = pages
                     .iter()
@@ -417,7 +430,7 @@ impl RawOfd {
                         let file = self.open(p.to_string())?;
 
                         let reader = BufReader::new(file);
-                        let xml: AnnotationXmlFile = RawOfd::read_item(reader)?;
+                        let xml: AnnotationXmlFile = RawOfd::<RD>::read_item(reader)?;
                         Ok(OfdItem {
                             path: p,
                             content: xml,
@@ -433,6 +446,7 @@ impl RawOfd {
         }
     }
 
+    /// read signatures.xml
     fn signatures_for_doc(
         &mut self,
         doc_index: usize,
@@ -448,6 +462,7 @@ impl RawOfd {
         }
     }
 
+    /// read each signature.xml
     pub fn signature_for_doc(
         &mut self,
         doc_index: usize,
@@ -473,9 +488,38 @@ impl RawOfd {
             .collect::<Result<Vec<OfdItem<SignatureXmlFile>>>>()?;
         Ok(Some(s))
     }
+
+    pub fn signature_for_page(
+        &mut self,
+        doc_index: usize,
+        page_index: usize,
+    ) -> Result<Option<Stamps>> {
+        let sigs = self.signature_for_doc(doc_index)?;
+
+        let doc = self.document_by_index(doc_index)?;
+        let page = doc.pages.page.get(page_index).unwrap();
+        let page_id = page.id;
+
+        if sigs.is_none() {
+            return Ok(None);
+        }
+        let sigs = sigs.unwrap();
+        let s = sigs
+            .iter()
+            .filter_map(|s| s.signed_info.stamp_annot.as_ref().map(|a| (s, a)))
+            .flat_map(|(s, a)| a.iter().map(move |aa| (s, aa)))
+            .filter(|(_s, aa)| aa.page_ref == page_id)
+            .map(|(s, aa)| (s.clone(), aa.clone()))
+            .collect::<Vec<(OfdItem<SignatureXmlFile>, StampAnnot)>>();
+        if s.is_empty() {
+            Ok(None)
+        } else {
+            Ok(Some(s))
+        }
+    }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct OfdItem<T> {
     // container: &'a mut Container,
     path: RelativePathBuf,
@@ -626,10 +670,22 @@ fn inner_resolve(this: &RelativePathBuf, other: &PathBuf) -> RelativePathBuf {
     };
     res
 }
-pub fn from_path(path: impl AsRef<Path>) -> Result<Ofd> {
+pub fn from_path(path: impl AsRef<Path>) -> Result<Ofd<BufReader<File>>> {
     let f = File::open(path)?;
     let reader = BufReader::new(f);
     let zip = ZipArchive::new(reader)?;
+
+    let _ = zip
+        .index_for_name("OFD.xml")
+        .ok_or(Error::OfdEntryNotFound)?;
+    Ok(Ofd::from_raw(RawOfd {
+        zip_archive: zip,
+        cache: HashMap::new(),
+    }))
+}
+
+pub fn from_bytes<'a, 'b, B: AsRef<[u8]> + 'b>(bytes: B) -> Result<Ofd<Cursor<B>>> {
+    let zip = ZipArchive::new(Cursor::new(bytes))?;
 
     let _ = zip
         .index_for_name("OFD.xml")

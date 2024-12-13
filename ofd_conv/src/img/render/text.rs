@@ -6,12 +6,16 @@ use ofd_rw::Resources;
 use skia_safe::{Color, Font, FontStyle, Paint, Point, TextBlob, TextBlobBuilder};
 use std::cmp::max;
 use std::collections::HashMap;
+use std::io::{Read, Seek};
 use std::ops::Index;
 use std::path::PathBuf;
 use std::str::FromStr;
 use tracing::{debug, warn};
 
-pub(super) fn draw_text_object(ctx: &mut RenderCtx, text_object: &TextObject) -> eyre::Result<()> {
+pub(super) fn draw_text_object<I: Read + Seek>(
+    ctx: &mut RenderCtx<I>,
+    text_object: &TextObject,
+) -> eyre::Result<()> {
     let canvas = ctx.canvas;
     let resources = ctx.resources;
     let vis = text_object.visible.unwrap_or(true);
@@ -85,8 +89,8 @@ pub(super) fn draw_text_object(ctx: &mut RenderCtx, text_object: &TextObject) ->
     Ok(())
 }
 
-fn get_font(
-    ctx: &mut RenderCtx,
+fn get_font<I: Read + Seek>(
+    ctx: &mut RenderCtx<I>,
     text_object: &TextObject,
     resources: &Resources,
 ) -> eyre::Result<Font> {

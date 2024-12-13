@@ -1,6 +1,6 @@
 #![allow(unused)]
 
-use crate::Sign;
+use crate::{ESealAppearance, Sign};
 use der::asn1::{
     BitString, GeneralizedTime, Ia5String, ObjectIdentifier, OctetString, PrintableString,
 };
@@ -25,7 +25,23 @@ pub struct SesSignature {
     timestamp: Option<BitString>,
 }
 
-impl Sign for SesSignature {}
+impl Sign for SesSignature {
+    fn appearance(&self) -> ESealAppearance {
+        let pic = &self.to_sign.e_seal.e_seal_info.picture;
+        pic.into()
+    }
+}
+
+impl From<&SesEsPictureInfo> for ESealAppearance {
+    fn from(val: &SesEsPictureInfo) -> ESealAppearance {
+        ESealAppearance {
+            height: val.height,
+            width: val.width,
+            data: val.data.clone().into_bytes(),
+            r#type: val.r#type.to_string(),
+        }
+    }
+}
 
 #[derive(Sequence, Debug)]
 pub struct TbsSign {
@@ -108,10 +124,10 @@ pub struct SesEsPictureInfo {
     data: OctetString,
 
     /// 图像显示宽度，单位毫米
-    width: i64,
+    width: u64,
 
     /// 图像显示高度，单位毫米
-    height: i64,
+    height: u64,
 }
 
 /// 印章属性

@@ -46,7 +46,7 @@ xdom = { path = "xdom" }
 ofd_base = { path = "ofd_base" }
 ofd_rw = { path = "ofd_rw" }
 ofd_conv = { path = "ofd_conv" }
-
+ofd_sign = { path = "ofd_sign" }
 
 # only dev use
 quick-xml = "0.37.1"

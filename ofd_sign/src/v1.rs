@@ -1,4 +1,4 @@
-use crate::Sign;
+use crate::{ESealAppearance, Sign};
 use der::asn1::{BitString, Ia5String, ObjectIdentifier, OctetString, UtcTime};
 use der::Sequence;
 
@@ -122,7 +122,23 @@ pub struct SesSignature {
     signature: BitString,
 }
 
-impl Sign for SesSignature {}
+impl Sign for SesSignature {
+    fn appearance(&self) -> ESealAppearance {
+        let pic = &self.to_sign.e_seal.e_seal_info.picture;
+        pic.into()
+    }
+}
+
+impl From<&SesEsPictureInfo> for ESealAppearance {
+    fn from(val: &SesEsPictureInfo) -> ESealAppearance {
+        ESealAppearance {
+            height: val.width,
+            width: val.height,
+            data: val.data.clone().into_bytes(),
+            r#type: val.r#type.to_string(),
+        }
+    }
+}
 
 #[derive(Debug, Sequence)]
 pub struct TbsSign {

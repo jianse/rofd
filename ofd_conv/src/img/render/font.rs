@@ -1,4 +1,5 @@
 use skia_safe::{FontMgr, FontStyle, Typeface};
+use std::io::{Read, Seek};
 use std::path::Path;
 use std::{
     collections::{HashMap, HashSet},
@@ -127,13 +128,13 @@ impl FontStyleSet {
 }
 
 /// struct handle ofd embedded fonts
-struct EmbeddedFontMgr {
-    ofd: Ofd,
+struct EmbeddedFontMgr<I> {
+    ofd: Ofd<I>,
     system_font_mgr: FontMgr,
     font_cache: HashMap<String, Typeface>,
 }
 
-impl EmbeddedFontMgr {
+impl<I: Read + Seek> EmbeddedFontMgr<I> {
     pub(crate) fn load_embed_font(
         &mut self,
         path: impl AsRef<str> + Into<String>,
@@ -149,7 +150,7 @@ impl EmbeddedFontMgr {
             Ok(tf)
         }
     }
-    pub fn from_ofd(ofd: Ofd) -> Self {
+    pub fn from_ofd(ofd: Ofd<I>) -> Self {
         let system_font_mgr = FontMgr::new();
         let font_cache = HashMap::new();
 
@@ -179,16 +180,16 @@ impl EmbeddedFontMgr {
     // pub fn
 }
 
-pub struct AggFontMgr {
-    ofd: Ofd,
-    embedded_font_mgr: EmbeddedFontMgr,
+pub struct AggFontMgr<I> {
+    ofd: Ofd<I>,
+    embedded_font_mgr: EmbeddedFontMgr<I>,
     local_dir_font_mgr: Option<LocalDirFontMgr>,
     system_font_mgr: FontMgr,
     fallback_font_name: String,
     fallback: Typeface,
 }
 
-impl AggFontMgr {
+impl<I> AggFontMgr<I> {
     pub(crate) fn match_family_style(
         &self,
         family_name: &String,
@@ -201,7 +202,7 @@ impl AggFontMgr {
     }
 }
 
-impl AggFontMgr {
+impl<I: Read + Seek> AggFontMgr<I> {
     pub(crate) fn fallback_typeface(&self) -> Typeface {
         self.fallback.clone()
     }
@@ -224,20 +225,23 @@ impl AggFontMgr {
     }
 }
 
-impl AggFontMgr {
-    pub(super) fn builder(ofd: Ofd, fallback_font_name: impl AsRef<str>) -> AggFontMgrBuilder {
+impl<I: Read + Seek> AggFontMgr<I> {
+    pub(super) fn builder(
+        ofd: Ofd<I>,
+        fallback_font_name: impl AsRef<str>,
+    ) -> AggFontMgrBuilder<I> {
         AggFontMgrBuilder::new(ofd, fallback_font_name)
     }
 }
 
-pub(super) struct AggFontMgrBuilder {
-    ofd: Ofd,
+pub(super) struct AggFontMgrBuilder<I> {
+    ofd: Ofd<I>,
     font_dir: Option<PathBuf>,
     fallback_font_name: String,
 }
 
-impl AggFontMgrBuilder {
-    pub fn new(ofd: Ofd, fallback_font_name: impl AsRef<str>) -> Self {
+impl<I: Read + Seek> AggFontMgrBuilder<I> {
+    pub fn new(ofd: Ofd<I>, fallback_font_name: impl AsRef<str>) -> Self {
         Self {
             ofd,
             fallback_font_name: fallback_font_name.as_ref().to_owned(),
@@ -251,7 +255,7 @@ impl AggFontMgrBuilder {
         self
     }
 
-    pub fn build(mut self) -> Result<AggFontMgr> {
+    pub fn build(mut self) -> Result<AggFontMgr<I>> {
         let system_fm = FontMgr::new();
         let local_dir_fm = self.font_dir.take().map(LocalDirFontMgr::form_path);
 
@@ -274,8 +278,6 @@ impl AggFontMgrBuilder {
         })
     }
 }
-
-impl AggFontMgr {}
 
 #[cfg(test)]
 mod tests {

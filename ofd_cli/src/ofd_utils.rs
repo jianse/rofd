@@ -5,6 +5,7 @@ use ofd_base::file::document::DocumentXmlFile;
 use ofd_conv::img::render;
 use ofd_rw::{self, Ofd};
 use std::collections::HashMap;
+use std::io::{Read, Seek};
 use std::path::Path;
 use std::time::Instant;
 use std::{
@@ -79,7 +80,7 @@ pub fn get_info(path: &PathBuf) -> Result<OfdInfo> {
     })
 }
 
-fn get_doc_count(container: &Ofd) -> Result<usize> {
+fn get_doc_count<I: Read + Seek>(container: &Ofd<I>) -> Result<usize> {
     let item = container.entry()?;
 
     let xml = item.content;
@@ -87,7 +88,7 @@ fn get_doc_count(container: &Ofd) -> Result<usize> {
     Ok(doc_count)
 }
 
-fn get_page_count(container: &Ofd, doc_index: usize) -> Result<usize> {
+fn get_page_count<I: Read + Seek>(container: &Ofd<I>, doc_index: usize) -> Result<usize> {
     let xml: DocumentXmlFile = container.document_by_index(doc_index)?.content;
     let page_count = xml.pages.page.len();
     Ok(page_count)
