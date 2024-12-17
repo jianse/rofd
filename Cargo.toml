@@ -41,6 +41,14 @@ tracing = "0.1.41"
 tracing-subscriber = "0.3.19"
 interpolator = "0.5.0"
 
+x509-cert = { version = "0.2.5" }
+ecdsa = { version = "0.16.9"}
+pkcs8 = "0.10.2"
+p256 = { version = "0.13.2" }
+der = "0.7.9"
+sha2 = { version = "0.10.8" }
+sm2 = "0.13.3"
+
 # workspace
 xdom = { path = "xdom" }
 ofd_base = { path = "ofd_base" }

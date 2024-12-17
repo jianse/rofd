@@ -1,5 +1,7 @@
 pub mod der;
 mod error;
+pub mod ext;
+pub mod gm;
 mod v1;
 mod v4;
 

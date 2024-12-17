@@ -2,15 +2,13 @@ use der::pem::LineEnding;
 use der::EncodePem;
 use ecdsa::elliptic_curve::rand_core::OsRng;
 use eyre::Result;
-use p256::ecdsa::{DerSignature, Signature};
+use p256::ecdsa::DerSignature;
 use p256::{NistP256, PublicKey};
 use pkcs8::{EncodePrivateKey, EncodePublicKey};
-use sha2::Sha256;
 use std::fs::File;
 use std::io::Write;
 use std::net::{IpAddr, Ipv4Addr};
 use std::str::FromStr;
-use std::time::Duration;
 use x509_cert::builder::{Builder, CertificateBuilder, Profile, RequestBuilder};
 use x509_cert::ext::pkix::name::GeneralName;
 use x509_cert::ext::pkix::SubjectAltName;
@@ -18,7 +16,6 @@ use x509_cert::name::Name;
 use x509_cert::serial_number::SerialNumber;
 use x509_cert::spki::{DecodePublicKey, SubjectPublicKeyInfoOwned};
 use x509_cert::time::Validity;
-use x509_cert::Certificate;
 
 fn ecdsa_signer() -> ecdsa::SigningKey<NistP256> {
     let mut rng = OsRng;

@@ -1075,9 +1075,13 @@ name = "ofd_sign"
 version = "0.1.0"
 dependencies = [
  "der",
+ "ecdsa",
  "eyre",
  "ofd_rw",
+ "sha2",
+ "sm2",
  "thiserror",
+ "x509-cert",
 ]
 
 [[package]]
@@ -1101,6 +1105,7 @@ dependencies = [
  "sha2",
  "skia-safe",
  "sm2",
+ "sm3",
  "tracing-subscriber",
  "x509-cert",
  "xdom",

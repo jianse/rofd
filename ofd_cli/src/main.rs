@@ -52,15 +52,22 @@ enum Commands {
         #[arg(short, long, default_value_t = false)]
         template: bool,
     },
+    /// certificate commands
+    Cert {},
 }
 
-fn init_logger() {
+fn init_logger(level: u8) {
+    let f = match level {
+        0 => "info".into(),
+        1 => "debug".into(),
+        _ => "trace".into(),
+    };
     use tracing_subscriber::{fmt, layer::SubscriberExt, util::SubscriberInitExt};
     let fmt = fmt::layer()
         .with_ansi(true)
         .with_file(true)
         .with_line_number(true);
-    let filter = EnvFilter::try_from_default_env().unwrap_or(EnvFilter::new("info"));
+    let filter = EnvFilter::try_from_default_env().unwrap_or(f);
     let _ = tracing_subscriber::registry()
         .with(filter)
         .with(fmt)
@@ -68,23 +75,11 @@ fn init_logger() {
 }
 
 fn main() -> Result<()> {
-    init_logger();
     let ops = Cli::parse();
+    init_logger(ops.debug);
     match ops.command {
         Commands::Info { ofd_file } => {
-            let info = ofd_utils::get_info(&ofd_file)?;
-            // docs
-            println!("This ofd has {} document(s).", info.doc_count);
-            print_stdout(info.doc_info.with_title())?;
-
-            // items in package
-            println!(
-                "This ofd has {} item(s) in it's package.",
-                info.item_names.len()
-            );
-            for item in info.item_names.iter() {
-                println!("{}", item);
-            }
+            print_ofd_info(&ofd_file)?;
         }
         Commands::Render {
             ofd_file,
@@ -112,7 +107,25 @@ fn main() -> Result<()> {
                 ofd_utils::render_ofd(&ofd_file, &out_path, &path_template)?;
             }
         }
+        Commands::Cert {} => todo!(),
     }
 
+    Ok(())
+}
+
+fn print_ofd_info(ofd_file: &PathBuf) -> Result<()> {
+    let info = ofd_utils::get_info(ofd_file)?;
+    // docs
+    println!("This ofd has {} document(s).", info.doc_count);
+    print_stdout(info.doc_info.with_title())?;
+
+    // items in package
+    println!(
+        "This ofd has {} item(s) in it's package.",
+        info.item_names.len()
+    );
+    for item in info.item_names.iter() {
+        println!("{}", item);
+    }
     Ok(())
 }
