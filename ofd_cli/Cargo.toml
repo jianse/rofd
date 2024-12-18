@@ -12,6 +12,8 @@ thiserror = { workspace = true }
 ofd_base = { workspace = true }
 ofd_rw = { workspace = true }
 ofd_conv = { workspace = true }
+ofd_sign = { workspace = true }
 tracing = { workspace = true }
 tracing-subscriber = { workspace = true, features = ["env-filter"] }
 interpolator = { workspace = true, features = ["number"] }
+chrono.workspace = true

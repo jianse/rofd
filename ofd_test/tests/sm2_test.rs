@@ -2,9 +2,11 @@
 
 use chrono::Duration;
 use der::EncodePem;
+use hex::ToHex;
 use pkcs8::{DecodePublicKey, SubjectPublicKeyInfo};
 use sm2::dsa::SigningKey;
 use sm2::elliptic_curve::rand_core::OsRng;
+use sm2::elliptic_curve::sec1::ToEncodedPoint;
 use sm2::pkcs8::{DecodePrivateKey, EncodePrivateKey, EncodePublicKey, LineEnding};
 use sm2::{PublicKey, SecretKey};
 use std::str::FromStr;
@@ -109,5 +111,18 @@ fn test_mysm2() -> eyre::Result<()> {
     let cert = cb.build()?;
 
     println!("{}", cert.to_pem(LineEnding::LF)?);
+    Ok(())
+}
+
+#[test]
+fn test_compressed_key() -> eyre::Result<()> {
+    let hex = hex::decode("024B0FA601977C659C9DF6E1DD4BD55243BF42B7FC0AB92F2984539D4824FCB9C2")?;
+    let pk = PublicKey::from_sec1_bytes(&hex)?;
+    // let pk
+    let enc_point = pk.to_encoded_point(true);
+    let h = enc_point.as_bytes().encode_hex::<String>();
+    println!("{}", &h);
+    let s = pk.to_public_key_pem(LineEnding::LF)?;
+    println!("{}", s);
     Ok(())
 }

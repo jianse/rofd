@@ -10,4 +10,6 @@ pub enum MyError {
 
     // #[error(transparent)]
     // XmlDeError(#[from] xdom::de::XmlDeError),
+    #[error("parse duration error. At {pos}, Reason: {reason}")]
+    ParseDurationError { pos: usize, reason: String },
 }

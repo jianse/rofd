@@ -1,18 +1,21 @@
 mod error;
 mod ofd_utils;
+mod util;
 
 use clap::{command, Parser, Subcommand};
 use cli_table::{print_stdout, WithTitle};
 use eyre::Result;
+use ofd_sign::gm::GenKeyPairReq;
 use std::path::PathBuf;
+use std::time::Duration;
 use tracing::info;
 use tracing_subscriber::EnvFilter;
-
+use util::parse_duration;
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
 struct Cli {
     /// Turn debugging information on
-    #[arg(short, long, action = clap::ArgAction::Count)]
+    #[arg(short, long, action = clap::ArgAction::Count, global = true)]
     debug: u8,
 
     #[command(subcommand)]
@@ -53,7 +56,33 @@ enum Commands {
         template: bool,
     },
     /// certificate commands
-    Cert {},
+    Cert {
+        #[command(subcommand)]
+        command: CertCommands,
+    },
+}
+
+#[derive(Subcommand)]
+enum CertCommands {
+    /// Generate sm2 keypair
+    Gen {
+        /// A path where the generated keypair stores.
+        #[arg(short, long)]
+        output: PathBuf,
+
+        /// Public key output path
+        #[arg(short, long)]
+        pub_output: Option<PathBuf>,
+    },
+    /// Generate Csr
+    Req {
+        #[arg(short, long, value_parser= parse_duration)]
+        valid_period: Duration,
+    },
+    /// X509 certificate
+    X509 {},
+    /// Electronic seal
+    ESeal {},
 }
 
 fn init_logger(level: u8) {
@@ -107,7 +136,22 @@ fn main() -> Result<()> {
                 ofd_utils::render_ofd(&ofd_file, &out_path, &path_template)?;
             }
         }
-        Commands::Cert {} => todo!(),
+        Commands::Cert { command } => match command {
+            CertCommands::Gen { output, pub_output } => {
+                let mut req = GenKeyPairReq::new();
+                req.mkdir(true).sk_path(output);
+                if let Some(pk_path) = pub_output {
+                    req.extract_pk(true).pk_path(pk_path);
+                };
+
+                req.generate()?;
+            }
+            CertCommands::Req { valid_period } => {
+                dbg!(&valid_period);
+            }
+            CertCommands::X509 { .. } => {}
+            CertCommands::ESeal { .. } => {}
+        },
     }
 
     Ok(())
