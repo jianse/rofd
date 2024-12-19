@@ -5,7 +5,7 @@ mod util;
 use clap::{command, Parser, Subcommand};
 use cli_table::{print_stdout, WithTitle};
 use eyre::Result;
-use ofd_sign::gm::GenKeyPairReq;
+use ofd_sign::gm::{GenCertReq, GenKeyPairReq};
 use std::path::PathBuf;
 use std::time::Duration;
 use tracing::info;
@@ -16,7 +16,7 @@ use util::parse_duration;
 struct Cli {
     /// Turn debugging information on
     #[arg(short, long, action = clap::ArgAction::Count, global = true)]
-    debug: u8,
+    verbose: u8,
 
     #[command(subcommand)]
     command: Commands,
@@ -77,10 +77,25 @@ enum CertCommands {
     /// Generate Csr
     Req {
         #[arg(short, long, value_parser= parse_duration)]
-        valid_period: Duration,
+        duration: Duration,
     },
     /// X509 certificate
-    X509 {},
+    X509 {
+        #[arg(short, long)]
+        output: PathBuf,
+
+        #[arg(short, long)]
+        key: PathBuf,
+
+        #[arg(short, long)]
+        to_sign: PathBuf,
+
+        #[arg(short, long, value_parser= parse_duration)]
+        duration: Duration,
+
+        #[arg(short, long)]
+        subject: String,
+    },
     /// Electronic seal
     ESeal {},
 }
@@ -105,7 +120,7 @@ fn init_logger(level: u8) {
 
 fn main() -> Result<()> {
     let ops = Cli::parse();
-    init_logger(ops.debug);
+    init_logger(ops.verbose);
     match ops.command {
         Commands::Info { ofd_file } => {
             print_ofd_info(&ofd_file)?;
@@ -146,10 +161,25 @@ fn main() -> Result<()> {
 
                 req.generate()?;
             }
-            CertCommands::Req { valid_period } => {
-                dbg!(&valid_period);
+            CertCommands::Req { duration } => {
+                dbg!(&duration);
             }
-            CertCommands::X509 { .. } => {}
+            CertCommands::X509 {
+                output,
+                key,
+                to_sign,
+                duration,
+                subject,
+            } => {
+                let mut req = GenCertReq::new();
+                req.mkdir(true)
+                    .output(output)
+                    .signing_key_path(key)
+                    .tbs_key_path(to_sign)
+                    .duration(duration)
+                    .subject(subject);
+                req.generate()?;
+            }
             CertCommands::ESeal { .. } => {}
         },
     }
